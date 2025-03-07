@@ -2,26 +2,41 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Dashboard = () => {
   const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
   
   useEffect(() => {
     const fetchUserData = async () => {
-      const token = localStorage.getItem('token');
-      const config = { headers: { Authorization: `Bearer ${token}` } };
+      try {
+        const token = localStorage.getItem('token');
+        if (!token) {
+          navigate('/login');
+          return;
+        }
 
-      const userResponse = await axios.get('/api/users/profile', config);
-      console.log('API Response:', userResponse.data); // Check the structure of the response
-      setUser(userResponse.data);
-      console.log(userResponse.data.user);
-
-      // Fetch stats and workout plans data...
+        const config = { headers: { Authorization: `Bearer ${token}` } };
+        const userResponse = await axios.get('http://localhost:5000/api/users/profile', config);
+        console.log('API Response:', userResponse.data);
+        setUser(userResponse.data);
+      } catch (err) {
+        console.error('Error fetching user data:', err);
+        setError(err.response?.data?.message || 'Failed to fetch user data');
+        if (err.response?.status === 401) {
+          navigate('/login');
+        }
+      }
     };
 
     fetchUserData();
-  }, []);
+  }, [navigate]);
+  
+  if (error) {
+    return <div className="text-red-500">Error: {error}</div>;
+  }
 
   if (!user) {
     return <div>Loading...</div>;
@@ -29,7 +44,7 @@ const Dashboard = () => {
 
   return (
     <div>
-      <h1>Welcome, {user?.Name || 'Guest'}!</h1>
+      <h1>Welcome, {user.Name || 'Guest'}!</h1>
       {/* Add other components like charts and workout plan listings here */}
     </div>
   );
