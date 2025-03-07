@@ -30,7 +30,6 @@ const Dashboard = () => {
   return (
     <div>
       <h1>Welcome, {user?.Name || 'Guest'}!</h1>
-      
       {/* Add other components like charts and workout plan listings here */}
     </div>
   );
