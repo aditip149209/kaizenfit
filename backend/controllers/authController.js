@@ -44,15 +44,15 @@ exports.loginUser = async (req, res) => {
   try {
 
     const [user] = await db.promise().query('SELECT * FROM User WHERE Email = ?', [email]);
+    if (!user || user.length === 0) {
+      console.log('here is error')
+        return res.status(401).json({ message: 'Invalid email or password' }); // User not found
+      }
     const pw = user[0].Password;
     console.log(user);
     console.log(` password is : `,pw);
 
-    if (user.length === 0) {
-    console.log('here is error')
-      return res.status(401).json({ message: 'Invalid email or password' }); // User not found
-    }
-
+  
     const isPasswordValid = await bcrypt.compare(password, user[0].Password);
 
     if (!isPasswordValid) {
@@ -60,7 +60,7 @@ exports.loginUser = async (req, res) => {
       return res.status(401).json({ message: 'Invalid email or password' }); // Incorrect password
     }
 
-    const token = jwt.sign({ id: user[0].id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user[0].UserID }, process.env.JWT_SECRET, { expiresIn: '1h' });
 
     res.status(200).json({ message: 'Login successful', token }); // Send success response with token
   } catch (error) {

@@ -12,6 +12,12 @@ app.use(bodyParser.json()); // Parse JSON request bodies
 const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
+const userRoutes = require('./routes/userRoutes');
+app.use('/api/users', userRoutes);
+
+const workoutRoutes = require('./routes/workoutplanRoutes');
+app.use('/api/workouts', workoutRoutes);
+
 // Default route
 app.get('/', (req, res) => {
     res.send('Fitness Tracker API is running');
