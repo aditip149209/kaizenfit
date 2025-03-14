@@ -1,9 +1,9 @@
 const express = require('express');
 const cors = require('cors');
-const bodyParser = require('body-parser');
 require('dotenv').config();
+const bodyParser = require('body-parser');
 const db = require('./config/db');
-
+const router = express.Router();
 const app = express();
 app.use(cors());
 app.use(bodyParser.json()); // Parse JSON request bodies
@@ -13,10 +13,14 @@ const authRoutes = require('./routes/authRoutes');
 app.use('/api/auth', authRoutes);
 
 const userRoutes = require('./routes/userRoutes');
-app.use('/api/users', userRoutes);
-
+const onboardRoutes = require('./routes/onboardRoutes');
+router.use('/', userRoutes);
+router.use('/', onboardRoutes);
+app.use('/api/users', router);
 const workoutRoutes = require('./routes/workoutplanRoutes');
 app.use('/api/workouts', workoutRoutes);
+
+
 
 // Default route
 app.get('/', (req, res) => {

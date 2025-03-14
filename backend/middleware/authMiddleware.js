@@ -20,7 +20,7 @@ const protect = async (req, res, next) => {
             // Get user from database by decoded UserID
             const [user] = await db.promise().query(
                 'SELECT * FROM User WHERE UserID = ?',
-                [decoded.id] // Use id from decoded payload
+                [decoded.UserID] // Use id from decoded payload
             );
 
             if (user.length === 0) {

@@ -68,3 +68,79 @@ Elevate your fitness journey with AI-driven analytics, real-time tracking, and p
 </>);
 
 }
+
+
+
+
+
+<div class="flex h-screen">
+  <!-- Sidebar -->
+  <aside class="w-64 bg-black text-white flex flex-col">
+    <div class="p-4 font-bold text-xl">My Fitness</div>
+    <nav class="flex flex-col mt-6 space-y-4">
+      <a href="#" class="hover:bg-slate-700 px-4 py-2 rounded">Dashboard</a>
+      <a href="#" class="hover:bg-slate-700 px-4 py-2 rounded">Course Schedule</a>
+      <a href="#" class="hover:bg-slate-700 px-4 py-2 rounded">Yoga</a>
+      <a href="#" class="hover:bg-slate-700 px-4 py-2 rounded">Meals</a>
+      <a href="#" class="hover:bg-slate-700 px-4 py-2 rounded">Chat</a>
+      <a href="#" class="hover:bg-slate-700 px-4 py-2 rounded">Profile</a>
+    </nav>
+    <div class="relative group mt-auto p-4 ">
+      <button class="w-full bg-slate-900 text-white px-6 py-3 rounded-lg overflow-hidden relative hover:bg-slate-700">
+    Logout
+  </button></div>
+  </aside>
+
+  <!-- Main Content -->
+  <main class="flex-grow bg-gradient-to-br from-black via-blue-950 to-cyan-950 p-6">
+    <!-- Header -->
+    <header class="flex justify-between items-center bg-slate-900 shadow-cyan-500/50 text-cyan-100 p-4 rounded-md">
+      <div>Hello Juli! Stay hydrated today.</div>
+      <div>18 Mar 2025, Wednesday</div>
+    </header>
+
+    <!-- Dashboard Content -->
+    <section class="mt-6 grid grid-cols-3 gap-6">
+      <!-- Metric Cards -->
+      <div class="bg-slate-900 text-cyan-100 p-4 rounded-lg shadow-md">
+        <h3>Heart Rate</h3>
+        <p>72 BPM</p>
+      </div>
+      <div class="bg-slate-900 text-cyan-100 p-4 rounded-lg shadow-md">
+        <h3>Energy Burn</h3>
+        <p>120 kcal</p>
+      </div>
+      <div class="bg-slate-900 text-cyan-100 p-4 rounded-lg shadow-md">
+        <h3>Swimming</h3>
+        <p>01 hrs</p>
+      </div>
+    </section>
+
+    <!-- Additional Sections -->
+    <section class="mt-6 grid grid-cols-[2fr_1fr] gap-x-[20px]">
+      <!-- Yoga Activity Chart -->
+      <div class="bg-slate-900 text-cyan-100 shadow-md p-6 rounded-lg">
+        <h3>Yoga Activity</h3>
+        <!-- Add chart here or placeholder -->
+        <div class="grid grid-cols-[repeat(7,_1fr)] gap-x-[10px] mt-[20px]">
+          <!-- Example Bars -->
+          <div class="h-[50px] bg-blue-[500]"></div>
+          <!-- Repeat similar divs for other days -->
+        </div>
+      </div>
+
+      <!-- Meal Statistics -->
+      <div class="bg-slate-900 text-cyan-100 shadow-md p-6 rounded-lg">
+        <h3>Meal Statistics</h3>
+        <!-- Add chart or placeholder -->
+        <p>230 kcal</p>
+      </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="mt-[20px] flex justify-between space-x-[10px] ">
+    </section>
+
+
+
+
