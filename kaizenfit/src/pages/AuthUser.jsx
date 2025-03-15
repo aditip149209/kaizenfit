@@ -16,7 +16,8 @@ const Login = () => {
     try {
       const response = await axios.post('http://localhost:5000/api/auth/login', { email, password });
       localStorage.setItem('token', response.data.token);
-      
+      console.log(response);
+      console.log(response.data.user);
       // Check if user has completed onboarding
       if (!response.data.user.is_onboarded) {
         navigate('/onboarding');
@@ -24,7 +25,9 @@ const Login = () => {
         navigate('/dashboard');
       }
     } catch (err) {
-      setError('Invalid email or password');
+      console.log(err);
+      console.log(err.response.data.message);
+      setError('Invalid');
     }
   };
 

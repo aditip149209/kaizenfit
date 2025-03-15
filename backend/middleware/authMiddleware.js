@@ -14,9 +14,6 @@ const protect = async (req, res, next) => {
 
             // Verify token
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-            // console.log('Decoded Token:', decoded); // Log decoded payload for debugging
-
             // Get user from database by decoded UserID
             const [user] = await db.promise().query(
                 'SELECT * FROM User WHERE UserID = ?',

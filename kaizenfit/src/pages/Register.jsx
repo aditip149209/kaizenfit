@@ -2,6 +2,7 @@ import React, {useState} from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
+
 const Register = () =>{
     const [name, setName] = useState('');
   const [email, setEmail] = useState('');
@@ -18,7 +19,7 @@ const Register = () =>{
     try{
         const response = await axios.post('http://localhost:5000/api/auth/register', { name, email, password });
         setSuccess(response.data.message);
-        setTimeout(() => navigate('/login'), 2000); 
+        setTimeout(() => navigate('/onboarding'), 2000); 
     }
     catch(err){
         console.log(err);
