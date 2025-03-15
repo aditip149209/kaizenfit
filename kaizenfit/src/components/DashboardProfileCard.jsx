@@ -5,12 +5,12 @@ import { useNavigate } from "react-router-dom";
 const DashboardProfileCard = () => {
     return (
         <>
-         <div className="w-48 h-48 bg-slate-800 text-white rounded-2xl shadow-lg flex flex-col justify-center items-center">
-      <h3 className="text-lg font-semibold mb-2">{title}</h3>
-      <p className="text-2xl font-bold">{value}</p>
-      <span className="text-sm text-gray-400">Goal: {goal}</span>
-    </div>
+         <div className="w-80 h-80 bg-slate-700 text-white rounded-2xl shadow-lg flex flex-col items-center justify-center">
+            <img src="/user.png" alt="skjs" className="h-24 w-24 mt-3"/>
 
+            <h3 className="text-2xl font-semibold mt-3 ">Name</h3>
+          <p className="text-xl font-bold">Age 20, Female</p>
+        </div>
 
         </>
 

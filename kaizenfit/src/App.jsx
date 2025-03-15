@@ -8,8 +8,6 @@ import Onboarding from './pages/Onboarding';
 function App() {
   return (
     <Router>
-      
-
       {/* Routes */}
       <Routes>
         <Route path="/" element={<LandingPage />} />
@@ -17,6 +15,7 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/dashboard" element={<Dashboard />} />
+        
       </Routes>
     </Router>
   );

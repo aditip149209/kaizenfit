@@ -10,6 +10,7 @@ import ConnectTrackerCard from '../components/connectTrackerCard';
 import WeightSection from '../components/WeightSection';
 import NutritionSection from '../components/NutritionSection';
 import WorkoutSection from '../components/WorkoutSection';
+import DashboardProfileCard from '../components/DashboardProfileCard';
 
 
 const Dashboard = () => {
@@ -42,11 +43,6 @@ const Dashboard = () => {
     navigate('/stats');
   }
 
-  const handleReminder = (e) => {
-    e.preventDefault();
-    navigate('/reminder');
-  }
-
   const handleSettings = (e) => {
     e.preventDefault();
     navigate('/settings');
@@ -57,6 +53,22 @@ const Dashboard = () => {
     navigate('/view')
 
   }
+
+  const handleEdit = (e) => {
+    e.preventDefault();
+    navigate('/editprofile');
+  }
+
+  const handleYourPlan = (e) => {
+    e.preventDefault();
+    navigate('/yourplan');
+  }
+
+  const handleHelp = (e) => {
+    e.preventDefault();
+    navigate('/help');
+  }
+
   
   useEffect(() => {
     const fetchUserData = async () => {
@@ -94,7 +106,7 @@ const Dashboard = () => {
   return (
     <div className="flex h-screen">
       {/* Sidebar */}
-      <div className="w-64 bg-slate-800 border-r border-gray-300 p-4 text-center justify-center">
+      <div className="w-64 bg-slate-800 border-r border-slate-800 p-4 text-center justify-center">
       
       <div className="flex flex-col items-center pb-6">
          <img src='/KaizenLogo.png' alt="KaizenFit Logo" className="h-24 w-24 object-contain mb-2" />
@@ -110,9 +122,7 @@ const Dashboard = () => {
           <li className="text-center p-3 bg-gray-700 rounded-lg hover:bg-gray-300 cursor-pointer text-white">
             <button className='cursor-pointer' onClick={handleFitnessPlan}>Fitness Plans</button>
           </li>
-          <li className="text-center p-3 bg-gray-700 rounded-lg hover:bg-gray-300 cursor-pointer text-white">
-            <button className = 'cursor-pointer' onClick={handleReminder}>Activity Reminders</button>
-          </li>
+          
         </ul>
         <div className="mt-8 absolute bottom-6 left-7 ">
           <button onClick = {handleView} className="w-full py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 cursor-pointer">
@@ -128,11 +138,10 @@ const Dashboard = () => {
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 p-6 bg-slate-200 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-500 scrollbar-track-gray-300">
-        <h1 className="text-2xl font-bold mb-6">Dashboard</h1>
+      <div className="flex-1 p-6 bg-slate-200 overflow-y-auto scrollbar-thin scrollbar-thumb-slate-500 scrollbar-track-slate-300 bg-slate-500">
+        <h1 className="text-2xl font-bold mb-6 text-gray-200">Dashboard</h1>
         <div className="flex flex-col gap-4">
           <Card userName={user.Name} />
-          
           
           <NutritionSection />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 gap-y-8">
@@ -141,7 +150,6 @@ const Dashboard = () => {
           <ConnectTrackerCard />
           </div>
           <WeightSection/>     
-        
           <WorkoutSection />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 gap-y-8">
          
@@ -153,10 +161,16 @@ const Dashboard = () => {
         
         {/* Add other components like charts and workout plan listings here */}
       </div>
-      <div className="w-128 bg-slate-800 border-l border-gray-300 p-4">
+      <div className="w-104 bg-slate-800 border-l border-slate-800 p-4 flex justify-center items-center h-full">
         {/* Second sidebar */}
-
-
+        <div className='items-center flex flex-col'>
+        <DashboardProfileCard />
+        <div className="mt-4 space-y-2 flex flex-col">
+                    <button onClick = {handleEdit} className="w-64 bg-slate-600 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Edit Profile</button>
+                    <button onClick = {handleYourPlan} className="w-64 bg-slate-600 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Your Plan</button>
+                    <button onClick = {handleHelp} className="w-64 bg-slate-600 text-white py-2 px-4 rounded-lg hover:bg-blue-600 transition">Help</button>
+                </div>
+        </div>
       </div>
     </div>
   );

@@ -21,7 +21,7 @@ const WeightSection = () => {
         <div className="mb-auto bg-gray-800 text-white rounded-lg p-2 shadow-md">
             <h2 className="text-xl font-semibold m-auto text-gray-300">🏋️‍♀️ Weight and Progress</h2>
         </div>
-        <div className="grid grid-cols-1 gap-6 gap-y-8 text-xl font-semibold m-auto text-gray-300 bg-slate-500 py-8 px-8 rounded-lg">
+        <div className="grid grid-cols-1 gap-6 gap-y-8 text-xl font-semibold m-auto text-gray-300 bg-slate-600 py-8 px-8 rounded-lg">
         <div className="flex flex-col items-center mb-6">
         <WeightLossProgress
           currentWeight={currentWeight}
