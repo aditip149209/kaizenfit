@@ -11,10 +11,6 @@ import WeightSection from '../components/WeightSection';
 import NutritionSection from '../components/NutritionSection';
 import WorkoutSection from '../components/WorkoutSection';
 
-import WeightLossProgress from '../components/WeightChart';
-import Trends from '../components/TrendWeight';
-import WeightGoal from '../components/WeightGoal';
-
 
 const Dashboard = () => {
   const waterGoal = 8; 
@@ -23,23 +19,45 @@ const Dashboard = () => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const currentWeight = 148; // Replace with dynamic data
-  const goalWeight = 135;
-  const startingWeight = 154;
-
-  const trendsData = [
-    { label: 'Last 7 Days', value: '-2' },
-    { label: 'Last 30 Days', value: '-4' },
-    { label: 'All Time', value: '-6' },
-  ];
+  
 
   const handleSignOut = (e) => {
     e.preventDefault();
     localStorage.removeItem('token');
     navigate('/');
+  }
+
+  const handleFitnessPlan = (e) => {
+    e.preventDefault();
+    navigate('/fitnessplans');
+  }
+
+  const handleProgress = (e) => {
+    e.preventDefault();
+    navigate('/progress');
+  }
+
+  const handleQuickStats = (e) => {
+    e.preventDefault();
+    navigate('/stats');
+  }
+
+  const handleReminder = (e) => {
+    e.preventDefault();
+    navigate('/reminder');
+  }
+
+  const handleSettings = (e) => {
+    e.preventDefault();
+    navigate('/settings');
+  }
+
+  const handleView = (e) => {
+    e.preventDefault();
+    navigate('/view')
 
   }
- 
+  
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -84,23 +102,23 @@ const Dashboard = () => {
       </div>
         <ul className="space-y-2">
           <li className="text-center p-3 bg-gray-700 rounded-lg hover:bg-gray-300 cursor-pointer text-white">
-            Quick Stats
+            <button className='cursor-pointer' onClick={handleQuickStats}>Quick Stats</button>
           </li>
           <li className="text-center p-3 bg-gray-700 rounded-lg hover:bg-gray-300 cursor-pointer text-white">
-            Progress Overview
+            <button className='cursor-pointer' onClick={handleProgress}>Progress Overview</button>
           </li>
           <li className="text-center p-3 bg-gray-700 rounded-lg hover:bg-gray-300 cursor-pointer text-white">
-            Fitness Plans
+            <button className='cursor-pointer' onClick={handleFitnessPlan}>Fitness Plans</button>
           </li>
           <li className="text-center p-3 bg-gray-700 rounded-lg hover:bg-gray-300 cursor-pointer text-white">
-            Activity Reminders
+            <button className = 'cursor-pointer' onClick={handleReminder}>Activity Reminders</button>
           </li>
         </ul>
         <div className="mt-8 absolute bottom-6 left-7 ">
-          <button className="w-full py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 cursor-pointer">
+          <button onClick = {handleView} className="w-full py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 cursor-pointer">
             View Events
           </button>
-          <button className="w-full mt-2 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 cursor-pointer">
+          <button onClick={handleSettings} className="w-full mt-2 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-800 cursor-pointer">
             Settings
           </button>
           <button onClick={handleSignOut} className="w-full mt-2 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 cursor-pointer">
@@ -122,12 +140,8 @@ const Dashboard = () => {
           <CaloriesConsumed calGoal={calGoal}/>
           <ConnectTrackerCard />
           </div>
-          <WeightSection/>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 gap-y-8">
-          
-          
-
-          </div>
+          <WeightSection/>     
+        
           <WorkoutSection />
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 gap-y-8">
          
@@ -139,7 +153,7 @@ const Dashboard = () => {
         
         {/* Add other components like charts and workout plan listings here */}
       </div>
-      <div className="w-128 bg-gray-100 border-l border-gray-300 p-4">
+      <div className="w-128 bg-slate-800 border-l border-gray-300 p-4">
         {/* Second sidebar */}
 
 

@@ -1,12 +1,9 @@
 import React from "react";
 
-const WeightGoal = () => {
+const Settings = () => {
     return (
         <>
-        <div>
-            
-        </div>
         </>
     );
+};
 
-}

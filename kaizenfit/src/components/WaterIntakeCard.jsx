@@ -44,3 +44,4 @@ const WaterIntakeCard = ({waterGoal}) =>{
 };
 
 export default  WaterIntakeCard ;
+
