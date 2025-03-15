@@ -151,12 +151,6 @@ const Dashboard = () => {
           </div>
           <WeightSection/>     
           <WorkoutSection />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 gap-y-8">
-         
-          <WaterIntakeCard waterConsumed={6} waterGoal={waterGoal} />
-          <CaloriesConsumed calGoal={calGoal}/>
-          <ConnectTrackerCard />
-          </div>
           </div>
         
         {/* Add other components like charts and workout plan listings here */}

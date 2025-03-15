@@ -1,6 +1,7 @@
 import React, {useState} from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 
 const Register = () =>{
@@ -30,6 +31,9 @@ const Register = () =>{
     return (
         <div className="flex justify-center items-center h-screen bg-slate-900">
           <div className="bg-white p-8 rounded shadow-md w-full max-w-md">
+          <Link to="/" className="text-blue-500 hover:text-blue-700 mb-4 block">
+          &larr; Back
+        </Link>
             <h2 className="text-2xl font-bold mb-6 text-center">Register</h2>
             {error && <p className="text-red-500 text-center mb-4">{error}</p>}
             {success && <p className="text-green-500 text-center mb-4">{success}</p>}

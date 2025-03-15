@@ -27,6 +27,9 @@ const LandingPage = () => {
    
        <>
        <div className="relative h-screen w-full bg-gradient-to-bl from-cyan-900 via-slate-900 to-black">
+       <div className="absolute top-4 left-4">
+          <img src="/KaizenLogo.png" alt="KaizenFit Logo" className="h-18 w-18 object-contain" />
+        </div>
            
        <div className="absolute top-4 right-4 flex space-x-4">
        <Link to="/login">
@@ -43,7 +46,7 @@ const LandingPage = () => {
        </div>
        
        
-       <section className="h-full flex flex-col justify-center items-center text-white text-center">
+       <section className="h-200 flex flex-col justify-center items-center text-white text-center">
          <h1 className="text-4xl md:text-6xl font-bold">
          Optimize Every Move  <br /> With   
            <span className="italic text-cyan-400"> Data-Driven Workouts</span>
@@ -54,7 +57,7 @@ const LandingPage = () => {
        </section>
        </div>
        
-       <section className="relative py-20 bg-gradient-to-br from-black via-gray-900 to-black text-white">
+       <section className="relative h-screen py-20 bg-gradient-to-br from-black via-gray-900 to-black text-white">
        <div className="max-w-6xl mx-auto px-6 text-center">
        <h2 className="text-4xl md:text-5xl font-extrabold text-cyan-400">
        Why Choose Our Fitness Tracker?
@@ -94,6 +97,29 @@ const LandingPage = () => {
        </div>
        </div>
        </section>
+
+       <section className="bg-gradient-to-tl from-black to-slate-800 relative h-screen py-12 text-center flex flex-col items-center justify-center">
+        <h2 className="text-3xl font-bold text-white mb-4 flex">Ready to Get Started?</h2>
+        <Link to="/register">
+          <button className="flex px-8 py-4 bg-white text-cyan-700 font-semibold rounded-lg hover:bg-gray-200 transition duration-300 ease-in-out transform hover:scale-105">
+            Join Now
+          </button>
+        </Link>
+      </section>
+
+
+       <footer className="bg-slate-900 text-gray-300 py-6">
+        <div className="max-w-6xl mx-auto px-6 text-center">
+          <p className="text-sm">
+            © {new Date().getFullYear()} KaizenFit. All rights reserved.
+          </p>
+          <div className="flex justify-center space-x-4 mt-4">
+            <a href="#" className="hover:text-cyan-400">Privacy Policy</a>
+            <a href="#" className="hover:text-cyan-400">Terms of Service</a>
+            <a href="#" className="hover:text-cyan-400">Contact Us</a>
+          </div>
+        </div>
+      </footer>
        </>
   );
 };
