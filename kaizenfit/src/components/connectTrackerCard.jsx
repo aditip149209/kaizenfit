@@ -4,7 +4,6 @@ import { FaLink } from 'react-icons/fa';
 
 const ConnectTrackerCard = () => {
   const navigate = useNavigate();
-
   const handleConnect = () => {
     navigate('/connect-tracker');
   };

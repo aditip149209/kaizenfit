@@ -69,3 +69,29 @@ exports.loginUser = async (req, res) => {
     res.status(500).json({ message: 'Server error' }); // Handle server errors
   }
 };
+
+
+exports.refreshUser = async (req, res) => {
+  const { token } = req.body;
+
+  if (!token) {
+    return res.status(400).json({ message: 'Refresh token is required' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.REFRESH_TOKEN_SECRET);
+    const [user] = await db.promise().query('SELECT * FROM User WHERE UserID = ?', [decoded.UserID]);
+
+    if (!user || user.length === 0) {
+      return res.status(401).json({ message: 'Invalid refresh token' });
+    }
+
+    const newAccessToken = jwt.sign({ UserID: user[0].UserID }, process.env.JWT_SECRET, { expiresIn: '1h' });
+
+    res.status(200).json({ accessToken: newAccessToken });
+  } catch (error) {
+    console.error('Error refreshing token:', error);
+    res.status(401).json({ message: 'Invalid refresh token' });
+
+}
+};

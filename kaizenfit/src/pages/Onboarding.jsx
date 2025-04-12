@@ -13,9 +13,22 @@ const Onboarding = () => {
         setData((prev) => ({...prev, [e.target.name]: e.target.value}));
     };
 
+    const refreshToken = async () => {
+        try {
+            const refreshToken = localStorage.getItem('refreshToken');
+            const response = await axios.post('http://localhost:5000/api/auth/refresh', { token: refreshToken });
+            localStorage.setItem('token', response.data.accessToken);
+            return response.data.accessToken;
+        } catch (err) {
+            console.error('Error refreshing token:', err);
+            // Handle error, possibly redirect to login
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const token = localStorage.getItem('token');
+        let token = localStorage.getItem('token');
+
         try {
             await axios.post('http://localhost:5000/api/users/onboarding', data, {
                 headers: {
@@ -24,7 +37,21 @@ const Onboarding = () => {
             });
             navigate('/dashboard');
         } catch (err) {
-            console.error(err);
+            if (err.response && err.response.status === 401) {
+                // Token might be expired, try refreshing
+                token = await refreshToken();
+                if (token) {
+                    // Retry the request with the new token
+                    await axios.post('http://localhost:5000/api/users/onboarding', data, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    navigate('/dashboard');
+                }
+            } else {
+                console.error('Error:', err.response ? err.response.data : err.message);
+            }
         }
     };
 
