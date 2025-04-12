@@ -1,9 +1,8 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Login from './pages/AuthUser';
-import Dashboard from './pages/Dashboard';
-import Register from './pages/Register';
-import Onboarding from './pages/Onboarding';
+
+import { Dashboard } from './pages/Dashboard';
+
 
 function App() {
   return (
@@ -11,11 +10,10 @@ function App() {
       {/* Routes */}
       <Routes>
         <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        
+        {/* <Route path="/login" element={} /> */}
+        {/* <Route path="/register" element={} /> */}
+        {/* <Route path="/onboarding" element={} /> */}
+        {/* <Route path="/dashboard" element={<Dashboard /> } /> */}
       </Routes>
     </Router>
   );
