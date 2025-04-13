@@ -4,7 +4,6 @@ import axios from "axios";
 
 const token = localStorage.getItem('token');
 
-
 export const fetchWaterDate = createAsyncThunk(
     'user/fetchWaterData',
     async(token) => {
@@ -38,4 +37,23 @@ export const updateWaterData = createAsyncThunk(
         return response.data;
     }
 )
+
+export const editWaterGoal = createAsyncThunk(
+    'user/editWaterGoal',
+    async({goalIntake}) => {
+        const response = await axios.put(
+            'https://kaizenfit-backend.onrender.com/api/water',
+            {
+                goalIntake
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${token}`
+                }
+            }
+        )
+        return response.data;
+    }
+)
+
 

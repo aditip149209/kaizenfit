@@ -1,5 +1,4 @@
 import { createSlice } from "@reduxjs/toolkit";
-import axios from "axios";
 import { fetchWaterDate, updateWaterData } from "../thunks/waterThunks";
 
 const initialState = {

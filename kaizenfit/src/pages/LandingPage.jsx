@@ -4,24 +4,56 @@ import { Link } from "react-router-dom";
 
 
 export const LandingPage = () => {
+
+  const navigate = useNavigate();
+  const onClickLogin = () => {
+    navigate('/login');
+  }
+  const onClickRegister = () => {
+    navigate('/register');
+  }
+
+
     return(
         <>
-        <div className="w-[1920px] h-[1080px] relative">
-  <div className="w-[1920px] h-[1080px] left-0 top-0 absolute bg-gradient-to-l from-slate-900 to-neutral-900" />
-  <div className="w-[1920px] h-36 left-0 top-0 absolute bg-blue-300/0" />
-  <img className="w-[1119px] h-[1080px] left-[801px] top-0 absolute opacity-30" src='kaizenfit/public/man-4648086_1920.jpg' />
-  <div className="w-60 h-12 left-[1598px] top-[74px] absolute text-center justify-start text-white text-xl font-medium font-['Inter']">CONTACT<br/></div>
-  <div className="w-60 h-12 left-[1409px] top-[74px] absolute text-center justify-start text-white text-xl font-medium font-['Inter']">ABOUT</div>
-  <div className="w-60 h-12 left-[1233px] top-[74px] absolute text-center justify-start text-white text-xl font-medium font-['Inter']">HOME</div>
-  <div className="w-60 h-12 left-[126px] top-[72px] absolute text-center justify-start text-white text-3xl font-bold font-['Inter']">KAIZENFIT</div>
-  <div className="w-40 h-16 left-[157px] top-[628px] absolute bg-teal-400 rounded-[33.50px]" />
-  <div className="w-36 h-5 left-[170px] top-[651px] absolute text-center justify-start text-black text-2xl font-bold font-['Inter']">SIGN IN</div>
-  <div className="w-40 h-16 left-[334px] top-[628px] absolute bg-teal-400 rounded-[33.50px]" />
-  <div className="w-48 h-14 left-[321px] top-[651px] absolute text-center justify-start text-black text-2xl font-bold font-['Inter']">REGISTER</div>
-  <div className="w-96 h-44 left-[154px] top-[300px] absolute justify-start text-white text-5xl font-bold font-['Inter']">OPTIMIZE EVERY MOVE WITH DATA DRIVEN INSIGHTS</div>
-  <div className="w-96 h-12 left-[126px] top-[562px] absolute text-center justify-start text-white text-2xl font-thin font-['Inter']">Your Smartest Workout Companion</div>
-</div>
+        <div className="relative w-full h-screen">
+  {/* Background Gradient */}
+  <div className="absolute inset-0 bg-gradient-to-l from-slate-900 to-neutral-900" />
+  
+  {/* Header Section */}
+  <div className="absolute top-0 left-0 w-full h-36 bg-blue-300/0 flex items-center justify-center gap-10 px-8">
+  {/* Logo */}
+  <div className="absolute left-8 text-white text-3xl font-bold font-['Inter']">
+    KAIZENFIT
+  </div>
+    <div className="text-white text-xl font-medium font-['Inter']"><Link to={'/'} >HOME</Link></div>
+    <div className="text-white text-xl font-medium font-['Inter']"><Link to={'/about'}>ABOUT</Link></div>
+    <div className="text-white text-xl font-medium font-['Inter']"><Link to={'/contact'}>CONTACT</Link></div>
+  </div>
+  
+  {/* Image */}
+  <img
+    className="absolute inset-0 w-full h-full object-cover opacity-30"
+    src="man-4648086_1920.jpg"
+    alt="Background"
+  />
 
+  {/* Main Content */}
+  <div className="absolute top-[300px] left-0 w-full text-center text-white">
+    <h1 className="text-5xl font-bold font-['Inter']">OPTIMIZE EVERY MOVE WITH DATA DRIVEN INSIGHTS</h1>
+    <p className="mt-4 text-2xl font-thin font-['Inter']">Your Smartest Workout Companion</p>
+    {/* Sign In and Register Buttons */}
+  <div className="absolute mt-8 w-full flex justify-center gap-4">
+    <div className="w-40 h-16 bg-teal-400 rounded-[33.50px] flex items-center justify-center">
+      <span className="text-black text-2xl font-bold font-['Inter']"><button onClick={onClickLogin}>SIGN IN</button></span>
+    </div>
+    <div className="w-40 h-16 bg-teal-400 rounded-[33.50px] flex items-center justify-center">
+      <span className="text-black text-2xl font-bold font-['Inter']"><button onClick={onClickRegister}>REGISTER</button></span>
+    </div>
+  </div>
+  </div> 
+
+</div>
         </>
     )
 }
