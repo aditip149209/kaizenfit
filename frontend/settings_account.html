@@ -2,81 +2,298 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Settings</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <title>Account Page UI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #0b181a;
+      font-family: 'Inter', sans-serif;
+      color: #e3f6fc;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+      border-radius: 22px;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 90px;
+      background: #162224;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 0;
+      gap: 18px;
+      border-radius: 22px 0 0 22px;
+    }
+    .sidebar .logo {
+      margin-bottom: 36px;
+    }
+    .sidebar .icon-link {
+      display: block;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      background: #223036;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .sidebar .icon-link.active,
+    .sidebar .icon-link:hover {
+      background: #2ec4b6;
+    }
+    .sidebar .icon-link img {
+      width: 28px;
+      height: 28px;
+      display: block;
+      margin: auto;
+      filter: brightness(0) invert(1) grayscale(1) opacity(0.85);
+      transition: filter 0.2s;
+    }
+    .sidebar .icon-link.active img,
+    .sidebar .icon-link:hover img {
+      filter: none;
+    }
+    .sidebar .bottom {
+      margin-top: auto;
+      margin-bottom: 10px;
+    }
+
+    .main-panel {
+      flex: 1;
+      background: #112224;
+      border-radius: 0 22px 22px 0;
+      padding: 48px 0 48px 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: row;
+      min-height: 100vh;
+    }
+    .settings-nav {
+      width: 180px;
+      padding: 0 0 0 38px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .settings-nav .nav-title {
+      font-size: 1.13rem;
+      font-weight: 600;
+      color: #e3f6fc;
+      margin-bottom: 22px;
+    }
+    .settings-nav .nav-link {
+      color: #b5d7e5;
+      background: none;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 1rem;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      margin-bottom: 2px;
+      font-family: inherit;
+    }
+    .settings-nav .nav-link.active {
+      background: #2ec4b6;
+      color: #fff;
+      font-weight: 600;
+    }
+    .settings-content {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 0 0 0 60px;
+    }
+    .settings-card {
+      background: #0e2324;
+      border-radius: 18px;
+      padding: 36px 38px 28px 38px;
+      min-width: 420px;
+      max-width: 520px;
+      color: #e3f6fc;
+      box-shadow: 0 2px 12px 0 rgba(0,0,0,0.08);
+      margin-top: 8px;
+    }
+    .settings-card label {
+      font-size: 0.98rem;
+      color: #b5d7e5;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .settings-card input {
+      width: 100%;
+      background: transparent;
+      border: 1px solid #244043;
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #e3f6fc;
+      font-size: 1rem;
+      outline: none;
+      margin-bottom: 18px;
+    }
+    .settings-card input[readonly] {
+      color: #b5d7e5;
+    }
+    .settings-card .row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .settings-card .row input {
+      margin-bottom: 0;
+      width: 180px;
+    }
+    .settings-card .row .btn {
+      margin-top: 0;
+      margin-bottom: 0;
+      padding: 8px 16px;
+      font-size: 0.98rem;
+    }
+    .settings-card .btn, .settings-card .manage-btn {
+      background: #2ec4b6;
+      color: #fff;
+      border: none;
+      padding: 8px 20px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .settings-card .btn:hover, .settings-card .manage-btn:hover {
+      background: #22b5a5;
+    }
+    .settings-card .device-list {
+      font-size: 0.97rem;
+      color: #b5d7e5;
+      margin-bottom: 18px;
+      margin-top: 8px;
+    }
+    .settings-card .device-list strong {
+      color: #e3f6fc;
+    }
+    .settings-card .save-btn {
+      background: #2ec4b6;
+      color: #fff;
+      border: none;
+      padding: 10px 32px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.2s;
+    }
+    .settings-card .save-btn:hover {
+      background: #22b5a5;
+    }
+    .settings-card .last-sync {
+      font-size: 0.92rem;
+      color: #7aafc6;
+      margin-top: 10px;
+    }
+    @media (max-width: 900px) {
+      .main-panel {
+        padding: 24px 0;
+      }
+      .settings-content {
+        padding-left: 0;
+      }
+      .settings-card {
+        min-width: 0;
+        width: 100%;
+        padding: 22px 12px;
+      }
+    }
+    @media (max-width: 700px) {
+      .container {
+        flex-direction: column;
+      }
+      .sidebar {
+        flex-direction: row;
+        width: 100%;
+        height: 70px;
+        border-radius: 22px 22px 0 0;
+        padding: 0 10px;
+        gap: 12px;
+      }
+      .main-panel {
+        border-radius: 0 0 22px 22px;
+      }
+      .settings-nav {
+        width: 100px;
+        padding-left: 10px;
+      }
+      .settings-content {
+        padding-left: 0;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-900 text-white font-sans">
-  <div class="flex h-screen">
+<body>
+  <div class="container">
     <!-- Sidebar -->
-     <class="sidebar">
-        <div class="logo"></div>
-        <ul class="main-nav">
-            <li><a href="#"><img src="icons/KaizenLogo.png" alt="Menu"> </a></li>
-            <li><a href="#"><img src="icons/home.png" alt="Home"></a></li>
-            <li><a href="#"><img src="icons/stats.png" alt="Stats"></a></li>
-            <li><a href="#"><img src="icons/meal.png" alt="Menu"></a></li>
-            <li><a href="#" class="active"><img src="icons/settings.png" alt="Settings"></a></li>
-            <li><a href="#"><img src="icons/logout.png" alt="Logout"></a></li>
-        </ul>
-    </div>
-    <!-- Main Content -->
-
-    <div class="flex-1 flex flex-col">
-      
-      <!-- Page Heading -->
-      <div class="bg-gray-800 p-4 rounded-t-lg shadow-lg">
-        <h1 class="text-3xl font-bold text-center">Account</h1>
+    <div class="sidebar">
+      <div class="logo">
+        <img src="icons/KaizenLogo.png" alt="Logo" style="width:40px; height:40px;">
       </div>
-
-      <div class="flex flex-1">
-        <!-- Side Dialog -->
-        <div class="side-dialog bg-gray-800 p-6 rounded-lg shadow-lg">
-          <h3 class="text-lg font-bold mb-4 text-center">Settings</h3>
-          <ul class="space-y-4">
-            <li><a href="#" class="text-gray-400 hover:text-white">Profile</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-white">Account</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-white">Your Plan</a></li>
-            <li><a href="#" class="text-gray-400 hover:text-white">Help</a></li>
-          </ul>
-        </div>
-
-        <!-- Account Form -->
-        <div class="form-container bg-gray-700 text-white rounded-2xl p-6 shadow-lg flex-1 mx-6 my-auto">
-          <form>
-            <!-- Email Address -->
-            <div>
-              <label for="email">Email Address</label>
-              <input type="email" id="email" placeholder="Enter your email" value="aditi*****@gmail.com">
-            </div>
-
-            <!-- Password -->
-            <div class="mt-4">
-              <label for="password">Password</label>
-              <button type="button" class="change-password-btn mt-2">Change Password</button>
-            </div>
-
-            <!-- Device Management -->
-            <div class="mt-6">
-              <h3 class="text-lg font-bold mb-2">Device Management and Syncing</h3>
-              <p class="text-gray-400 text-sm mb-4">
-                Authorize fitness devices and sync data (e.g., fitness, health, devices, watches, etc.)
-              </p>
-              <div class="flex items-center justify-between">
-                <span class="text-gray-400">Connected Fitness Device</span>
-                <button type="button" class="manage-btn">Manage</button>
-              </div>
-            </div>
-
-            <!-- Connected Device -->
-            <div class="mt-6">
-              <div class="flex items-center justify-between">
-                <span class="text-gray-400">Fitbit 3400 HR</span>
-                <button type="button" class="sync-btn">Sync</button>
-              </div>
-              <p class="text-gray-400 text-sm mt-2">Last Synced: 12/03/2025 @ 12:45 pm</p>
-            </div>
-          </form>
+      <a href="#" class="icon-link">
+        <img src="icons/home.png" alt="Home">
+      </a>
+      <a href="#" class="icon-link">
+        <img src="icons/stats.png" alt="Analytics">
+      </a>
+      <a href="#" class="icon-link">
+        <img src="icons/meal.png" alt="Billing">
+      </a>
+      <a href="#" class="icon-link active">
+        <img src="icons/settings.png" alt="Settings">
+      </a>
+      <div class="bottom">
+        <a href="#" class="icon-link">
+          <img src="icons/logout.png" alt="Logout">
+        </a>
+      </div>
+    </div>
+    <!-- Main Panel -->
+    <div class="main-panel">
+      <nav class="settings-nav">
+        <div class="nav-title">Settings</div>
+        <button class="nav-link">Profile</button>
+        <button class="nav-link active">Account</button>
+        <button class="nav-link">Your Plan</button>
+        <button class="nav-link">Help</button>
+      </nav>
+      <div class="settings-content">
+        <div class="settings-card">
+          <div style="margin-bottom:18px;font-size:1.13rem;font-weight:600;">Account</div>
+          <label for="email">Email Address</label>
+          <input id="email" type="email" value="jagjeet@magical.com" readonly>
+          <label for="password">Password</label>
+          <div class="row">
+            <input id="password" type="password" value="********" readonly>
+            <button class="btn">Change</button>
+          </div>
+          <div class="device-list">
+            Device Management and Syncing<br>
+            <span style="color: #b5d7e5;">You can manage your devices and syncing options here.</span>
+          </div>
+          <div class="row">
+            <input type="text" value="Pixel 5 (ABCD1234)" readonly>
+            <button class="manage-btn">Manage</button>
+          </div>
+          <button class="save-btn">Save</button>
+          <div class="last-sync">Last Sync: 2024-03-20 11:45 pm</div>
         </div>
       </div>
     </div>

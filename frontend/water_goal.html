@@ -1,117 +1,192 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Water Goal</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #003049;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: #003049;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            width: 300px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        select, input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #669bbc;
-            background-color: #669bbc;
-            color: white;
-            box-sizing: border-box;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M287.694%2069.94L146.225%20206.062%204.756%2069.94%200%2074.684l146.225%20141.754L292.44%2074.684z%22%2F%3E%3C%2Fsvg%3E');
-            background-repeat: no-repeat, repeat;
-            background-position: right .7em top 50%, 0 0;
-            background-size: .65em auto, 100%;
-        }
-        button {
-            background-color: #1a936f;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #005f73;
-        }
-        .close-button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5em;
-            cursor: pointer;
-        }
-        .water-goal {
-            text-align: center;
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-        .new-water-goal {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
-        .new-water-goal select {
-            width: 45%;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Edit Water Goal</title>
+  <meta name="viewport" content="width=320, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #07191a;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Montserrat', sans-serif;
+      color: #e7f6f2;
+    }
+    .modal {
+      background: #073032;
+      border-radius: 14px;
+      width: 320px;
+      padding: 28px 22px 22px 22px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+      position: relative;
+      font-family: 'Montserrat', sans-serif;
+      color: #e7f6f2;
+    }
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.05rem;
+      font-weight: 600;
+      letter-spacing: 1px;
+      margin-bottom: 18px;
+    }
+    .close-btn {
+      font-size: 1.2rem;
+      color: #e7f6f2;
+      background: none;
+      border: none;
+      cursor: pointer;
+      font-weight: 700;
+      transition: color 0.2s;
+      line-height: 1;
+      padding: 0 2px;
+    }
+    .close-btn:hover {
+      color: #e74c3c;
+    }
+    .modal label,
+    .modal .current-goal {
+      font-size: 0.97rem;
+      color: #a0c7c7;
+      margin-bottom: 10px;
+      display: block;
+      font-weight: 500;
+    }
+    .current-goal-value {
+      color: #7ed6c0;
+      font-weight: 600;
+      margin-left: 6px;
+    }
+    .new-goal-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin: 16px 0 24px 0;
+    }
+    .glasses-input-group {
+      display: flex;
+      align-items: center;
+      background: #092223;
+      border-radius: 8px;
+      overflow: hidden;
+      height: 38px;
+    }
+    .glasses-btn {
+      background: none;
+      border: none;
+      color: #7ed6c0;
+      font-size: 1.3rem;
+      width: 34px;
+      height: 100%;
+      cursor: pointer;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      transition: background 0.15s;
+    }
+    .glasses-btn:hover {
+      background: #174243;
+    }
+    .glasses-value {
+      width: 34px;
+      text-align: center;
+      background: none;
+      border: none;
+      color: #e7f6f2;
+      font-size: 1rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      outline: none;
+    }
+    .glasses-label {
+      color: #b2dfdb;
+      font-size: 0.95rem;
+      margin-left: 5px;
+      margin-right: 10px;
+    }
+    .volume-select {
+      background: #092223;
+      color: #7ed6c0;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-family: 'Montserrat', sans-serif;
+      padding: 8px 18px 8px 12px;
+      appearance: none;
+      outline: none;
+      margin-left: 2px;
+      font-weight: 500;
+    }
+    .volume-unit {
+      color: #b2dfdb;
+      margin-left: 6px;
+      font-size: 0.95rem;
+    }
+    .save-btn {
+      background: #1dbd6b;
+      color: #fff;
+      border: none;
+      border-radius: 16px;
+      padding: 8px 32px;
+      font-size: 1rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 12px auto 0 auto;
+      display: block;
+      transition: background 0.2s;
+    }
+    .save-btn:hover {
+      background: #16a05b;
+    }
+    @media (max-width: 400px) {
+      .modal {
+        width: 98vw;
+        padding: 14px 2vw 14px 2vw;
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h2>EDIT WATER GOAL</h2>
-            <button class="close-button">×</button>
-        </div>
-        <div class="water-goal">
-            Current Water Goal: 8 glasses
-        </div>
-        <div class="form-group">
-            <label>New Water Goal:</label>
-            <div class="new-water-goal">
-                <select id="glasses">
-                    <option>- 2 + glasses</option>
-                    <option>+ 4 glasses</option>
-                    <option>+ 6 glasses</option>
-                    <option>+ 8 glasses</option>
-                </select>
-                <select id="ml">
-                    <option>250 ml</option>
-                    <option>500 ml</option>
-                    <option>750 ml</option>
-                    <option>1000 ml</option>
-                </select>
-            </div>
-        </div>
-        <button>Save Goal</button>
+  <div class="modal">
+    <div class="modal-header">
+      <span>EDIT WATER GOAL</span>
+      <button class="close-btn" aria-label="Close">&times;</button>
     </div>
+    <div class="current-goal">
+      Current Water Goal:
+      <span class="current-goal-value">8 glasses</span>
+    </div>
+    <label>New Water Goal:</label>
+    <div class="new-goal-row">
+      <div class="glasses-input-group">
+        <button type="button" class="glasses-btn" onclick="changeGlasses(-1)">–</button>
+        <input type="text" class="glasses-value" id="glassesValue" value="2" readonly>
+        <button type="button" class="glasses-btn" onclick="changeGlasses(1)">+</button>
+      </div>
+      <span class="glasses-label">glasses</span>
+      <select class="volume-select">
+        <option>250</option>
+        <option>200</option>
+        <option>300</option>
+      </select>
+      <span class="volume-unit">ml</span>
+    </div>
+    <button class="save-btn">Save Goal</button>
+  </div>
+  <script>
+    function changeGlasses(delta) {
+      const input = document.getElementById('glassesValue');
+      let value = parseInt(input.value, 10);
+      value += delta;
+      if (value < 1) value = 1;
+      if (value > 20) value = 20;
+      input.value = value;
+    }
+  </script>
 </body>
 </html>

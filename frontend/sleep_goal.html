@@ -1,118 +1,161 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Sleep Goal</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #003049;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: #003049;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            width: 300px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        select, input[type="number"] {
-            width: 100%;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #669bbc;
-            background-color: #669bbc;
-            color: white;
-            box-sizing: border-box;
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M287.694%2069.94L146.225%20206.062%204.756%2069.94%200%2074.684l146.225%20141.754L292.44%2074.684z%22%2F%3E%3C%2Fsvg%3E');
-            background-repeat: no-repeat, repeat;
-            background-position: right .7em top 50%, 0 0;
-            background-size: .65em auto, 100%;
-        }
-        button {
-            background-color: #1a936f;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #005f73;
-        }
-        .close-button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5em;
-            cursor: pointer;
-        }
-        .sleep-goal {
-            text-align: center;
-            font-size: 1.2em;
-            margin-bottom: 20px;
-        }
-        .new-sleep-goal {
-            display: flex;
-            justify-content: space-around;
-            align-items: center;
-        }
-        .new-sleep-goal select {
-            width: 45%;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Edit Sleep Goal Modal</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0c1818;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #b2dfdb;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-bg {
+      background: rgba(0,0,0,0.45);
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    .modal {
+      background: #073131;
+      border-radius: 14px;
+      min-width: 320px;
+      max-width: 340px;
+      padding: 28px 28px 22px 28px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.14);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      font-size: 1.3rem;
+      color: #b2dfdb;
+      background: none;
+      border: none;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .modal-close:hover {
+      opacity: 1;
+    }
+    .modal-title {
+      font-size: 1.15rem;
+      color: #e0f7fa;
+      font-weight: 500;
+      margin-bottom: 22px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .modal-row {
+      width: 100%;
+      margin-bottom: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      font-size: 1rem;
+    }
+    .modal-row label {
+      min-width: 136px;
+      color: #b2dfdb;
+    }
+    .modal-row .current-goal {
+      color: #e0f7fa;
+      font-weight: 500;
+      margin-left: 6px;
+    }
+    .modal-row.select-row {
+      justify-content: flex-start;
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+    select {
+      background: #0c1818;
+      color: #b2dfdb;
+      border: 1px solid #1de9b6;
+      border-radius: 7px;
+      padding: 7px 16px 7px 10px;
+      font-size: 1rem;
+      margin-right: 7px;
+      outline: none;
+      appearance: none;
+      min-width: 60px;
+      transition: border 0.2s;
+    }
+    select:focus {
+      border: 1.5px solid #00bcd4;
+    }
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: #155353;
+      margin: 18px 0 18px 0;
+      border: none;
+    }
+    .save-btn {
+      background: #178b8b;
+      color: #e0f7fa;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 28px;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-top: 5px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: background 0.18s;
+    }
+    .save-btn:hover {
+      background: #13b3b3;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h2>EDIT SLEEP GOAL</h2>
-            <button class="close-button">×</button>
-        </div>
-        <div class="sleep-goal">
-            Current Sleep Goal: 7 hours 45 minutes
-        </div>
-        <div class="form-group">
-            <label>New Sleep Goal:</label>
-            <div class="new-sleep-goal">
-                <select id="hours">
-                    <option>6 hrs</option>
-                    <option>7 hrs</option>
-                    <option>8 hrs</option>
-                    <option>9 hrs</option>
-                    <option>10 hrs</option>
-                </select>
-                <select id="minutes">
-                    <option>15 min</option>
-                    <option>30 min</option>
-                    <option>45 min</option>
-                    <option>00 min</option>
-                </select>
-            </div>
-        </div>
-        <button>Save Goal</button>
+  <div class="modal-bg">
+    <div class="modal">
+      <button class="modal-close" aria-label="Close">&times;</button>
+      <div class="modal-title">EDIT SLEEP GOAL</div>
+      <div class="modal-row">
+        <label>Current Sleep Goal:</label>
+        <span class="current-goal">7 hours 45 minutes</span>
+      </div>
+      <div class="modal-row select-row">
+        <label style="min-width:130px;">New Sleep Goal:</label>
+        <select>
+          <option>5</option>
+          <option>6</option>
+          <option>7</option>
+          <option>8</option>
+          <option selected>8</option>
+          <option>9</option>
+          <option>10</option>
+        </select>
+        <span>hrs</span>
+        <select>
+          <option>00</option>
+          <option>15</option>
+          <option>30</option>
+          <option selected>45</option>
+        </select>
+        <span>min</span>
+      </div>
+      <div class="divider"></div>
+      <button class="save-btn">Save Goal</button>
     </div>
+  </div>
 </body>
 </html>

@@ -1,120 +1,207 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Log Weight</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #003049;
-            color: white;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .container {
-            background-color: #003049;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
-            width: 300px;
-        }
-        .header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 20px;
-        }
-        .form-group {
-            margin-bottom: 15px;
-        }
-        label {
-            display: block;
-            margin-bottom: 5px;
-        }
-        input[type="text"],
-        select,
-        textarea {
-            width: 100%;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid #669bbc;
-            background-color: #669bbc;
-            color: white;
-            box-sizing: border-box;
-        }
-        select {
-            appearance: none;
-            -webkit-appearance: none;
-            -moz-appearance: none;
-            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M287.694%2069.94L146.225%20206.062%204.756%2069.94%200%2074.684l146.225%20141.754L292.44%2074.684z%22%2F%3E%3C%2Fsvg%3E');
-            background-repeat: no-repeat, repeat;
-            background-position: right .7em top 50%, 0 0;
-            background-size: .65em auto, 100%;
-        }
-        button {
-            background-color: #1a936f;
-            color: white;
-            padding: 10px 15px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-        }
-        button:hover {
-            background-color: #005f73;
-        }
-        .close-button {
-            background: none;
-            border: none;
-            color: white;
-            font-size: 1.5em;
-            cursor: pointer;
-        }
-        .date-input-wrapper {
-            position: relative;
-        }
-        .date-icon {
-            position: absolute;
-            right: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            pointer-events: none;
-            color: white;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Log Weight Modal</title>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: rgba(16, 28, 28, 0.9);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    
+    .modal-container {
+      width: 320px;
+      background-color: #0c2627;
+      border-radius: 16px;
+      padding: 24px;
+      color: #e7f6f2;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+    }
+    
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+    }
+    
+    .modal-title {
+      font-size: 16px;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      color: #e7f6f2;
+    }
+    
+    .close-btn {
+      font-size: 20px;
+      color: #e7f6f2;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+    
+    .form-group {
+      margin-bottom: 16px;
+    }
+    
+    label {
+      display: block;
+      font-size: 14px;
+      color: #a0c7c7;
+      margin-bottom: 8px;
+    }
+    
+    .date-input-container {
+      position: relative;
+    }
+    
+    .date-input-container input {
+      width: 100%;
+      padding: 12px;
+      background-color: #0a1f20;
+      border: none;
+      border-radius: 8px;
+      color: #e7f6f2;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+    }
+    
+    .calendar-icon {
+      position: absolute;
+      right: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      pointer-events: none;
+    }
+    
+    .weight-input-container {
+      display: flex;
+    }
+    
+    .weight-input-container input {
+      flex: 1;
+      padding: 12px;
+      background-color: #0a1f20;
+      border: none;
+      border-top-left-radius: 8px;
+      border-bottom-left-radius: 8px;
+      color: #e7f6f2;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+    }
+    
+    .weight-input-container .unit-selector {
+      width: 60px;
+      background-color: #0a1f20;
+      border: none;
+      border-top-right-radius: 8px;
+      border-bottom-right-radius: 8px;
+      color: #7ed6c0;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      padding: 0 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+    }
+    
+    .unit-selector span {
+      margin-right: 4px;
+    }
+    
+    .unit-selector .dropdown-icon {
+      font-size: 10px;
+    }
+    
+    textarea {
+      width: 100%;
+      padding: 12px;
+      background-color: #0a1f20;
+      border: none;
+      border-radius: 8px;
+      color: #e7f6f2;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 14px;
+      resize: none;
+      height: 80px;
+    }
+    
+    .save-btn {
+      width: 100px;
+      padding: 10px 0;
+      background-color: #1dbd6b;
+      color: white;
+      border: none;
+      border-radius: 20px;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 500;
+      font-size: 14px;
+      cursor: pointer;
+      margin: 8px auto 0;
+      display: block;
+    }
+    
+    .save-btn:hover {
+      background-color: #19a65e;
+    }
+    
+    input:focus, textarea:focus {
+      outline: none;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            <h2>LOG WEIGHT</h2>
-            <button class="close-button">×</button>
-        </div>
-        <div class="form-group">
-            <label for="done">Done</label>
-            <div class="date-input-wrapper">
-                <input type="text" id="done" placeholder="Select Date">
-                <span class="date-icon">&#x1F4C5;</span>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="weight">Weight</label>
-            <div style="display: flex;">
-                <input type="text" id="weight" placeholder="Enter Weight" style="width: 70%;">
-                <select id="unit" style="width: 30%; margin-left: 5px;">
-                    <option>Lbs</option>
-                    <option>Kg</option>
-                    </select>
-            </div>
-        </div>
-        <div class="form-group">
-            <label for="notes">Notes</label>
-            <textarea id="notes" rows="4" placeholder="Enter Notes"></textarea>
-        </div>
-        <button>Save</button>
+  <div class="modal-container">
+    <div class="modal-header">
+      <div class="modal-title">LOG WEIGHT</div>
+      <button class="close-btn">×</button>
     </div>
+    
+    <form>
+      <div class="form-group">
+        <label for="date">Date</label>
+        <div class="date-input-container">
+          <input type="date" id="date" required>
+          <svg class="calendar-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#7ed6c0">
+            <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 002 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z"/>
+          </svg>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="weight">Weight</label>
+        <div class="weight-input-container">
+          <input type="number" id="weight" step="0.1" min="0" required>
+          <div class="unit-selector">
+            <span>Lb</span>
+            <span class="dropdown-icon">▼</span>
+          </div>
+        </div>
+      </div>
+      
+      <div class="form-group">
+        <label for="notes">Notes</label>
+        <textarea id="notes"></textarea>
+      </div>
+      
+      <button type="submit" class="save-btn">Save</button>
+    </form>
+  </div>
 </body>
 </html>

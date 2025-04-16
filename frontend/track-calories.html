@@ -2,77 +2,286 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Track Calories</title>
-  <link rel="stylesheet" href="css/styles.css">
+  <meta name="viewport" content="width=500, initial-scale=1">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: #07191a;
+      font-family: 'Montserrat', sans-serif;
+      color: #e7f6f2;
+      min-height: 100vh;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+      align-items: flex-start;
+      justify-content: flex-start;
+    }
+    .sidebar {
+      background: #142626;
+      width: 80px;
+      min-width: 80px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 0;
+      gap: 16px;
+      border-top-left-radius: 20px;
+      border-bottom-left-radius: 20px;
+      height: 100vh;
+    }
+    .sidebar a {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      background: #1d3434;
+      border-radius: 12px;
+      margin-bottom: 10px;
+      transition: background 0.2s;
+      text-decoration: none;
+    }
+    .sidebar a:hover {
+      background: #7ed6c0;
+    }
+    .sidebar img {
+      width: 28px;
+      height: 28px;
+      object-fit: contain;
+      display: block;
+      filter: brightness(0.95);
+    }
+    .main-content {
+      flex: 1;
+      padding: 32px 0 32px 32px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    .calories-card {
+      background: #0c2324;
+      border-radius: 20px;
+      padding: 32px 32px 24px 32px;
+      width: 700px;
+      box-shadow: 0 2px 16px rgba(0,0,0,0.09);
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    .calories-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .calories-title {
+      font-size: 1.13rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+    .calories-tip {
+      font-size: 0.92rem;
+      color: #a0c7c7;
+      letter-spacing: 0.2px;
+      margin-left: 24px;
+      flex: 1;
+    }
+    .calories-left-circle {
+      border: 1.5px solid #7ed6c0;
+      border-radius: 50%;
+      width: 70px;
+      height: 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #e7f6f2;
+      font-size: 1.05rem;
+      font-weight: 500;
+      position: relative;
+    }
+    .calories-left-circle span {
+      font-size: 1.2rem;
+      font-weight: 600;
+      color: #7ed6c0;
+      margin-bottom: 3px;
+    }
+    .divider {
+      border: none;
+      border-top: 1px solid #183031;
+      margin: 8px 0 0 0;
+    }
+    .date-row {
+      text-align: center;
+      color: #b2dfdb;
+      letter-spacing: 1px;
+      font-size: 0.98rem;
+      margin: 10px 0 0 0;
+      font-weight: 500;
+    }
+    .meals-row {
+      display: flex;
+      gap: 24px;
+      margin: 18px 0 0 0;
+      justify-content: space-between;
+    }
+    .meal-card {
+      background: #113131;
+      border-radius: 16px;
+      flex: 1;
+      padding: 18px 10px 18px 18px;
+      min-width: 120px;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      margin-right: 0;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+    }
+    .meal-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #e7f6f2;
+      margin-bottom: 10px;
+      letter-spacing: 0.5px;
+    }
+    .meal-nutrients {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      margin-top: 5px;
+    }
+    .nutrient-row {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.96rem;
+      color: #b2dfdb;
+      font-weight: 500;
+    }
+    .nutrient-row span {
+      font-size: 1.1em;
+    }
+    .actions-row {
+      display: flex;
+      gap: 24px;
+      margin-top: 28px;
+      justify-content: flex-start;
+    }
+    .action-btn {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      background: none;
+      border: 1px solid #7ed6c0;
+      color: #e7f6f2;
+      border-radius: 30px;
+      padding: 10px 18px;
+      font-size: 1rem;
+      font-family: 'Montserrat', sans-serif;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.18s, color 0.18s;
+      margin-right: 0;
+      text-decoration: none;
+      justify-content: center;
+      gap: 10px;
+    }
+    .action-btn:hover {
+      background: #7ed6c0;
+      color: #182828;
+    }
+    .action-btn .icon {
+      font-size: 1.15em;
+      margin-right: 6px;
+    }
+    @media (max-width: 900px) {
+      .main-content {
+        padding-left: 8px;
+      }
+      .calories-card {
+        width: 96vw;
+        padding: 18px 8px 14px 8px;
+      }
+      .meals-row {
+        flex-direction: column;
+        gap: 18px;
+      }
+      .actions-row {
+        flex-direction: column;
+        gap: 12px;
+      }
+    }
+  </style>
 </head>
-<body class="bg-gray-900 text-white font-sans">
-  <div class="flex">
-    <!-- Sidebar -->
+<body>
+  <div class="container">
     <div class="sidebar">
-      <img src="icons\KaizenLogo.png" alt="Logo">
-      <img src="icons/home.png" alt="Home">
-      <img src="icons/stats.png" alt="Stats">
-      <img src="icons/meal.png" alt="Meal">
-      <img src="icons/settings.png" alt="Settings">
-      <img src="icons/logout.png" alt="Logout">
+      <a href="dashboard.html"><img src="icons/KaizenLogo.png" alt="Logo"></a>
+      <a href="home.html"><img src="icons/home.png" alt="Home"></a>
+      <a href="stats.html"><img src="icons/stats.png" alt="Stats"></a>
+      <a href="meals.html"><img src="icons/meal.png" alt="Meals"></a>
+      <a href="settings.html"><img src="icons/settings.png" alt="Settings"></a>
+      <a href="logout.html"><img src="icons/logout.png" alt="Logout"></a>
     </div>
-
-    <!-- Main Content -->
     <div class="main-content">
-      <!-- Header -->
-      <div class="header">
-        <div>
-          <h2>TRACK CALORIES</h2>
-          <p>Aim to stay within your sweet spot</p>
+      <div class="calories-card">
+        <div class="calories-header-row">
+          <div class="calories-title">TRACK CALORIES</div>
+          <div class="calories-tip">AIM TO STAY WITHIN YOUR SWEET SPOT</div>
+          <div class="calories-left-circle">
+            <span>1230</span>
+            Cals Left
+          </div>
         </div>
-        <div class="calories-left">
-          <span>1230</span>
-          <p>Cals Left</p>
+        <hr class="divider">
+        <div class="date-row">
+          TODAY, 6TH DEC &nbsp; &#8250;
         </div>
-      </div>
-
-      <!-- Date -->
-      <div class="text-center text-gray-400 mb-4">
-        <p>TODAY, 6TH DEC</p>
-      </div>
-
-      <!-- Meal Cards -->
-      <div class="card-container">
-        <div class="card">
-          <h3>Breakfast</h3>
-          <p>Carbs</p>
-          <p>Proteins</p>
-          <p>Fats</p>
-          <button>+</button>
+        <div class="meals-row">
+          <!-- Breakfast -->
+          <div class="meal-card">
+            <div class="meal-title">Breakfast</div>
+            <div class="meal-nutrients">
+              <div class="nutrient-row"><span>🌾</span> Carbs</div>
+              <div class="nutrient-row"><span>🥚</span> Proteins</div>
+              <div class="nutrient-row"><span>💧</span> Fats</div>
+            </div>
+          </div>
+          <!-- Lunch -->
+          <div class="meal-card">
+            <div class="meal-title">Lunch</div>
+            <div class="meal-nutrients">
+              <div class="nutrient-row"><span>🌾</span> Carbs</div>
+              <div class="nutrient-row"><span>🥚</span> Proteins</div>
+              <div class="nutrient-row"><span>💧</span> Fats</div>
+            </div>
+          </div>
+          <!-- Snacks -->
+          <div class="meal-card">
+            <div class="meal-title">Snacks</div>
+            <div class="meal-nutrients">
+              <div class="nutrient-row"><span>🌾</span> Carbs</div>
+              <div class="nutrient-row"><span>🥚</span> Proteins</div>
+              <div class="nutrient-row"><span>💧</span> Fats</div>
+            </div>
+          </div>
+          <!-- Dinner -->
+          <div class="meal-card">
+            <div class="meal-title">Dinner</div>
+            <div class="meal-nutrients">
+              <div class="nutrient-row"><span>🌾</span> Carbs</div>
+              <div class="nutrient-row"><span>🥚</span> Proteins</div>
+              <div class="nutrient-row"><span>💧</span> Fats</div>
+            </div>
+          </div>
         </div>
-        <div class="card">
-          <h3>Lunch</h3>
-          <p>Carbs</p>
-          <p>Proteins</p>
-          <p>Fats</p>
-          <button>+</button>
+        <div class="actions-row">
+          <a href="#" class="action-btn"><span class="icon">📖</span> My Recipes</a>
+          <a href="#" class="action-btn"><span class="icon">🍽️</span> My Meals</a>
         </div>
-        <div class="card">
-          <h3>Snacks</h3>
-          <p>Carbs</p>
-          <p>Proteins</p>
-          <p>Fats</p>
-          <button>+</button>
-        </div>
-        <div class="card">
-          <h3>Dinner</h3>
-          <p>Carbs</p>
-          <p>Proteins</p>
-          <p>Fats</p>
-          <button>+</button>
-        </div>
-      </div>
-
-      <!-- Footer Buttons -->
-      <div class="footer-buttons">
-        <button>My Recipes</button>
-        <button>My Meals</button>
       </div>
     </div>
   </div>

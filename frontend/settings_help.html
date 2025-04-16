@@ -1,38 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Settings - Help</title>
-    <link rel="stylesheet" href="css/styles.css">
+  <meta charset="UTF-8">
+  <title>Help Page UI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: #0b181a;
+      font-family: 'Inter', sans-serif;
+      color: #e3f6fc;
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+    .container {
+      display: flex;
+      min-height: 100vh;
+      border-radius: 22px;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 90px;
+      background: #162224;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 32px 0;
+      gap: 18px;
+      border-radius: 22px 0 0 22px;
+    }
+    .sidebar .logo {
+      margin-bottom: 36px;
+    }
+    .sidebar .icon-link {
+      display: block;
+      width: 48px;
+      height: 48px;
+      margin-bottom: 12px;
+      border-radius: 12px;
+      background: #223036;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s;
+    }
+    .sidebar .icon-link.active,
+    .sidebar .icon-link:hover {
+      background: #2ec4b6;
+    }
+    .sidebar .icon-link img {
+      width: 28px;
+      height: 28px;
+      display: block;
+      margin: auto;
+      filter: brightness(0) invert(1) grayscale(1) opacity(0.85);
+      transition: filter 0.2s;
+    }
+    .sidebar .icon-link.active img,
+    .sidebar .icon-link:hover img {
+      filter: none;
+    }
+    .sidebar .bottom {
+      margin-top: auto;
+      margin-bottom: 10px;
+    }
+
+    .main-panel {
+      flex: 1;
+      background: #112224;
+      border-radius: 0 22px 22px 0;
+      padding: 48px 0 48px 0;
+      min-width: 0;
+      display: flex;
+      flex-direction: row;
+      min-height: 100vh;
+    }
+    .settings-nav {
+      width: 180px;
+      padding: 0 0 0 38px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .settings-nav .nav-title {
+      font-size: 1.13rem;
+      font-weight: 600;
+      color: #e3f6fc;
+      margin-bottom: 22px;
+    }
+    .settings-nav .nav-link {
+      color: #b5d7e5;
+      background: none;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-size: 1rem;
+      text-align: left;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+      margin-bottom: 2px;
+      font-family: inherit;
+    }
+    .settings-nav .nav-link.active {
+      background: #2ec4b6;
+      color: #fff;
+      font-weight: 600;
+    }
+    .settings-content {
+      flex: 1;
+      display: flex;
+      align-items: flex-start;
+      justify-content: flex-start;
+      padding: 0 0 0 60px;
+    }
+    .settings-card {
+      background: #0e2324;
+      border-radius: 18px;
+      padding: 36px 38px 28px 38px;
+      min-width: 420px;
+      max-width: 520px;
+      color: #e3f6fc;
+      box-shadow: 0 2px 12px 0 rgba(0,0,0,0.08);
+      margin-top: 8px;
+    }
+    .settings-card label {
+      font-size: 0.98rem;
+      color: #b5d7e5;
+      margin-bottom: 6px;
+      display: block;
+    }
+    .settings-card input {
+      width: 100%;
+      background: transparent;
+      border: 1px solid #244043;
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #e3f6fc;
+      font-size: 1rem;
+      outline: none;
+      margin-bottom: 18px;
+    }
+    .settings-card .help-title {
+      font-size: 1.13rem;
+      font-weight: 600;
+      margin-bottom: 18px;
+    }
+    .settings-card .help-actions {
+      display: flex;
+      gap: 16px;
+      margin-top: 14px;
+    }
+    .settings-card .help-btn,
+    .settings-card .help-btn-secondary {
+      padding: 8px 22px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .settings-card .help-btn {
+      background: #2ec4b6;
+      color: #fff;
+    }
+    .settings-card .help-btn:hover {
+      background: #22b5a5;
+    }
+    .settings-card .help-btn-secondary {
+      background: transparent;
+      color: #e57373;
+      border: 1px solid #e57373;
+    }
+    .settings-card .help-btn-secondary:hover {
+      background: #e57373;
+      color: #fff;
+    }
+    @media (max-width: 900px) {
+      .main-panel {
+        padding: 24px 0;
+      }
+      .settings-content {
+        padding-left: 0;
+      }
+      .settings-card {
+        min-width: 0;
+        width: 100%;
+        padding: 22px 12px;
+      }
+    }
+    @media (max-width: 700px) {
+      .container {
+        flex-direction: column;
+      }
+      .sidebar {
+        flex-direction: row;
+        width: 100%;
+        height: 70px;
+        border-radius: 22px 22px 0 0;
+        padding: 0 10px;
+        gap: 12px;
+      }
+      .main-panel {
+        border-radius: 0 0 22px 22px;
+      }
+      .settings-nav {
+        width: 100px;
+        padding-left: 10px;
+      }
+      .settings-content {
+        padding-left: 0;
+      }
+    }
+  </style>
 </head>
 <body>
+  <div class="container">
+    <!-- Sidebar -->
     <div class="sidebar">
-        <div class="logo"></div>
-        <ul class="main-nav">
-            <li><a href="#"><img src="icons/KaizenLogo.png" alt="Menu"></a></li>
-            <li><a href="#"><img src="icons/home.png" alt="Home"></a></li>
-            <li><a href="#"><img src="icons/stats.png" alt="Stats"></a></li>
-            <li><a href="#"><img src="icons/meal.png" alt="Menu"></a></li>
-            <li><a href="#" class="active"><img src="icons/settings.png" alt="Settings"></a></li>
-            <li><a href="#"><img src="icons/logout.png" alt="Logout"></a></li>
-        </ul>
-    </div>
-    <div class="side-dialog bg-gray-800 p-6 rounded-lg shadow-lg">
-        <h3 class="text-lg font-bold mb-4 text-center">Settings</h3>
-        <ul class="space-y-4">
-          <li><a href="#" class="text-gray-400 hover:text-white">Profile</a></li>
-          <li><a href="#" class="text-gray-400 hover:text-white">Account</a></li>
-          <li><a href="#" class="text-gray-400 hover:text-white active-link">Your Plan</a></li>
-          <li><a href="#" class="text-gray-400 hover:text-white">Help</a></li>
-        </ul>
+      <div class="logo">
+        <img src="icons/KaizenLogo.png" alt="Logo" style="width:40px; height:40px;">
       </div>
-    <div class="main-content">
-        <h2>Help</h2>
-        <div class="help-content">
-            <button class="contact-btn">Contact Us</button>
-            <button class="cancel-account-btn">Cancel Account</button>
-        </div>
+      <a href="#" class="icon-link">
+        <img src="icons/home.png" alt="Home">
+      </a>
+      <a href="#" class="icon-link">
+        <img src="icons/stats.png" alt="Analytics">
+      </a>
+      <a href="#" class="icon-link">
+        <img src="icons/meal.png" alt="Billing">
+      </a>
+      <a href="#" class="icon-link active">
+        <img src="icons/settings.png" alt="Settings">
+      </a>
+      <div class="bottom">
+        <a href="#" class="icon-link">
+          <img src="icons/logout.png" alt="Logout">
+        </a>
+      </div>
     </div>
+    <!-- Main Panel -->
+    <div class="main-panel">
+      <nav class="settings-nav">
+        <div class="nav-title">Settings</div>
+        <button class="nav-link">Profile</button>
+        <button class="nav-link">Account</button>
+        <button class="nav-link">Your Plan</button>
+        <button class="nav-link active">Help</button>
+      </nav>
+      <div class="settings-content">
+        <div class="settings-card">
+          <div class="help-title">Help</div>
+          <div class="help-actions">
+            <button class="help-btn">Contact Us</button>
+            <button class="help-btn-secondary">Deactivate</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </body>
 </html>

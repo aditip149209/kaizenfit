@@ -1,128 +1,166 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create/Edit Workout</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #0A192F;
-            color: #fff;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            background-color: #172A45;
-            border-radius: 10px;
-            padding: 20px;
-            width: 80%;
-            max-width: 400px;
-        }
-
-        h1 {
-            margin: 0 0 20px 0;
-            font-size: 24px;
-            text-align: center;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #64FFDA;
-        }
-
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #495670;
-            background-color: #0A192F;
-            color: #fff;
-        }
-
-        .exercise-list {
-            margin-bottom: 20px;
-        }
-
-        .exercise {
-            display: grid;
-            grid-template-columns: 2fr 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 10px;
-            align-items: center;
-        }
-
-        .exercise input[type="text"] {
-            width: 100%;
-        }
-
-        .add-exercise {
-            color: #64FFDA;
-            cursor: pointer;
-        }
-
-        .save-button {
-            padding: 10px 20px;
-            border-radius: 5px;
-            border: none;
-            background-color: #64FFDA;
-            color: #0A192F;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: #fff;
-            cursor: pointer;
-            font-size: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Create/Edit Workout Modal</title>
+  <style>
+    body {
+      background: #181f1f;
+      margin: 0;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .modal {
+      background: #073333;
+      border-radius: 14px;
+      width: 370px;
+      padding: 32px 28px 28px 28px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.22);
+      color: #fff;
+      position: relative;
+    }
+    .modal h2 {
+      margin: 0 0 24px 0;
+      font-size: 1.18rem;
+      font-weight: 600;
+      text-align: center;
+      letter-spacing: 1px;
+    }
+    .close-btn {
+      position: absolute;
+      right: 18px;
+      top: 18px;
+      font-size: 1.18rem;
+      color: #b0b0b0;
+      background: none;
+      border: none;
+      cursor: pointer;
+    }
+    .label {
+      display: block;
+      font-size: 1rem;
+      margin-bottom: 8px;
+      color: #b0c4c4;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+    }
+    .input-field {
+      width: 100%;
+      padding: 10px 12px;
+      border-radius: 10px;
+      border: none;
+      background: #0e2323;
+      color: #fff;
+      font-size: 1rem;
+      margin-bottom: 18px;
+      outline: none;
+      box-sizing: border-box;
+    }
+    .exercise-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 12px;
+    }
+    .exercise-table th,
+    .exercise-table td {
+      text-align: left;
+      padding: 7px 6px;
+      font-size: 0.98rem;
+    }
+    .exercise-table th {
+      color: #b0c4c4;
+      font-weight: 500;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid #1a3a3a;
+    }
+    .exercise-table td {
+      padding-bottom: 5px;
+    }
+    .exercise-input {
+      background: #0e2323;
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      padding: 7px 8px;
+      font-size: 1rem;
+      width: 90%;
+      outline: none;
+    }
+    .add-exercise {
+      color: #2acfcf;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 8px;
+      margin-bottom: 14px;
+      display: inline-block;
+      border: none;
+      background: none;
+      padding: 0;
+    }
+    .modal hr {
+      border: none;
+      border-top: 1px solid #1a3a3a;
+      margin: 18px 0 22px 0;
+    }
+    .save-btn {
+      width: 80%;
+      display: block;
+      margin: 0 auto;
+      padding: 10px 0;
+      background: #2acfcf;
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.2s;
+      letter-spacing: 0.5px;
+    }
+    .save-btn:hover {
+      background: #1fa0a0;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="close-button">&times;</div>
-        <h1>Create/Edit Workout</h1>
+  <div class="modal">
+    <button class="close-btn" title="Close">&times;</button>
+    <h2>CREATE/EDIT WORKOUT</h2>
+    <label class="label" for="workout-name">WORKOUT NAME</label>
+    <input class="input-field" type="text" id="workout-name" value="EVENING CORE BLAST">
 
-        <div class="form-group">
-            <label for="workout-name">Workout Name</label>
-            <input type="text" id="workout-name" value="Evening Core Blast">
-        </div>
-
-        <div class="exercise-list">
-            <div class="exercise">
-                <input type="text" value="Pushups">
-                <input type="text" value="3" placeholder="Sets">
-                <input type="text" value="15" placeholder="Reps">
-            </div>
-            <div class="exercise">
-                <input type="text" value="Donkey Kicks">
-                <input type="text" value="4" placeholder="Sets">
-                <input type="text" value="15" placeholder="Reps">
-            </div>
-            <div class="exercise">
-                <input type="text" value="Low Plank">
-                <input type="text" value="5" placeholder="Sets">
-                <input type="text" value="30 sec" placeholder="Reps">
-            </div>
-        </div>
-
-        <div class="add-exercise">+ Add Exercise</div>
-
-        <button class="save-button">Save Workout</button>
-    </div>
+    <table class="exercise-table">
+      <thead>
+        <tr>
+          <th>EXERCISE NAME</th>
+          <th>SETS</th>
+          <th>REPS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input class="exercise-input" type="text" value="Pushups"></td>
+          <td><input class="exercise-input" type="number" value="3"></td>
+          <td><input class="exercise-input" type="text" value="15"></td>
+        </tr>
+        <tr>
+          <td><input class="exercise-input" type="text" value="Donkey Kicks"></td>
+          <td><input class="exercise-input" type="number" value="4"></td>
+          <td><input class="exercise-input" type="text" value="15"></td>
+        </tr>
+        <tr>
+          <td><input class="exercise-input" type="text" value="Low Plank"></td>
+          <td><input class="exercise-input" type="number" value="5"></td>
+          <td><input class="exercise-input" type="text" value="30 sec"></td>
+        </tr>
+      </tbody>
+    </table>
+    <button class="add-exercise">+ Add Exercise</button>
+    <hr>
+    <button class="save-btn">SAVE WORKOUT</button>
+  </div>
 </body>
 </html>

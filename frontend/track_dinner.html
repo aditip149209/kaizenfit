@@ -1,139 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Track Dinner</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #0A192F;
-            color: #fff;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-        }
-
-        .container {
-            background-color: #172A45;
-            border-radius: 10px;
-            padding: 20px;
-            width: 80%;
-            max-width: 400px;
-        }
-
-        h1 {
-            margin: 0 0 20px 0;
-            font-size: 24px;
-            text-align: center;
-        }
-
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 5px;
-            color: #64FFDA;
-        }
-
-        input[type="text"],
-        select {
-            width: 100%;
-            padding: 10px;
-            border-radius: 5px;
-            border: 1px solid #495670;
-            background-color: #0A192F;
-            color: #fff;
-        }
-
-        .macronutrients {
-            background-color: #233554;
-            border-radius: 10px;
-            padding: 15px;
-            margin-bottom: 20px;
-        }
-
-        .macronutrients h2 {
-            font-size: 18px;
-            margin-top: 0;
-            color: #fff;
-        }
-
-        .macronutrient {
-            display: flex;
-            align-items: center;
-            margin-bottom: 5px;
-        }
-
-        .macronutrient img {
-            width: 20px;
-            height: 20px;
-            margin-right: 10px;
-        }
-
-        .save-button {
-            padding: 10px 20px;
-            border-radius: 5px;
-            border: none;
-            background-color: #64FFDA;
-            color: #0A192F;
-            cursor: pointer;
-            width: 100%;
-        }
-
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            color: #fff;
-            cursor: pointer;
-            font-size: 20px;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Track Dinner Modal</title>
+  <style>
+    body {
+      margin: 0;
+      background: #0c1818;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: #b2dfdb;
+      height: 100vh;
+      width: 100vw;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-bg {
+      background: rgba(0,0,0,0.45);
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      width: 100vw;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 10;
+    }
+    .modal {
+      background: #073131;
+      border-radius: 14px;
+      min-width: 320px;
+      max-width: 340px;
+      padding: 28px 28px 22px 28px;
+      box-shadow: 0 4px 32px rgba(0,0,0,0.14);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .modal-close {
+      position: absolute;
+      top: 14px;
+      right: 18px;
+      font-size: 1.3rem;
+      color: #b2dfdb;
+      background: none;
+      border: none;
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+    .modal-close:hover {
+      opacity: 1;
+    }
+    .modal-title {
+      font-size: 1.08rem;
+      color: #e0f7fa;
+      font-weight: 500;
+      margin-bottom: 22px;
+      letter-spacing: 1px;
+      text-align: center;
+    }
+    .modal-row {
+      width: 100%;
+      margin-bottom: 17px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      font-size: 1rem;
+    }
+    .modal-row label {
+      min-width: 90px;
+      color: #b2dfdb;
+      font-size: 0.98rem;
+      margin-bottom: 3px;
+    }
+    .modal-row input,
+    .modal-row select {
+      background: #0c1818;
+      color: #b2dfdb;
+      border: 1px solid #1de9b6;
+      border-radius: 7px;
+      padding: 7px 12px;
+      font-size: 1rem;
+      margin-right: 10px;
+      outline: none;
+      margin-bottom: 0;
+      transition: border 0.2s;
+    }
+    .modal-row input:focus,
+    .modal-row select:focus {
+      border: 1.5px solid #00bcd4;
+    }
+    .modal-row.quantity-row {
+      gap: 10px;
+      margin-bottom: 17px;
+    }
+    .modal-row input[type="text"] {
+      width: 100%;
+    }
+    .macro-section-title {
+      color: #b2dfdb;
+      font-size: 0.98rem;
+      margin-bottom: 9px;
+      margin-top: 6px;
+      width: 100%;
+    }
+    .macro-box {
+      background: #094040;
+      border-radius: 14px;
+      padding: 16px 18px 12px 18px;
+      width: 100%;
+      margin-bottom: 18px;
+      box-sizing: border-box;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+    .macro-calories {
+      color: #e0f7fa;
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .macro-row {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      font-size: 0.97rem;
+      color: #b2dfdb;
+    }
+    .macro-icon {
+      width: 17px;
+      height: 17px;
+      display: inline-block;
+      margin-right: 2px;
+      filter: brightness(0) invert(0.7);
+    }
+    .divider {
+      width: 100%;
+      height: 1px;
+      background: #155353;
+      margin: 14px 0 14px 0;
+      border: none;
+    }
+    .save-btn {
+      background: #178b8b;
+      color: #e0f7fa;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 28px;
+      font-size: 1rem;
+      font-weight: 500;
+      margin-top: 5px;
+      cursor: pointer;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: background 0.18s;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+    }
+    .save-btn:hover {
+      background: #13b3b3;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <div class="close-button">&times;</div>
-        <h1>Track Dinner</h1>
-
-        <div class="form-group">
-            <label for="dish">Dish</label>
-            <input type="text" id="dish" placeholder="Search by Food Name/Dish">
+  <div class="modal-bg">
+    <div class="modal">
+      <button class="modal-close" aria-label="Close">&times;</button>
+      <div class="modal-title">TRACK DINNER</div>
+      <form style="width:100%;">
+        <div class="modal-row">
+          <label for="dish">Dish</label>
+          <input id="dish" type="text" placeholder="Search by Food Name/Dish">
         </div>
-
-        <div class="form-group">
-            <label for="quantity">Quantity</label>
-            <select id="quantity">
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-            </select>
-            <input type="text" placeholder="Measure">
+        <div class="modal-row quantity-row">
+          <label for="quantity">Quantity</label>
+          <input id="quantity" type="text" style="width:60px;">
+          <select id="measure">
+            <option>g</option>
+            <option>ml</option>
+            <option>pcs</option>
+          </select>
         </div>
-
-        <div class="macronutrients">
-            <h2>Macronutrients Breakdown</h2>
-            <p>Calories: 73 cal</p>
-            <div class="macronutrient">
-                <img src="carb_icon.png" alt="Carbs">
-                <span>Carbs: 6.3g</span>
-            </div>
-            <div class="macronutrient">
-                <img src="protein_icon.png" alt="Proteins">
-                <span>Proteins: 3.0g</span>
-            </div>
-            <div class="macronutrient">
-                <img src="fat_icon.png" alt="Fats">
-                <span>Fats: 1.0g</span>
-            </div>
+        <div class="macro-section-title">Macronutrients Breakdown</div>
+        <div class="macro-box">
+          <div class="macro-calories">Calories<br><span style="font-size:1.2rem;font-weight:600;">73 cal</span></div>
+          <div class="macro-row">
+            <img class="macro-icon" src="https://cdn-icons-png.flaticon.com/512/3075/3075977.png" alt="Carbs">
+            Carbs <span style="margin-left:auto;">8.3 g</span>
+          </div>
+          <div class="macro-row">
+            <img class="macro-icon" src="https://cdn-icons-png.flaticon.com/512/1046/1046750.png" alt="Proteins">
+            Proteins <span style="margin-left:auto;">3.0 g</span>
+          </div>
+          <div class="macro-row">
+            <img class="macro-icon" src="https://cdn-icons-png.flaticon.com/512/616/616490.png" alt="Fats">
+            Fats <span style="margin-left:auto;">1.0 g</span>
+          </div>
         </div>
-
-        <button class="save-button">Save</button>
+        <button type="submit" class="save-btn">Save</button>
+      </form>
     </div>
+  </div>
 </body>
 </html>
