@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Log Weight</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #003049;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #003049;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 300px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #669bbc;
+            background-color: #669bbc;
+            color: white;
+            box-sizing: border-box;
+        }
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M287.694%2069.94L146.225%20206.062%204.756%2069.94%200%2074.684l146.225%20141.754L292.44%2074.684z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat, repeat;
+            background-position: right .7em top 50%, 0 0;
+            background-size: .65em auto, 100%;
+        }
+        button {
+            background-color: #1a936f;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #005f73;
+        }
+        .close-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        .date-input-wrapper {
+            position: relative;
+        }
+        .date-icon {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            pointer-events: none;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>LOG WEIGHT</h2>
+            <button class="close-button">×</button>
+        </div>
+        <div class="form-group">
+            <label for="done">Done</label>
+            <div class="date-input-wrapper">
+                <input type="text" id="done" placeholder="Select Date">
+                <span class="date-icon">&#x1F4C5;</span>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="weight">Weight</label>
+            <div style="display: flex;">
+                <input type="text" id="weight" placeholder="Enter Weight" style="width: 70%;">
+                <select id="unit" style="width: 30%; margin-left: 5px;">
+                    <option>Lbs</option>
+                    <option>Kg</option>
+                    </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label for="notes">Notes</label>
+            <textarea id="notes" rows="4" placeholder="Enter Notes"></textarea>
+        </div>
+        <button>Save</button>
+    </div>
+</body>
+</html>
