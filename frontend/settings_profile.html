@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Settings</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-900 text-white font-sans">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <img src="icons/KaizenLogo.png" alt="Logo" class="mb-8">
+      <img src="icons/home.png" alt="Home" class="mb-6 cursor-pointer">
+      <img src="icons/stats.png" alt="Stats" class="mb-6 cursor-pointer">
+      <img src="icons/meal.png" alt="Meal" class="mb-6 cursor-pointer">
+      <img src="icons/settings.png" alt="Settings" class="mb-6 cursor-pointer">
+      <img src="icons/logout.png" alt="Logout" class="cursor-pointer">
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex">
+      <!-- Side Dialog -->
+      <div class="side-dialog bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h3 class="text-lg font-bold mb-4">Settings</h3>
+        <ul class="space-y-4">
+          <li><a href="#" class="text-gray-400 hover:text-white">Profile</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white">Account</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white">Your Plan</a></li>
+          <li><a href="#" class="text-gray-400 hover:text-white">Help</a></li>
+        </ul>
+      </div>
+
+      <!-- Profile Form -->
+      <div class="form-container bg-gray-700 text-white rounded-2xl p-6 shadow-lg flex-1 mx-6 my-auto">
+        <h2 class="text-2xl font-bold mb-6 text-center">Profile</h2>
+        <form>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="first-name">First Name</label>
+              <input type="text" id="first-name" placeholder="Enter your first name" value="Aditi">
+            </div>
+            <div>
+              <label for="last-name">Last Name</label>
+              <input type="text" id="last-name" placeholder="Enter your last name" value="Pandey">
+            </div>
+          </div>
+          <div>
+            <label for="contact">Contact</label>
+            <input type="text" id="contact" placeholder="Enter your contact number" value="9686979680">
+          </div>
+          <div>
+            <label for="gender">Gender</label>
+            <input type="text" id="gender" placeholder="Enter your gender" value="Female">
+          </div>
+          <div>
+            <label for="dob">Date of Birth</label>
+            <input type="date" id="dob" value="2005-02-03">
+          </div>
+          <div class="grid grid-cols-2 gap-4">
+            <div>
+              <label for="height">Height (cm)</label>
+              <input type="number" id="height" placeholder="Enter your height" value="170">
+            </div>
+            <div>
+              <label for="weight">Weight (kg)</label>
+              <input type="number" id="weight" placeholder="Enter your weight" value="123">
+            </div>
+          </div>
+          <button type="submit" class="mt-4">Save Changes</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

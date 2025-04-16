@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Your Plan</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body class="bg-gray-900 text-white font-sans">
+  <div class="flex h-screen">
+    <!-- Sidebar -->
+    v class="sidebar">
+        <div class="logo"></div>
+        <ul class="main-nav">
+            <li><a href="#"><img src="icons/KaizenLogo.png" alt="Menu"></a></li>
+            <li><a href="#"><img src="icons/home.png" alt="Home"> </a></li>
+            <li><a href="#"><img src="icons/stats.png" alt="Stats"></a></li>
+            <li><a href="#"><img src="icons/meal.png" alt="Menu"></a></li>
+            <li><a href="#" class="active"><img src="icons/settings.png" alt="Settings"></a></li>
+            <li><a href="#"><img src="icons/logout.png" alt="Logout"></a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="flex-1 flex flex-col">
+      <!-- Page Heading -->
+      <div class="bg-gray-800 p-4 rounded-t-lg shadow-lg">
+        <h1 class="text-3xl font-bold text-center">Your Plan</h1>
+      </div>
+
+      <div class="flex flex-1">
+        <!-- Side Dialog -->
+        <div class="side-dialog bg-gray-800 p-6 rounded-lg shadow-lg">
+          <h3 class="text-lg font-bold mb-4 text-center">Settings</h3>
+          <ul class="space-y-4">
+            <li><a href="#" class="text-gray-400 hover:text-white">Profile</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Account</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white active-link">Your Plan</a></li>
+            <li><a href="#" class="text-gray-400 hover:text-white">Help</a></li>
+          </ul>
+        </div>
+
+        <!-- Your Plan Section -->
+        <div class="form-container bg-gray-700 text-white rounded-2xl p-6 shadow-lg flex-1 mx-6 my-auto">
+          <form>
+            <!-- Current Plan -->
+            <div class="mb-6">
+              <h3 class="text-lg font-bold mb-2">Current Plan</h3>
+              <div class="flex items-center space-x-4">
+                <span class="bg-yellow-500 text-black px-4 py-2 rounded-lg">Gold</span>
+                <button type="button" class="change-plan-btn">Change Plan</button>
+                <button type="button" class="pause-plan-btn">Pause Plan</button>
+              </div>
+            </div>
+
+            <!-- Billing Details -->
+            <div class="mb-6">
+              <h3 class="text-lg font-bold mb-2">Billing Details</h3>
+              <p class="text-gray-400 mb-2">Amount: 149 INR</p>
+              <p class="text-gray-400 mb-4">Billed every 17th of the month</p>
+              <button type="button" class="cancel-plan-btn">Cancel Plan</button>
+            </div>
+
+            <!-- Mode of Payment -->
+            <div>
+              <h3 class="text-lg font-bold mb-2">Mode of Payment</h3>
+              <p class="text-gray-400 mb-2">Credit Card: HDFC xxx6021</p>
+              <button type="button" class="change-payment-btn">Change Payment Mode</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

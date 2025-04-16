@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Analytics Dashboard</title>
+  <style>
+    :root {
+      --dark-bg: #051a1a;
+      --panel-bg: #0a2626;
+      --teal: #2acfcf;
+      --light-teal: #3ddada;
+      --gold: #d4af37;
+      --text-color: #ffffff;
+      --text-secondary: #a0b4b4;
+    }
+    
+    body {
+      background-color: var(--dark-bg);
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      color: var(--text-color);
+    }
+    
+    .dashboard {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      grid-template-rows: auto auto;
+      gap: 16px;
+      padding: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+    
+    .panel {
+      background-color: var(--panel-bg);
+      border-radius: 10px;
+      padding: 16px;
+    }
+    
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 15px;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text-secondary);
+    }
+    
+    .section-title {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: var(--text-color);
+    }
+    
+    /* Weight Progress Panel */
+    .weight-progress {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    
+    .weight-stats {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .weight-change {
+      font-size: 14px;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    
+    .weight-graph {
+      height: 60px;
+      background: linear-gradient(180deg, rgba(42, 207, 207, 0.1) 0%, rgba(42, 207, 207, 0) 100%);
+      margin-bottom: 20px;
+      position: relative;
+    }
+    
+    .weight-graph::before {
+      content: "";
+      position: absolute;
+      width: 100%;
+      height: 2px;
+      background: linear-gradient(90deg, var(--teal) 0%, var(--teal) 80%, transparent 100%);
+      bottom: 10px;
+    }
+    
+    /* Calorie Tracker Panel */
+    .calorie-tracker {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    
+    .progress-bar {
+      height: 8px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 4px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      background-color: var(--teal);
+      border-radius: 4px;
+    }
+    
+    .calorie-item {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 15px;
+    }
+    
+    .calorie-label {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    
+    .calorie-value {
+      font-weight: 600;
+    }
+    
+    /* Water Tracker Panel */
+    .water-tracker {
+      grid-column: 3;
+      grid-row: 1;
+    }
+    
+    .water-count {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+    
+    .water-amount {
+      font-size: 28px;
+      font-weight: bold;
+      margin-right: 10px;
+    }
+    
+    .water-unit {
+      color: var(--text-secondary);
+    }
+    
+    .water-controls {
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    /* Today's Workout Panel */
+    .todays-workout {
+      grid-column: 2;
+      grid-row: 2;
+    }
+    
+    .workout-title {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .workout-subtitle {
+      color: var(--text-secondary);
+      font-size: 14px;
+      margin-bottom: 20px;
+    }
+    
+    /* My Workouts Panel */
+    .my-workouts {
+      grid-column: 3;
+      grid-row: 2;
+    }
+    
+    .workout-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    
+    .workout-name {
+      font-weight: 600;
+    }
+    
+    .workout-time {
+      color: var(--text-secondary);
+      font-size: 14px;
+    }
+    
+    .workout-status {
+      background-color: var(--gold);
+      color: var(--dark-bg);
+      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 10px;
+      font-weight: bold;
+    }
+    
+    .button {
+      background-color: var(--teal);
+      color: var(--dark-bg);
+      border: none;
+      border-radius: 20px;
+      padding: 8px 16px;
+      font-weight: 600;
+      font-size: 14px;
+      cursor: pointer;
+      transition: background-color 0.2s;
+    }
+    
+    .button:hover {
+      background-color: var(--light-teal);
+    }
+    
+    .button-outline {
+      background-color: transparent;
+      color: var(--teal);
+      border: 1px solid var(--teal);
+    }
+    
+    .button-outline:hover {
+      background-color: rgba(42, 207, 207, 0.1);
+    }
+  </style>
+</head>
+<body>
+  <div class="section-title">Analytics</div>
+  
+  <div class="dashboard">
+    <!-- Weight Progress Panel -->
+    <div class="panel weight-progress">
+      <div class="panel-header">WEIGHT PROGRESS</div>
+      <div class="weight-stats">67 kg + 60 kg</div>
+      <div class="weight-change">1.5 kg down in 2 weeks</div>
+      <div class="weight-graph"></div>
+      <button class="button button-outline">See Weight</button>
+    </div>
+    
+    <!-- Calorie Tracker Panel -->
+    <div class="panel calorie-tracker">
+      <div class="panel-header">CALORIE TRACKER</div>
+      
+      <div class="calorie-item">
+        <div class="calorie-label">Calories Remaining</div>
+        <div class="calorie-value">780</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 65%;"></div>
+      </div>
+      
+      <div class="calorie-item">
+        <div class="calorie-label">Protein</div>
+        <div class="calorie-value">120g</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 80%;"></div>
+      </div>
+      
+      <div class="calorie-item">
+        <div class="calorie-label">Fats</div>
+        <div class="calorie-value">45g</div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" style="width: 50%;"></div>
+      </div>
+      
+      <button class="button">Track Calories</button>
+    </div>
+    
+    <!-- Water Tracker Panel -->
+    <div class="panel water-tracker">
+      <div class="panel-header">WATER TRACKER</div>
+      
+      <div class="water-count">
+        <div class="water-amount">6 glasses</div>
+        <div class="water-unit">of 8 glasses</div>
+      </div>
+      
+      <div class="water-controls">
+        <button class="button button-outline">Add Glass</button>
+        <button class="button">Edit Goal</button>
+      </div>
+    </div>
+    
+    <!-- Today's Workout Panel -->
+    <div class="panel todays-workout">
+      <div class="panel-header">TODAY'S WORKOUT</div>
+      
+      <div class="workout-title">FULL BODY HIT</div>
+      <div class="workout-subtitle">30 MINS<br>500 KCAL</div>
+      
+      <button class="button">VIEW WORKOUT</button>
+    </div>
+    
+    <!-- My Workouts Panel -->
+    <div class="panel my-workouts">
+      <div class="panel-header">MY WORKOUTS</div>
+      
+      <div class="workout-item">
+        <div class="workout-name">Cardio</div>
+        <div class="workout-time">30 min</div>
+        <div class="workout-status">TODAY</div>
+      </div>
+      
+      <div class="workout-item">
+        <div class="workout-name">Chest</div>
+        <div class="workout-time">45 min</div>
+        <div class="workout-status">TODAY</div>
+      </div>
+      
+      <div class="workout-item">
+        <div class="workout-name">Upper Body</div>
+        <div class="workout-time">30 min</div>
+        <div class="workout-status">TODAY</div>
+      </div>
+      
+      <div class="workout-item">
+        <div class="workout-name">Cardio</div>
+        <div class="workout-time">30 min</div>
+        <div class="workout-status">TODAY</div>
+      </div>
+      
+      <button class="button">View Workout</button>
+    </div>
+  </div>
+</body>
+</html>

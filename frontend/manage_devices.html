@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Manage Devices</title>
+  <style>
+    body {
+      background: #092923;
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+    }
+    .modal {
+      background: #07302c;
+      color: #d6f5f0;
+      width: 370px;
+      margin: 60px auto;
+      border-radius: 10px;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.3);
+      padding: 28px 26px 20px 26px;
+      position: relative;
+    }
+    .modal h2 {
+      margin-top: 0;
+      font-size: 1.1rem;
+      font-weight: 500;
+      letter-spacing: 1px;
+      text-align: center;
+      margin-bottom: 28px;
+    }
+    .close {
+      position: absolute;
+      top: 16px;
+      right: 18px;
+      font-size: 1.2rem;
+      color: #d6f5f0;
+      cursor: pointer;
+    }
+    .device-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+      font-size: 1rem;
+      color: #b2ccc7;
+    }
+    .logout-btn {
+      background: #a12a2a;
+      color: #fff;
+      border: none;
+      border-radius: 18px;
+      padding: 6px 18px;
+      font-size: 0.97rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .logout-btn:hover {
+      background: #7b1d1d;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #224b41;
+      margin: 18px 0 18px 0;
+    }
+    .save-btn {
+      display: block;
+      margin: 0 auto;
+      background: #219488;
+      color: #fff;
+      border: none;
+      border-radius: 7px;
+      padding: 7px 28px;
+      font-size: 1rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .save-btn:hover {
+      background: #176e65;
+    }
+  </style>
+</head>
+<body>
+  <div class="modal">
+    <span class="close" onclick="alert('Close clicked!')">&times;</span>
+    <h2>MANAGE DEVICES</h2>
+    <div class="device-row">
+      <span>Chrome[Linux]</span>
+      <button class="logout-btn">Log out</button>
+    </div>
+    <div class="device-row">
+      <span>Mozilla Firefox(Windows)</span>
+      <button class="logout-btn">Log out</button>
+    </div>
+    <div class="device-row">
+      <span>I Pad Air 10th Gen(Safari)</span>
+      <button class="logout-btn">Log out</button>
+    </div>
+    <hr>
+    <button class="save-btn">Save</button>
+  </div>
+</body>
+</html>

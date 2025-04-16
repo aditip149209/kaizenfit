@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Sleep Goal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #003049;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #003049;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 300px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        select, input[type="number"] {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #669bbc;
+            background-color: #669bbc;
+            color: white;
+            box-sizing: border-box;
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url('data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22white%22%20d%3D%22M287.694%2069.94L146.225%20206.062%204.756%2069.94%200%2074.684l146.225%20141.754L292.44%2074.684z%22%2F%3E%3C%2Fsvg%3E');
+            background-repeat: no-repeat, repeat;
+            background-position: right .7em top 50%, 0 0;
+            background-size: .65em auto, 100%;
+        }
+        button {
+            background-color: #1a936f;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #005f73;
+        }
+        .close-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        .sleep-goal {
+            text-align: center;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        .new-sleep-goal {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+        .new-sleep-goal select {
+            width: 45%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>EDIT SLEEP GOAL</h2>
+            <button class="close-button">×</button>
+        </div>
+        <div class="sleep-goal">
+            Current Sleep Goal: 7 hours 45 minutes
+        </div>
+        <div class="form-group">
+            <label>New Sleep Goal:</label>
+            <div class="new-sleep-goal">
+                <select id="hours">
+                    <option>6 hrs</option>
+                    <option>7 hrs</option>
+                    <option>8 hrs</option>
+                    <option>9 hrs</option>
+                    <option>10 hrs</option>
+                </select>
+                <select id="minutes">
+                    <option>15 min</option>
+                    <option>30 min</option>
+                    <option>45 min</option>
+                    <option>00 min</option>
+                </select>
+            </div>
+        </div>
+        <button>Save Goal</button>
+    </div>
+</body>
+</html>
