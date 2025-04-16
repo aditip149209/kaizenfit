@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Workout</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #003049;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: #003049;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+            width: 300px;
+        }
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        input[type="text"],
+        select,
+        textarea {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #669bbc;
+            background-color: #669bbc;
+            color: white;
+            box-sizing: border-box;
+        }
+       button {
+            background-color: #1a936f;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+        }
+        button:hover {
+            background-color: #005f73;
+        }
+        .close-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+        }
+        .exercise-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        .exercise-row input {
+            width: 100%;
+            padding: 8px;
+            border-radius: 4px;
+            border: 1px solid #669bbc;
+            background-color: #669bbc;
+            color: white;
+            box-sizing: border-box;
+            text-align: center;
+        }
+        h3 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h2>VIEW WORKOUT</h2>
+            <button class="close-button">×</button>
+        </div>
+        <h3>FULL BODY HIT</h3>
+        <div class="form-group">
+            <label for="exercise">EXERCISE NAME</label>
+            <label for="sets">SETS</label>
+            <label for="reps">REPS</label>
+        </div>
+        <div class="exercise-row">
+            <input type="text" value="Pushups" readonly>
+            <input type="text" value="3" readonly>
+            <input type="text" value="15" readonly>
+        </div>
+         <div class="exercise-row">
+            <input type="text" value="Donkey Kicks" readonly>
+            <input type="text" value="4" readonly>
+            <input type="text" value="15" readonly>
+        </div>
+         <div class="exercise-row">
+            <input type="text" value="Low Plank" readonly>
+            <input type="text" value="5" readonly>
+            <input type="text" value="30 sec" readonly>
+        </div>
+         <div class="exercise-row">
+            <input type="text" value="High Plank" readonly>
+            <input type="text" value="5" readonly>
+            <input type="text" value="30 sec" readonly>
+        </div>
+         <div class="exercise-row">
+            <input type="text" value="Tuck Jumps" readonly>
+            <input type="text" value="5" readonly>
+            <input type="text" value="10" readonly>
+        </div>
+        <button>Close</button>
+    </div>
+</body>
+</html>

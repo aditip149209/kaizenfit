@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fitness Dashboard</title>
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="logo"></div>
+      <nav class="nav">
+        <button class="nav-btn"></button>
+        <button class="nav-btn"></button>
+        <button class="nav-btn"></button>
+        <button class="nav-btn"></button>
+        <button class="nav-btn"></button>
+        <button class="nav-btn logout"></button>
+      </nav>
+    </aside>
+
+    <main class="main">
+      <header class="header">
+        <h2>Welcome, Aditi</h2>
+        <h3>Fitness Goal: Build Muscle</h3>
+      </header>
+
+      <section class="dashboard">
+        <div class="card diet">
+          <h4>Diet Tracker</h4>
+          <span class="tag">Vegan</span>
+          <p>Breakfast: Oats with almond milk</p>
+          <p>Lunch: Grilled Tofu with Quinoa</p>
+          <p>Evening Snack: Carrots and Hummus</p>
+          <p>Dinner: Quinoa with Brussels</p>
+        </div>
+
+        <div class="card calories">
+          <h4>Calorie Tracker</h4>
+          <p>Calories: 1100/1800</p>
+          <div class="progress-bar"></div>
+          <button>Track Calories</button>
+        </div>
+
+        <div class="card water">
+          <h4>Water Tracker</h4>
+          <p><strong>6 glasses</strong></p>
+          <button>Edit Goal</button>
+        </div>
+
+        <div class="card weight">
+          <h4>Weight Progress</h4>
+          <p>67kg → 60kg</p>
+          <p>1.8kg down in 2 weeks</p>
+          <button>Log Weight</button>
+        </div>
+
+        <div class="card workout">
+          <h4>Today's Workout</h4>
+          <p><strong>FULL BODY HIIT</strong></p>
+          <p>30 MINS</p>
+          <p>250 KCAL</p>
+          <button>View Workout</button>
+          <button class="complete">Mark as Completed</button>
+        </div>
+
+        <div class="card my-workouts">
+          <h4>My Workouts</h4>
+          <ul>
+            <li>Leg Day <span>45 min</span></li>
+            <li>Biceps <span>35 min</span></li>
+            <li>Upper Body <span>25 min</span></li>
+            <li>Glutes <span>25 min</span></li>
+          </ul>
+          <button>Create Workout</button>
+        </div>
+      </section>
+    </main>
+
+    <aside class="profile">
+      <div class="profile-card">
+        <button class="view-profile">View Profile</button>
+        <div class="heart-rate">
+          <h4>Heart Rate</h4>
+          <p><span class="heart">❤️</span> 72 bpm</p>
+          <p>Resting: 65 bpm</p>
+          <button>Sync Device</button>
+          <button>Settings</button>
+        </div>
+
+        <div class="steps">
+          <h4>Steps</h4>
+          <p>Today: 8000 steps</p>
+          <p>Goal: 8 Hours</p>
+        </div>
+
+        <div class="activity">
+          <h4>Activity</h4>
+          <p>7 hr 45 min</p>
+          <p>Goal: 8 hrs</p>
+        </div>
+      </div>
+    </aside>
+  </div>
+</body>
+</html>
