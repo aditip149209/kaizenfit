@@ -3,6 +3,7 @@ import React, { useState } from "react";
 export default function SettingsAccount() {
   const [activeNav, setActiveNav] = useState("Account");
 
+
   const styles = {
     container: {
       display: "flex",
@@ -223,6 +224,7 @@ export default function SettingsAccount() {
   // Settings nav links
   const navLinks = ["Profile", "Account", "Your Plan", "Help"];
 
+
   return (
     <div style={styles.container}>
       {/* Sidebar */}
@@ -309,38 +311,11 @@ export default function SettingsAccount() {
                   onMouseLeave={() => setBtnHover(false)}
                   onClick={() => alert("Change password clicked")}
                 >
-                  Change
+                  Change Password
                 </button>
               </div>
 
-              <div style={styles.deviceList}>
-                Device Management and Syncing
-                <br />
-                <span style={styles.deviceListStrong}>
-                  You can manage your devices and syncing options here.
-                </span>
-              </div>
-
-              <div style={styles.row}>
-                <input
-                  type="text"
-                  value="Pixel 5 (ABCD1234)"
-                  readOnly
-                  style={{ ...styles.input, ...styles.rowInput }}
-                />
-                <button
-                  style={{
-                    ...styles.btn,
-                    marginTop: 0,
-                    marginBottom: 0,
-                    padding: "8px 20px",
-                  }}
-                  onClick={() => alert("Manage device clicked")}
-                >
-                  Manage
-                </button>
-              </div>
-
+  
               <button
                 style={{
                   ...styles.saveBtn,
@@ -352,12 +327,10 @@ export default function SettingsAccount() {
               >
                 Save
               </button>
-
-              <div style={styles.lastSync}>Last Sync: 2024-03-20 11:45 pm</div>
             </div>
           )}
 
-          {/* You can add other nav content here if needed */}
+         
         </div>
       </div>
     </div>

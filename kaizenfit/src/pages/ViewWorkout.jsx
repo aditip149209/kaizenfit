@@ -1,6 +1,6 @@
 import React from "react";
 
-function ViewWorkout() {
+export function ViewWorkout() {
   const styles = {
     overlay: {
       position: "fixed",

@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
 
-import configInfo from "./db.config";
+import configInfo from "./db.config.js";
 import { config } from "dotenv";
 
 const sequelize = new Sequelize(

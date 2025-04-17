@@ -1,6 +1,6 @@
 import React from 'react';
 
-const LogWeightModal = () => {
+export const LogWeightModal = () => {
   const styles = {
     body: {
       fontFamily: "'Montserrat', sans-serif",

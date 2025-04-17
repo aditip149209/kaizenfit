@@ -1,8 +1,8 @@
-import { sequelize } from "../utils/database";
+import { sequelize } from "../utils/database.js";
 import { DataTypes } from "sequelize";
 
-const Users = sequelize.define("Users", {
-    UserID: {
+const Workout = sequelize.define("Workout", {
+    PlanID: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
@@ -12,6 +12,103 @@ const Users = sequelize.define("Users", {
     Name: {
         type: DataTypes.STRING,
         allowNull: false,
+    },
+    Description: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Duration: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    CaloriesBurned: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    Type: {
+        type: DataTypes.ENUM('cardio', 'strength', 'flexibility'),
+        allowNull: false,
+        defaultValue: 'cardio'
+    },
+    TargetPart: {
+        type: DataTypes.ENUM('upper_body', 'lower_body', 'full_body', 'back', 'chest', 'legs', 'arms'),
+        allowNull: false,
+        defaultValue: 'full_body'
+    },     
+    Day: {
+        type: DataTypes.ENUM('Monday', 'Tuesday', 'Wednesday', 'THrusday', 'Friday', 'Saturday', 'Sunday'),
+        allowNull: false,
+        defaultValue: 'Monday'
+    }
+})
+
+const DietPlan = sequelize.define("DietPlan", {
+    DietPlanID: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+        unique: true,
+    },
+    Name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    Description: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    GoalType: {
+        type: DataTypes.ENUM('weight_loss', 'muscle_gain', 'maintenance'),
+        allowNull: false,
+        defaultValue: 'maintenance'
+    },
+    Timing: {
+        type: DataTypes.ENUM('breakfast', 'lunch', 'dinner', 'snack'),
+        allowNull: false,
+        defaultValue: 'snack'
+    },
+    CaloriesConsumed: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    Type: {
+        type: DataTypes.ENUM('vegetarian', 'non_vegetarian', 'vegan', 'keto', 'eggetarian'),
+        allowNull: false,
+        defaultValue: 'vegetarian'
+    }, 
+    Day: {
+        type: DataTypes.ENUM('Monday', 'Tuesday', 'Wednesday', 'THrusday', 'Friday', 'Saturday', 'Sunday'),
+        allowNull: false,
+        defaultValue: 'Monday'
+    }
+})
+
+const Users = sequelize.define("Users", {
+    UserID: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+        unique: true,
+    },
+    FirstName: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    LastName: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    Username: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: true
+    },
+    Gender: {
+        type: DataTypes.ENUM('male', 'female', 'prefernottosay'),
+        allowNull: false,
+        defaultValue: 'prefernottosay'
     },
     Email: {
         type: DataTypes.STRING,
@@ -35,7 +132,7 @@ const Users = sequelize.define("Users", {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
-            model: 'Workout',
+            model: Workout,
             key: 'PlanID'
         }
     },
@@ -43,8 +140,8 @@ const Users = sequelize.define("Users", {
         type: DataTypes.INTEGER,
         allowNull: true,
         references: {
-            model: 'DietPlan',
-            key: 'PlanID'
+            model: DietPlan,
+            key: 'DietPlanID'
         }
     },
     Membership: {
@@ -54,7 +151,7 @@ const Users = sequelize.define("Users", {
     },
     Height: {
         type: DataTypes.FLOAT,
-        allowNull: false,
+
     },
     StepsGoal: {
         type: DataTypes.INTEGER,
@@ -73,8 +170,33 @@ const Users = sequelize.define("Users", {
     },
     WeightGoal: {
         type: DataTypes.FLOAT,
-        allowNull: false,
+
     },
+    isOnboarded: {
+        type: DataTypes.BOOLEAN,
+        allowNull: false, 
+        defaultValue: false
+    },
+    CalorieGoal: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 2000
+    },
+    ProteinGoal : {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 100
+    },
+    CarbGoal: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 150
+    },
+    FatsGoal: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 20
+    }
 })
 
 const Exercise = sequelize.define("Exercise", {
@@ -173,78 +295,6 @@ const FoodItem = sequelize.define("FoodItem", {
     }
 })
 
-const Workout = sequelize.define("Workout", {
-    PlanID: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-        unique: true,
-    },
-    Name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    Description: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    Duration: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
-    CaloriesBurned: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
-    Type: {
-        type: DataTypes.ENUM('cardio', 'strength', 'flexibility'),
-        allowNull: false,
-        defaultValue: 'cardio'
-    },
-    TargetPart: {
-        type: DataTypes.ENUM('upper_body', 'lower_body', 'full_body', 'back', 'chest', 'legs', 'arms'),
-        allowNull: false,
-        defaultValue: 'full_body'
-    },     
-})
-
-const DietPlan = sequelize.define("DietPlan", {
-    DietPlanID: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-        unique: true,
-    },
-    Name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    Description: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    GoalType: {
-        type: DataTypes.ENUM('weight_loss', 'muscle_gain', 'maintenance'),
-        allowNull: false,
-        defaultValue: 'maintenance'
-    },
-    Timing: {
-        type: DataTypes.ENUM('breakfast', 'lunch', 'dinner', 'snack'),
-        allowNull: false,
-        defaultValue: 'snack'
-    },
-    CaloriesConsumed: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
-    Type: {
-        type: DataTypes.ENUM('vegetarian', 'non_vegetarian', 'vegan', 'keto', 'eggetarian'),
-        allowNull: false,
-        defaultValue: 'vegetarian'
-    }
-})
 
 const HealthMetric = sequelize.define("HealthMetric", {
     MetricID: {
@@ -284,6 +334,32 @@ const HealthMetric = sequelize.define("HealthMetric", {
     }    
 })
 
+const Plan = sequelize.define("Plan", {
+    PlanID: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+        allowNull: false,
+        unique: true,
+    },
+    Name: {
+        type: DataTypes.STRING,
+        allowNull: false,
+    },
+    Description: {
+        type: DataTypes.STRING,
+        allowNull: true,
+    },
+    Price: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+    },
+    Duration: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    }
+})
+
 const Membership = sequelize.define("Membership", {
     MembershipID: {
         type: DataTypes.INTEGER,
@@ -320,36 +396,6 @@ const Membership = sequelize.define("Membership", {
         type: DataTypes.ENUM('active', 'inactive', 'expired'),
         allowNull: false,
         defaultValue: 'active'
-    }
-})
-
-const Plan = sequelize.define("Plan", {
-    PlanID: {
-        type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true,
-        allowNull: false,
-        unique: true,
-    },
-    Name: {
-        type: DataTypes.STRING,
-        allowNull: false,
-    },
-    Description: {
-        type: DataTypes.STRING,
-        allowNull: true,
-    },
-    Price: {
-        type: DataTypes.FLOAT,
-        allowNull: false,
-    },
-    Duration: {
-        type: DataTypes.INTEGER,
-        allowNull: false,
-    },
-    Features: {
-        type: DataTypes.ARRAY(DataTypes.STRING),
-        allowNull: false,
     }
 })
 
@@ -458,6 +504,31 @@ const LogToday = sequelize.define("LogToday",{
         allowNull: false,
     }
 })
+
+const WaterLog = sequelize.define("WaterLog", {
+    WaterLogID: {
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+        autoIncrement: true,
+    },
+    UserID: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+            model: Users,
+            key: 'UserID'
+        }
+    },
+    Timestamp: {
+        type: DataTypes.DATE,
+        allowNull: false, // Timestamp of when the water intake was logged
+    },
+    Quantity: { // Amount of water consumed in this entry
+        type: DataTypes.FLOAT, // Use FLOAT to allow partial values (e.g., 0.5 liters)
+        allowNull: false,
+    },
+});
 
 const WeightLog = sequelize.define("WeightLog",{
     WtLogID: {
@@ -569,14 +640,10 @@ const LogTodayFoodItem = sequelize.define("LogTodayFoodItem", {
         type: DataTypes.FLOAT,
         allowNull: true,
     },
-    Measure: {
-        type: DataTypes.ENUM('grams', 'ml', 'pieces'),
-        allowNull: false,
-        defaultValue: 'grams'
-    }
+   
 })
 
-const UserWorkoutLog = sequelize.define("", {
+const UserWorkoutLog = sequelize.define("UserWorkoutLog", {
     UserID: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -610,7 +677,7 @@ const UserWorkoutLog = sequelize.define("", {
 
 //for user 
 
-Users.hasMany(HealthMetric, { foreignKey: 'UserID' });
+Users.hasMany(HealthMetric, { foreignKey: 'UserID' , onDelete: "CASCADE"});
 HealthMetric.belongsTo(Users, { foreignKey: 'UserID' });
 
 Users.hasMany(Membership, { foreignKey: 'UserID' , onDelete: "CASCADE"});
@@ -630,6 +697,11 @@ WeightLog.belongsTo(Users, { foreignKey: 'UserID' });
 
 Users.hasMany(SleepLog, { foreignKey: 'UserID' });
 SleepLog.belongsTo(Users, { foreignKey: 'UserID' });
+
+
+// A user can have multiple water intake logs
+Users.hasMany(WaterLog, { foreignKey: 'UserID', onDelete: 'CASCADE' });
+WaterLog.belongsTo(Users, { foreignKey: 'UserID' });
 
 Membership.hasOne(Plan, {foreignKey: 'PlanID'});
 Plan.belongsTo(Membership, {foreignKey: 'PlanID'});
@@ -689,8 +761,10 @@ Workout.belongsToMany(Users, {
 })
 
 
-const db = { Users, FoodItem, DietPlan, Workout, Exercise, HealthMetric, Membership, Payment, Plan, DietPlanFoodItem, WorkoutExercise, SleepLog, SleepStage, WeightLog, LogToday, UserWorkoutLog, LogTodayFoodItem}; 
+const db = { Users, FoodItem, DietPlan, Workout, Exercise, WaterLog, HealthMetric, Membership,
+     Payment, Plan, DietPlanFoodItem, WorkoutExercise, SleepLog, SleepStage, WeightLog, LogToday, UserWorkoutLog, LogTodayFoodItem}; 
 export default db;
+
 
 
 
