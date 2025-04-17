@@ -31,8 +31,7 @@ function App() {
     </Router>
   );
 }
-import LogWeightModal from './pages/LogWeight';
-import { ViewWorkout } from './pages/ViewWorkout';
+
 
 // Example Landing Page Component
 

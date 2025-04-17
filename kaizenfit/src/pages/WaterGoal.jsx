@@ -5,168 +5,58 @@ const WaterGoalModal = () => {
   const [volume, setVolume] = useState('250');
   const [isHovered, setIsHovered] = useState(false);
 
-  const styles = {
-    modal: {
-      background: '#073032',
-      borderRadius: '14px',
-      width: '320px',
-      padding: '28px 22px 22px 22px',
-      boxShadow: '0 4px 24px rgba(0,0,0,0.18)',
-      position: 'relative',
-      fontFamily: 'Montserrat, sans-serif',
-      color: '#e7f6f2',
-    },
-    header: {
-      display: 'flex',
-      justifyContent: 'space-between',
-      alignItems: 'center',
-      fontSize: '1.05rem',
-      fontWeight: 600,
-      letterSpacing: '1px',
-      marginBottom: '18px',
-    },
-    closeBtn: {
-      fontSize: '1.2rem',
-      background: 'none',
-      border: 'none',
-      cursor: 'pointer',
-      fontWeight: 700,
-      padding: '0 2px',
-      transition: 'color 0.2s',
-      color: '#e7f6f2',
-    },
-    currentGoal: {
-      fontSize: '0.97rem',
-      color: '#a0c7c7',
-      marginBottom: '10px',
-      fontWeight: 500,
-    },
-    goalValue: {
-      color: '#7ed6c0',
-      fontWeight: 600,
-      marginLeft: '6px',
-    },
-    inputGroup: {
-      display: 'flex',
-      alignItems: 'center',
-      background: '#092223',
-      borderRadius: '8px',
-      overflow: 'hidden',
-      height: '38px',
-    },
-    glassButton: {
-      background: 'none',
-      border: 'none',
-      color: '#7ed6c0',
-      fontSize: '1.3rem',
-      width: '34px',
-      height: '100%',
-      cursor: 'pointer',
-      fontWeight: 600,
-      transition: 'background 0.15s',
-    },
-    glassInput: {
-      width: '34px',
-      textAlign: 'center',
-      background: 'none',
-      border: 'none',
-      color: '#e7f6f2',
-      fontSize: '1rem',
-      fontWeight: 600,
-      outline: 'none',
-    },
-    volumeSelect: {
-      background: '#092223',
-      color: '#7ed6c0',
-      border: 'none',
-      borderRadius: '8px',
-      fontSize: '1rem',
-      padding: '8px 18px 8px 12px',
-      marginLeft: '2px',
-      fontWeight: 500,
-    },
-    saveButton: {
-      background: isHovered ? '#16a05b' : '#1dbd6b',
-      color: '#fff',
-      border: 'none',
-      borderRadius: '16px',
-      padding: '8px 32px',
-      fontSize: '1rem',
-      fontWeight: 600,
-      cursor: 'pointer',
-      margin: '12px auto 0',
-      display: 'block',
-      transition: 'background 0.2s',
-    },
-  };
-
-  const handleGlassChange = (delta) => {
+  const handleGlassChange = async (delta) => {
     setGlasses(prev => Math.max(1, Math.min(prev + delta, 20)));
+    // TODO: Add API logic
   };
+  
 
   return (
-    <div style={{
-      position: 'fixed',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      background: 'rgba(0,0,0,0.5)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      zIndex: 1000
-    }}>
-      <div style={styles.modal}>
-        <div style={styles.header}>
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000] font-montserrat text-[#e7f6f2]">
+      <div className="bg-[#073032] rounded-xl w-[320px] px-5 pt-7 pb-5 shadow-xl relative">
+        <div className="flex justify-between items-center text-[1.05rem] font-semibold tracking-wide mb-4">
           <span>EDIT WATER GOAL</span>
-          <button 
-            style={styles.closeBtn}
-            onMouseEnter={(e) => e.target.style.color = '#e74c3c'}
-            onMouseLeave={(e) => e.target.style.color = '#e7f6f2'}
+          <button
+            className="text-[1.2rem] font-bold px-1 transition-colors hover:text-[#e74c3c]"
             onClick={() => console.log('Close modal')}
           >
             &times;
           </button>
         </div>
 
-        <div style={styles.currentGoal}>
+        <div className="text-sm text-[#a0c7c7] mb-2 font-medium">
           Current Water Goal:
-          <span style={styles.goalValue}>8 glasses</span>
+          <span className="text-[#7ed6c0] font-semibold ml-1">8 glasses</span>
         </div>
 
-        <label style={{...styles.currentGoal, marginBottom: '5px'}}>New Water Goal:</label>
-        
-        <div style={{display: 'flex', alignItems: 'center', gap: '10px', margin: '16px 0 24px'}}>
-          <div style={styles.inputGroup}>
-            <button 
-              style={styles.glassButton}
+        <label className="text-sm text-[#a0c7c7] mb-1 font-medium block">New Water Goal:</label>
+
+        <div className="flex items-center gap-2.5 my-4">
+          <div className="flex items-center bg-[#092223] rounded-md overflow-hidden h-10">
+            <button
+              className="w-[34px] h-full text-[#7ed6c0] text-xl font-semibold transition-colors hover:bg-[#174243]"
               onClick={() => handleGlassChange(-1)}
-              onMouseEnter={(e) => e.target.style.background = '#174243'}
-              onMouseLeave={(e) => e.target.style.background = 'none'}
             >
               –
             </button>
             <input
               type="text"
-              value={glasses}
               readOnly
-              style={styles.glassInput}
+              value={glasses}
+              className="w-[34px] text-center bg-transparent border-none text-[#e7f6f2] text-base font-semibold outline-none"
             />
-            <button 
-              style={styles.glassButton}
+            <button
+              className="w-[34px] h-full text-[#7ed6c0] text-xl font-semibold transition-colors hover:bg-[#174243]"
               onClick={() => handleGlassChange(1)}
-              onMouseEnter={(e) => e.target.style.background = '#174243'}
-              onMouseLeave={(e) => e.target.style.background = 'none'}
             >
               +
             </button>
           </div>
-          
-          <span style={{color: '#b2dfdb', fontSize: '0.95rem'}}>glasses</span>
-          
-          <select 
-            style={styles.volumeSelect}
+
+          <span className="text-[#b2dfdb] text-sm">glasses</span>
+
+          <select
+            className="bg-[#092223] text-[#7ed6c0] text-base font-medium rounded-md border-none px-3 py-2 ml-0.5"
             value={volume}
             onChange={(e) => setVolume(e.target.value)}
           >
@@ -174,12 +64,14 @@ const WaterGoalModal = () => {
             <option value="200">200</option>
             <option value="300">300</option>
           </select>
-          
-          <span style={{color: '#b2dfdb', fontSize: '0.95rem'}}>ml</span>
+
+          <span className="text-[#b2dfdb] text-sm">ml</span>
         </div>
 
-        <button 
-          style={styles.saveButton}
+        <button
+          className={`block mx-auto mt-3 rounded-2xl px-8 py-2 font-semibold text-white text-base transition-colors ${
+            isHovered ? 'bg-[#16a05b]' : 'bg-[#1dbd6b]'
+          }`}
           onMouseEnter={() => setIsHovered(true)}
           onMouseLeave={() => setIsHovered(false)}
           onClick={() => console.log('Save goal', { glasses, volume })}
