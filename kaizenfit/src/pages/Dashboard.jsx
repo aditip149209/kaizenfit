@@ -13,7 +13,6 @@ import AddFoodItem from './AddFoodItem';
 import WaterGoalModal from './WaterGoal';
 import CreateNewDiet from '../components/CreateNewDiet';
 
-
 export const Dashboard = () => {
   const token = localStorage.getItem('token');
   const navigate = useNavigate();
@@ -24,78 +23,112 @@ export const Dashboard = () => {
   const [customWorkouts, setCustomWorkouts] = useState([]);
   const [todayDiet, setTodayDiet] = useState([]);
   const [calories, setCalories] = useState({});
-  const [waterIntake, setWaterIntake] = useState({current : 0, goal : 8});
+  const [waterIntake, setWaterIntake] = useState({ current: 0, goal: 8 });
   const [weightProgress, setWeightProgress] = useState({});
   const [loading, setLoading] = useState(true);
-  const [exerciseList, setExerciseList] = useState([])
+  const [exerciseList, setExerciseList] = useState([]);
 
-
-  //states to toggle between modal popups
+  // States to toggle between modal popups
   const [showTodayWorkout, setShowTodayWorkout] = useState(false);
   const [showCreateEditWorkout, setShowCreateWorkout] = useState(false);
   const [createExercise, setCreateExercise] = useState('');
   const [showEditWaterGoal, setShowEditWaterGoal] = useState(false);
   const [showDietPlan, setShowDietPlan] = useState(false);
   const [showTodayCalories, setShowTodayCalories] = useState(false);
-  const [weightGoal, setWeightGoal] = useState(false)
+  const [weightGoal, setWeightGoal] = useState(false);
   const [logWeight, setLogWeight] = useState(false);
   const [addFoodItem, setAddFoodItem] = useState(false);
   const [addNewDiet, setAddNewDiet] = useState(false);
 
- 
-
- 
-
   // Function to calculate the percentage for progress bars
   const calculateProgressPercentage = (current, goal) => {
-    if(!goal) return 0;
+    if (!goal) return 0;
     return Math.min((current / goal) * 100, 100); // Ensure it's capped at 100%
   };
 
-  
   const incrementWater = () => {
-    setWaterIntake(prev => ({
+    setWaterIntake((prev) => ({
       ...prev,
-      current: prev.current + 1 // cap at goal
+      current: prev.current + 1, // cap at goal
     }));
   };
 
   const decrementWater = () => {
-    setWaterIntake(prev => ({
+    setWaterIntake((prev) => ({
       ...prev,
       current: Math.max(0, prev.current - 1), // no negative values
     }));
   };
 
-  
-const SidebarItem = ({ icon, title, desc }) => (
-  <div className="flex items-start gap-3 p-3 hover:bg-gray-100 rounded-xl cursor-pointer transition">
-    <div>{icon}</div>
-    <div>
-      <h4 className="text-sm font-medium text-gray-800">{title}</h4>
-      <p className="text-xs text-gray-500">{desc}</p>
+  // Logout function
+  const handleLogout = () => {
+    localStorage.removeItem('token'); // Remove the token
+    navigate('/'); // Redirect to the landing page
+  };
+
+  const SidebarItem = ({ icon, title, desc }) => (
+    <div className="flex items-start gap-3 p-3 hover:bg-gray-100 rounded-xl cursor-pointer transition">
+      <div>{icon}</div>
+      <div>
+        <h4 className="text-sm font-medium text-gray-800">{title}</h4>
+        <p className="text-xs text-gray-500">{desc}</p>
+      </div>
     </div>
-  </div>
-);
+  );
 
   return (
     <div className="flex  min-h-screen bg-[#101c1c] font-montserrat text-[#e7f6f2]">
       {/* Sidebar */}
       <div className="bg-[#142626] w-[80px] flex flex-col items-center py-[30px] gap-[30px] rounded-tl-[20px] rounded-bl-[20px]">
-        <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={() => navigate('/dashboard')}>
-          <img src="icons/KaizenLogo.png" alt="Logo" className="w-[22px] h-[22px] object-contain block" />
+        <div
+          className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all"
+          onClick={() => navigate('/dashboard')}
+        >
+          <img
+            src="icons/KaizenLogo.png"
+            alt="Logo"
+            className="w-[22px] h-[22px] object-contain block"
+          />
         </div>
-        <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={() => navigate('/dashboard')}>
-          <img src="icons/home.png" alt="Home" className="w-[22px] h-[22px] object-contain block" />
+        <div
+          className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all"
+          onClick={() => navigate('/dashboard')}
+        >
+          <img
+            src="icons/home.png"
+            alt="Home"
+            className="w-[22px] h-[22px] object-contain block"
+          />
         </div>
-        <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={() => navigate('/diet')}>
-          <img src="icons/meal.png" alt="Diet" className="w-[22px] h-[22px] object-contain block" />
+        <div
+          className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all"
+          onClick={() => navigate('/diet')}
+        >
+          <img
+            src="icons/meal.png"
+            alt="Diet"
+            className="w-[22px] h-[22px] object-contain block"
+          />
         </div>
-        <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={() => navigate('/profilesettings')}>
-          <img src="icons/settings.png" alt="Settings" className="w-[22px] h-[22px] object-contain block" />
+        <div
+          className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all"
+          onClick={() => navigate('/profilesettings')}
+        >
+          <img
+            src="icons/settings.png"
+            alt="Settings"
+            className="w-[22px] h-[22px] object-contain block"
+          />
         </div>
-        <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={() => navigate('/logout')}>
-          <img src="icons/logout.png" alt="Logout" className="w-[22px] h-[22px] object-contain block" />
+        <div
+          className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all"
+          onClick={handleLogout} // Call the logout function here
+        >
+          <img
+            src="icons/logout.png"
+            alt="Logout"
+            className="w-[22px] h-[22px] object-contain block"
+          />
         </div>
       </div>
 
@@ -105,8 +138,12 @@ const SidebarItem = ({ icon, title, desc }) => (
         <div className="flex-3 flex flex-col gap-[25px]">
           {/* Header */}
           <div className="flex justify-between items-center mb-[10px]">
-            <h2 className="text-[1.2rem] font-semibold m-0">Welcome, {profile.name || 'Guest'}</h2>
-            <div className="text-[#a0c7c7] text-[1rem] font-normal mr-10">Fitness Goal: <b>{profile.fitnessGoal || 'Maintain'}</b></div>
+            <h2 className="text-[1.2rem] font-semibold m-0">
+              Welcome, {profile.name || 'Guest'}
+            </h2>
+            <div className="text-[#a0c7c7] text-[1rem] font-normal mr-10">
+              Fitness Goal: <b>{profile.fitnessGoal || 'Maintain'}</b>
+            </div>
           </div>
 
           {/* Cards Grid */}
