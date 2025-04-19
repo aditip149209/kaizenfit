@@ -3,60 +3,73 @@ import jwt from 'jsonwebtoken'
 import db from '../models/index.js'
 import { GetUserByEmail,insertIntoUser } from '../models/services/userQuery.js'
 
-const registerUser = async (req, res) => {
-  const {firstname, lastname, username, email, password, dob} = req.body;
-  const hashedPassword = await bcrypt.hash(password, 10);
+const JWT_SECRET = process.env.JWT_SECRET || "your_secret_key"; // Replace with env in production
 
-  if(!username || !email || !password || !firstname || !lastname || !dob){
+const registerUser = async (req, res) => {
+  const { firstname, lastname, username, email, password, dob } = req.body;
+
+  if (!username || !email || !password || !firstname || !lastname || !dob) {
     return res.status(400).json({
-      message: "Please fill in all fields"
-    })
+      message: "Please fill in all fields",
+    });
   }
 
-  //check is password is of length atleast 8, has atleast one upper case, one symbol and one number 
+  // Validate password
   const isValidPassword = (password) => {
     const passwordRegex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#^()_+])[A-Za-z\d@$!%*?&#^()_+]{8,}$/;
     return passwordRegex.test(password);
   };
 
-  if(!isValidPassword(password)){
+  if (!isValidPassword(password)) {
     return res.status(401).json({
-      message: "Password should have atleast 8 characters with atleast 1 uppercase, 1 digit and 1 symbol"
-    })
+      message:
+        "Password should have at least 8 characters with 1 uppercase, 1 digit, and 1 symbol",
+    });
   }
 
-  try{
+  try {
     const userExists = await GetUserByEmail(email);
-    console.log(userExists);
-    if(userExists){
+    if (userExists) {
       return res.status(400).json({
-        message: "User already exists"
-      })
+        message: "User already exists",
+      });
     }
+
     const hashedPassword = await bcrypt.hash(password, 10);
     const data = {
       FirstName: firstname,
       LastName: lastname,
       Username: username,
-      Email: email, 
+      Email: email,
       Password: hashedPassword,
-      DateOfBirth : dob
-    }
-    const userCreate = insertIntoUser(data);
-    if(userCreate){
-    return res.status(201).json({
-      message: "User registered successfully"
-    })
-  }
+      DateOfBirth: dob,
+    };
 
-  }
-  catch(error){
-    console.log(error)
+    const userCreate = await insertIntoUser(data);
+
+    if (userCreate) {
+      // Create token with user's email or id
+      const token = jwt.sign(
+        {
+          
+        },
+        JWT_SECRET,
+        { expiresIn: "1h" } // token expires in 1 hour
+      );
+
+      // Send token back in response
+      return res.status(201).json({
+        message: "User registered successfully",
+        token, // front-end will store this
+      });
+    }
+  } catch (error) {
+    console.log(error);
     return res.status(500).json({
-      message: "There was an error registering"
-    })
+      message: "There was an error registering",
+    });
   }
-}
+};
 
 const loginUser = async (req, res) => {
   const {email, password} = req.body;

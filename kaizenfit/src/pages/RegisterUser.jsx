@@ -14,6 +14,7 @@ const Register = () => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const navigate = useNavigate();
+  // const [token, setToken] = useState('')
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -36,6 +37,7 @@ const Register = () => {
         dob,
       });
       setSuccess(response.data.message);
+      localStorage.setItem('token', response.data.token);
       setTimeout(() => navigate('/onboarding'), 2000);
     } catch (err) {
       console.log(err);
