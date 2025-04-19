@@ -1,6 +1,6 @@
 import db from "../models/index.js";
 
-import { getRandomWorkoutWithExercises, createWorkoutWithExercises } from "../models/services/workoutQuery.js";
+import { getRandomWorkoutWithExercises, createWorkoutWithExercises, createNewExercise, getWorkoutListFromDB, getExerciseList} from "../models/services/workoutQuery.js";
 
 export const getRandomWorkoutWithExercisesController = async (req, res) => {
     try {
@@ -27,7 +27,6 @@ export const createWorkoutWithExercisesController = async (req, res) => {
     if (!workoutData || !exercises || exercises.length === 0) {
         return res.status(400).json({ message: "Workout data and exercises are required." });
     }
-
     try {
         const result = await createWorkoutWithExercises(workoutData, exercises);
 
@@ -73,6 +72,60 @@ export const markWorkoutAsCompletedController = async (req, res) => {
         return res.status(500).json({ message: "Error marking workout as completed.", error });
     }
 };
+
+export const createExercise = async (req, res) => {
+    const {Name, Description, Duration, CaloriesBurned, Type, TargetPart, defaultReps, defaultSets} = req.body;
+
+    console.log(req.body);
+    const data = {
+        Name: Name, 
+        Description: Description,
+        Duration: Duration, 
+        CaloriesBurned: CaloriesBurned, 
+        Type: Type,
+        TargetPart: TargetPart,
+        defaultReps: defaultReps,
+        defaultSets : defaultSets
+    }
+    try{
+        const createEx = await createNewExercise(data);
+        return res.status(201).json({
+            message: "Exercise created",
+            createEx
+        })
+    }
+    catch(error){
+        console.log(error)
+        return res.status(500).json({
+            message: "Server error"
+        })
+    }
+}
+
+export const getWorkoutListController = async (req, res) => {
+    const UserID = req.query.UserID
+    try{
+        const workoutList = await getWorkoutListFromDB(UserID);
+        return res.status(200).json(workoutList)
+    }
+    catch(error){
+        console.log(error)
+        return res.status(500).json({
+            message: "Server error"
+        })
+    }
+}
+
+export const getExerciseListController = async (req, res) => {
+    let exercises
+    try{
+        exercises = await getExerciseList();
+        return res.status(200).json(exercises);
+    }
+    catch(error){
+        console.log(error)
+    }
+}
 
 
 

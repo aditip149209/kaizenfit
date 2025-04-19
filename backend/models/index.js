@@ -26,20 +26,21 @@ const Workout = sequelize.define("Workout", {
         allowNull: false,
     },
     Type: {
-        type: DataTypes.ENUM('cardio', 'strength', 'flexibility'),
+        type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'cardio'
     },
     TargetPart: {
-        type: DataTypes.ENUM('upper_body', 'lower_body', 'full_body', 'back', 'chest', 'legs', 'arms'),
+        type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'full_body'
     },     
     Day: {
-        type: DataTypes.ENUM('Monday', 'Tuesday', 'Wednesday', 'THrusday', 'Friday', 'Saturday', 'Sunday'),
+        type: DataTypes.ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
         allowNull: false,
         defaultValue: 'Monday'
-    }
+    },
+    
 })
 
 const DietPlan = sequelize.define("DietPlan", {
@@ -63,14 +64,22 @@ const DietPlan = sequelize.define("DietPlan", {
         allowNull: false,
         defaultValue: 'maintenance'
     },
-    Timing: {
-        type: DataTypes.ENUM('breakfast', 'lunch', 'dinner', 'snack'),
-        allowNull: false,
-        defaultValue: 'snack'
-    },
+    
     CaloriesConsumed: {
         type: DataTypes.INTEGER,
         allowNull: false,
+    },
+    CarbsConsumed: {
+        type: DataTypes.INTEGER,
+        allowNull: false
+    },
+    ProteinCOnsumed: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+    },
+    FatsConsumed: {
+        type: DataTypes.INTEGER,
+        allowNull: false
     },
     Type: {
         type: DataTypes.ENUM('vegetarian', 'non_vegetarian', 'vegan', 'keto', 'eggetarian'),
@@ -127,6 +136,11 @@ const Users = sequelize.define("Users", {
         type: DataTypes.ENUM('weight_loss', 'muscle_gain', 'maintenance'),
         allowNull: false,
         defaultValue: 'maintenance'
+    },
+    FitnessLevel: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: "Moderately Active"
     },
     WorkoutPlan: {
         type: DataTypes.INTEGER,
@@ -224,12 +238,12 @@ const Exercise = sequelize.define("Exercise", {
         allowNull: false,
     },
     Type: {
-        type: DataTypes.ENUM('cardio', 'strength', 'flexibility'),
+        type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'cardio'
     },
     TargetPart: {
-        type: DataTypes.ENUM('upper_body', 'lower_body', 'full_body', 'back', 'chest', 'legs', 'arms'),
+        type: DataTypes.STRING,
         allowNull: false,
         defaultValue: 'full_body'
     } ,
@@ -527,7 +541,7 @@ const WaterLog = sequelize.define("WaterLog", {
     Quantity: { // Amount of water consumed in this entry
         type: DataTypes.FLOAT, // Use FLOAT to allow partial values (e.g., 0.5 liters)
         allowNull: false,
-    },
+    }
 });
 
 const WeightLog = sequelize.define("WeightLog",{
@@ -643,6 +657,10 @@ const LogTodayFoodItem = sequelize.define("LogTodayFoodItem", {
    
 })
 
+//need a table that just has all the workouts created by the user 
+
+
+
 const UserWorkoutLog = sequelize.define("UserWorkoutLog", {
     UserID: {
         type: DataTypes.INTEGER,
@@ -688,6 +706,18 @@ Payment.belongsTo(Users, { foreignKey: 'UserID' });
 
 Users.hasMany(Workout, { foreignKey: 'WorkoutPlan' });
 Workout.belongsTo(Users, { foreignKey: 'WorkoutPlan' });
+
+Users.hasMany(Workout, {
+    foreignKey: 'createdByUserId',
+    as: 'customWorkouts',
+    sourceKey: 'UserID'
+  });
+  
+  Workout.belongsTo(Users, {
+    foreignKey: 'createdByUserId',
+    as: 'creator',
+    targetKey: 'UserID'
+  });
 
 Users.hasMany(DietPlan, { foreignKey: 'DietPlan' });
 DietPlan.belongsTo(Users, { foreignKey: 'DietPlan' });
@@ -759,7 +789,6 @@ Workout.belongsToMany(Users, {
     foreignKey: 'WorkoutID',
     otherKey: 'UserID'
 })
-
 
 const db = { Users, FoodItem, DietPlan, Workout, Exercise, WaterLog, HealthMetric, Membership,
      Payment, Plan, DietPlanFoodItem, WorkoutExercise, SleepLog, SleepStage, WeightLog, LogToday, UserWorkoutLog, LogTodayFoodItem}; 

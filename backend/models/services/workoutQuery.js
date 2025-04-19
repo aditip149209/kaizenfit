@@ -1,4 +1,5 @@
 import db from "../index.js";
+import { sequelize } from "../../utils/database.js";
 
 export const getRandomWorkoutWithExercises = async (day) => {
     try {
@@ -36,16 +37,28 @@ export const getRandomWorkoutWithExercises = async (day) => {
     }
 };
 
+export const createNewExercise = async (data) => {
+    // console.log("this is exercise", data);
+    try{
+        const newEx = await db.Exercise.create(data);
+        return newEx
+    }
+    catch(error){
+        throw error;
+   }
+}
+
 export const createWorkoutWithExercises = async (workoutData, exercises) => {
-    const transaction = await db.sequelize.transaction(); // Start a transaction
+    const transaction = await sequelize.transaction(); // Start a transaction
     try {
         // Step 1: Create the workout
         const newWorkout = await db.Workout.create(workoutData, { transaction });
+            
 
         // Step 2: Add entries to the join table (WorkoutExercise)
         const workoutExercises = exercises.map(exercise => ({
             WorkoutID: newWorkout.PlanID, // Use the newly created workout's ID
-            ExerciseID: exercise.exerciseId, // ID of the exercise
+            ExerciseID: exercise.ExerciseID, // name of the exercise
             customReps: exercise.customReps || null, // Optional custom reps
             customSets: exercise.customSets || null, // Optional custom sets
             customDuration: exercise.customDuration || null, // Optional custom duration
@@ -67,4 +80,32 @@ export const createWorkoutWithExercises = async (workoutData, exercises) => {
         throw error;
     }
 };
+
+export const getWorkoutListFromDB = async(UserID) => {
+    try{
+    const workouts = await db.Workout.findAll({
+        where: { createdByUserId: UserID },
+        attributes: ['Name', 'Duration', 'Type']
+      });
+      console.log(workouts); 
+      return workouts
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
+export const getExerciseList = async () => {
+    let exercises
+    try{
+        exercises = await db.Exercise.findAll({
+            attributes: ['Name','ExerciseID', 'defaultReps', 'defaultSets']
+        });
+        return exercises;
+    }
+    catch(error){
+        console.log(error)
+    }
+
+}
 

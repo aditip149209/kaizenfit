@@ -3,6 +3,7 @@ import { Sequelize } from "sequelize";
 import configInfo from "./db.config.js";
 import { config } from "dotenv";
 
+
 const sequelize = new Sequelize(
     configInfo.DB,
     configInfo.USER,
@@ -18,7 +19,7 @@ const connectDB = async () => {
     try{
         await sequelize.authenticate();
         console.log('Successfully connected to database'),
-        await sequelize.sync({force: true});
+        await sequelize.sync();
         console.log("Database and tables synced")
     }
     catch(error){

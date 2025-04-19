@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 
-const WaterGoalModal = () => {
+const WaterGoalModal = ({onClose}) => {
   const [glasses, setGlasses] = useState(2);
   const [volume, setVolume] = useState('250');
   const [isHovered, setIsHovered] = useState(false);
@@ -10,15 +10,22 @@ const WaterGoalModal = () => {
     // TODO: Add API logic
   };
   
+   const [hoverClose, setHoverClose] = useState(false);
+      const [hoverSave, setHoverSave] = useState(false);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000] font-montserrat text-[#e7f6f2]">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-[1000] font-montserrat text-[#e7f6f2]">
       <div className="bg-[#073032] rounded-xl w-[320px] px-5 pt-7 pb-5 shadow-xl relative">
         <div className="flex justify-between items-center text-[1.05rem] font-semibold tracking-wide mb-4">
           <span>EDIT WATER GOAL</span>
           <button
-            className="text-[1.2rem] font-bold px-1 transition-colors hover:text-[#e74c3c]"
-            onClick={() => console.log('Close modal')}
+            className={` absolute top-10 right-10 text-[#e0f7fa] text-xl font-bold transition-colors ${
+              hoverClose ? "text-red-500" : ""
+            }`}
+            onMouseEnter={() => setHoverClose(true)}
+            onMouseLeave={() => setHoverClose(false)}
+            onClick={onClose}
+            aria-label="Close"
           >
             &times;
           </button>

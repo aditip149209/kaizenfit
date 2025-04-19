@@ -43,9 +43,11 @@ const registerUser = async (req, res) => {
       DateOfBirth : dob
     }
     const userCreate = insertIntoUser(data);
+    if(userCreate){
     return res.status(201).json({
       message: "User registered successfully"
     })
+  }
 
   }
   catch(error){

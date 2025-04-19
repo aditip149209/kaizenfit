@@ -5,11 +5,11 @@ import { Dashboard } from './pages/Dashboard';
 import Login from './pages/LoginUser';
 import Register from './pages/RegisterUser';
 import Onboarding from './pages/Onboarding';
-import TrackCalories from './pages/TrackCalories';
-import WaterGoalModal from './pages/WaterGoal';
+import About from './pages/About';
+import Contact from './pages/Contact'
+import Analytics from './pages/Analytics';
 import SettingsAccount from './pages/SettingsAccount';
-import LogWeightModal from './pages/LogWeight';
-import { ViewWorkout } from './pages/ViewWorkout';
+
 
 
 function App() {
@@ -18,22 +18,22 @@ function App() {
       {/* Routes */}
       <Routes>
         <Route path="/" element={<LandingPage />} />
+        <Route path="/about" element={<About /> } />
+        <Route path="/contact" element={<Contact /> } />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/onboarding" element={<Onboarding />} />
         <Route path="/dashboard" element={<Dashboard /> } />
-        <Route path="/trackcalories" element={<TrackCalories/>} />
-        <Route path="/waterGoal" element={<WaterGoalModal />} />
-        <Route path="/settings" element={<SettingsAccount />} />
-        <Route path="/logweight" element={<LogWeightModal/>} />
-        <Route path="/myworkout" element={<ViewWorkout/>} />
+        <Route path="/profilesettings" element={<SettingsAccount /> } />
+        
+        
+        <Route path="/analytics" element={<Analytics /> } />   
+           
       </Routes>
     </Router>
   );
 }
 
-
-// Example Landing Page Component
 
 
 export default App;

@@ -1,14 +1,12 @@
 import React, { useState } from "react";
 
 export default function ChangePasswordModal({ onClose }) {
-  // Optional: You can manage form state here if needed
   const [form, setForm] = useState({
     current: "",
     new: "",
     confirm: "",
   });
 
-  // For hover effect on Save button
   const [saveHover, setSaveHover] = useState(false);
 
   const handleChange = (e) => {
@@ -22,171 +20,48 @@ export default function ChangePasswordModal({ onClose }) {
   };
 
   return (
-    <div
-      style={{
-        background: "#222",
-        minHeight: "100vh",
-        margin: 0,
-        fontFamily: "'Segoe UI', Arial, sans-serif",
-        display: "flex",
-        alignItems: "flex-start",
-        justifyContent: "center",
-      }}
-    >
-      <div
-        style={{
-          background: "#07302c",
-          color: "#d6f5f0",
-          width: 340,
-          margin: "60px auto",
-          borderRadius: 10,
-          boxShadow: "0 4px 24px rgba(0,0,0,0.3)",
-          padding: "28px 26px 20px 26px",
-          position: "relative",
-        }}
-      >
-        <span
-          style={{
-            position: "absolute",
-            top: 16,
-            right: 18,
-            fontSize: "1.2rem",
-            color: "#d6f5f0",
-            cursor: "pointer",
-            userSelect: "none",
-          }}
+    <div className="min-h-screen bg-gray-900 flex justify-center items-start font-sans">
+      <div className="bg-teal-950 text-teal-100 w-[340px] mt-16 p-7 rounded-xl shadow-lg relative">
+        <button
+          className="absolute top-4 right-4 text-xl text-teal-100 hover:text-red-400 transition"
           onClick={onClose || (() => alert("Close clicked!"))}
           title="Close"
         >
           &times;
-        </span>
-        <h2
-          style={{
-            marginTop: 0,
-            fontSize: "1.1rem",
-            fontWeight: 500,
-            letterSpacing: "1px",
-            textAlign: "center",
-            marginBottom: 28,
-          }}
-        >
+        </button>
+
+        <h2 className="text-center text-lg font-medium tracking-wide mb-7">
           CHANGE PASSWORD
         </h2>
+
         <form onSubmit={handleSubmit}>
-          <div style={{ marginBottom: 16 }}>
-            <label
-              htmlFor="current"
-              style={{
-                display: "block",
-                marginBottom: 4,
-                color: "#b2ccc7",
-                fontSize: "0.97rem",
-              }}
-            >
-              Current Password:
-            </label>
-            <input
-              type="password"
-              id="current"
-              name="current"
-              value={form.current}
-              onChange={handleChange}
-              style={{
-                width: "100%",
-                padding: "7px 10px",
-                borderRadius: 7,
-                border: "1px solid #17544c",
-                background: "transparent",
-                color: "#fff",
-                fontSize: "1rem",
-                boxSizing: "border-box",
-                outline: "none",
-                marginBottom: 2,
-              }}
-              autoComplete="current-password"
-            />
-          </div>
-          <div style={{ marginBottom: 16 }}>
-            <label
-              htmlFor="new"
-              style={{
-                display: "block",
-                marginBottom: 4,
-                color: "#b2ccc7",
-                fontSize: "0.97rem",
-              }}
-            >
-              New Password:
-            </label>
-            <input
-              type="password"
-              id="new"
-              name="new"
-              value={form.new}
-              onChange={handleChange}
-              style={{
-                width: "100%",
-                padding: "7px 10px",
-                borderRadius: 7,
-                border: "1px solid #17544c",
-                background: "transparent",
-                color: "#fff",
-                fontSize: "1rem",
-                boxSizing: "border-box",
-                outline: "none",
-                marginBottom: 2,
-              }}
-              autoComplete="new-password"
-            />
-          </div>
-          <div style={{ marginBottom: 16 }}>
-            <label
-              htmlFor="confirm"
-              style={{
-                display: "block",
-                marginBottom: 4,
-                color: "#b2ccc7",
-                fontSize: "0.97rem",
-              }}
-            >
-              Confirm Password:
-            </label>
-            <input
-              type="password"
-              id="confirm"
-              name="confirm"
-              value={form.confirm}
-              onChange={handleChange}
-              style={{
-                width: "100%",
-                padding: "7px 10px",
-                borderRadius: 7,
-                border: "1px solid #17544c",
-                background: "transparent",
-                color: "#fff",
-                fontSize: "1rem",
-                boxSizing: "border-box",
-                outline: "none",
-                marginBottom: 2,
-              }}
-              autoComplete="new-password"
-            />
-          </div>
+          {["current", "new", "confirm"].map((field, index) => (
+            <div key={field} className="mb-4">
+              <label
+                htmlFor={field}
+                className="block text-sm text-teal-300 mb-1 capitalize"
+              >
+                {field === "confirm" ? "Confirm Password:" : `${field.charAt(0).toUpperCase() + field.slice(1)} Password:`}
+              </label>
+              <input
+                type="password"
+                id={field}
+                name={field}
+                value={form[field]}
+                onChange={handleChange}
+                className="w-full px-3 py-2 bg-transparent border border-teal-700 rounded-md text-white focus:outline-none focus:ring-2 focus:ring-teal-500"
+                autoComplete={
+                  field === "current" ? "current-password" : "new-password"
+                }
+              />
+            </div>
+          ))}
+
           <button
             type="submit"
-            style={{
-              display: "block",
-              margin: "18px auto 0 auto",
-              background: saveHover ? "#176e65" : "#219488",
-              color: "#fff",
-              border: "none",
-              borderRadius: 18,
-              padding: "7px 28px",
-              fontSize: "1rem",
-              fontWeight: 500,
-              cursor: "pointer",
-              transition: "background 0.2s",
-            }}
+            className={`block mx-auto mt-6 px-7 py-2 rounded-full text-white font-medium transition-colors ${
+              saveHover ? "bg-teal-700" : "bg-teal-600"
+            }`}
             onMouseEnter={() => setSaveHover(true)}
             onMouseLeave={() => setSaveHover(false)}
           >

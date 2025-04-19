@@ -1,24 +1,21 @@
 import React from 'react';
 import { useState, useEffect } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-export const LogWeightModal = ({onClose}) => {
 
+export const EditWeightGoal = ({onClose}) => {
 
-  const [hoverClose, setHoverClose] = useState(false);
-  const [hoverSave, setHoverSave] = useState(false);
-
-  const handleSave = async () => {
-
-  }
-
-             
+    const [hoverClose, setHoverClose] = useState(false);
+    const [hoverSave, setHoverSave] = useState(false);
+    
+    const handleSave = async () => {
+        
+    }
+    
   return (
     <div className="flex items-center justify-center fixed inset-0 bg-black/50 px-4 py-8">
       <div className="relative bg-[#0c2627] rounded-xl w-[320px] p-6 shadow-xl text-[#e7f6f2]">
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
-          <div className="text-sm font-medium tracking-wider">LOG WEIGHT</div>
-
+          <div className="text-sm font-medium tracking-wider">EDIT WEIGHT GOAL</div>
           <button
             className={` absolute top-10 right-10 text-[#e0f7fa] text-xl font-bold transition-colors ${
               hoverClose ? "text-red-500" : ""
@@ -30,42 +27,23 @@ export const LogWeightModal = ({onClose}) => {
           >
             &times;
           </button>
-
         </div>
 
         {/* Form */}
         <form>
-          {/* Date */}
+          {/* Target Weight */}
           <div className="mb-4">
-            <label htmlFor="date" className="block text-sm text-[#a0c7c7] mb-2">Date</label>
-            <div className="relative">
-              <input
-                type="date"
-                id="date"
-                className="w-full px-4 py-3 bg-[#0a1f20] rounded-lg text-[#e7f6f2] text-sm outline-none"
-                required
-              />
-              <svg
-                className="absolute right-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-[#7ed6c0]"
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-              >
-                <path d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20a2 2 0 002 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM9 14H7v-2h2v2zm4 0h-2v-2h2v2zm4 0h-2v-2h2v2z" />
-              </svg>
-            </div>
-          </div>
-
-          {/* Weight */}
-          <div className="mb-4">
-            <label htmlFor="weight" className="block text-sm text-[#a0c7c7] mb-2">Weight</label>
+            <label htmlFor="targetWeight" className="block text-sm text-[#a0c7c7] mb-2">
+              Target Weight
+            </label>
             <div className="flex">
               <input
                 type="number"
-                id="weight"
+                id="targetWeight"
                 step="0.1"
                 min="0"
                 className="flex-1 px-4 py-3 bg-[#0a1f20] rounded-l-lg text-[#e7f6f2] text-sm outline-none"
+                placeholder="e.g. 140"
               />
               <div className="flex items-center justify-between px-4 py-3 bg-[#0a1f20] rounded-r-lg text-[#7ed6c0] cursor-pointer">
                 <span>Lb</span>
@@ -76,10 +54,11 @@ export const LogWeightModal = ({onClose}) => {
 
           {/* Notes */}
           <div className="mb-4">
-            <label htmlFor="notes" className="block text-sm text-[#a0c7c7] mb-2">Notes</label>
+            <label htmlFor="goalNotes" className="block text-sm text-[#a0c7c7] mb-2">Notes</label>
             <textarea
-              id="notes"
+              id="goalNotes"
               className="w-full px-4 py-3 bg-[#0a1f20] rounded-lg text-[#e7f6f2] text-sm resize-none h-20"
+              placeholder="Optional notes..."
             ></textarea>
           </div>
 
@@ -96,4 +75,4 @@ export const LogWeightModal = ({onClose}) => {
   );
 };
 
-export default LogWeightModal;
+export default EditWeightGoal;

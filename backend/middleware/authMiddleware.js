@@ -17,8 +17,9 @@ const protect = async (req, res, next) => {
             console.log(decoded);
             // Get user from database by decoded UserID
             const user = await getUserBYID(decoded.id);
+            // console.log(user.dataValues);
 
-            if (user.length === 0) {
+            if (!user) {
                 return res.status(401).json({ message: 'Not authorized, user not found' });
             }
 

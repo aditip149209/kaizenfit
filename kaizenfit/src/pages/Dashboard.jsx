@@ -1,6 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { Link } from 'react-router-dom';
 import { useNavigate } from 'react-router-dom';
+import { CreateEditWorkoutModal } from '../components/CreateEditWorkoutModal';
+import CreateCustomExercise from '../components/CreateCustomExercise';
+import { ViewWorkout } from './ViewWorkout';
+import TrackCalories from './TrackCalories';
+import LogWeightModal from './LogWeight';
+import EditWeightGoal from './EditWeightGoal';
+import { ViewDiet } from './ViewDiet';
+import AddFoodItem from './AddFoodItem';
+import WaterGoalModal from './WaterGoal';
+import CreateNewDiet from '../components/CreateNewDiet';
+
 
 export const Dashboard = () => {
   const token = localStorage.getItem('token');
@@ -12,80 +24,50 @@ export const Dashboard = () => {
   const [customWorkouts, setCustomWorkouts] = useState([]);
   const [todayDiet, setTodayDiet] = useState([]);
   const [calories, setCalories] = useState({});
-  const [waterIntake, setWaterIntake] = useState({});
+  const [waterIntake, setWaterIntake] = useState({current : 0, goal : 8});
   const [weightProgress, setWeightProgress] = useState({});
   const [loading, setLoading] = useState(true);
+  const [exerciseList, setExerciseList] = useState([])
 
-  // Fetch the dashboard data from the API
-  const fetchDashboardData = async () => {
-    setLoading(true);
-    try {
-      // Fetch user profile data
-      const profileResponse = await axios.get('http://localhost:3000/api/user/profile', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setProfile(profileResponse.data);
 
-      // Fetch workouts for the day
-      const workoutsResponse = await axios.get('http://localhost:3000/api/user/workoutoftheday', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setWorkouts(workoutsResponse.data);
+  //states to toggle between modal popups
+  const [showTodayWorkout, setShowTodayWorkout] = useState(false);
+  const [showCreateEditWorkout, setShowCreateWorkout] = useState(false);
+  const [createExercise, setCreateExercise] = useState('');
+  const [showEditWaterGoal, setShowEditWaterGoal] = useState(false);
+  const [showDietPlan, setShowDietPlan] = useState(false);
+  const [showTodayCalories, setShowTodayCalories] = useState(false);
+  const [weightGoal, setWeightGoal] = useState(false)
+  const [logWeight, setLogWeight] = useState(false);
+  const [addFoodItem, setAddFoodItem] = useState(false);
+  const [addNewDiet, setAddNewDiet] = useState(false);
 
-      // Fetch custom workouts
-      const customWorkoutsResponse = await axios.get('http://localhost:3000/api/user/customworkouts', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setCustomWorkouts(customWorkoutsResponse.data);
+ 
 
-      // Fetch diet plan for the day
-      const dietResponse = await axios.get('http://localhost:3000/api/user/dietplan', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setTodayDiet(dietResponse.data);
-
-      // Fetch calorie tracker data
-      const calorieResponse = await axios.get('http://localhost:3000/api/user/calories', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setCalories(calorieResponse.data);
-
-      // Fetch water intake data
-      const waterResponse = await axios.get('http://localhost:3000/api/user/water', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setWaterIntake(waterResponse.data);
-
-      // Fetch weight progress data
-      const weightResponse = await axios.get('http://localhost:3000/api/user/weightprogress', {
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setWeightProgress(weightResponse.data);
-
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-      if (error.response?.status === 401) {
-        navigate('/login');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Use useEffect to fetch data on component mount
-  useEffect(() => {
-    fetchDashboardData();
-  }, [navigate]); // Fetch data when the component mounts or the navigate function changes
-
-  if (loading) {
-    return <div>Loading...</div>; // Show a loading state while fetching data
-  }
+ 
 
   // Function to calculate the percentage for progress bars
   const calculateProgressPercentage = (current, goal) => {
+    if(!goal) return 0;
     return Math.min((current / goal) * 100, 100); // Ensure it's capped at 100%
   };
 
+  
+  const incrementWater = () => {
+    setWaterIntake(prev => ({
+      ...prev,
+      current: prev.current + 1 // cap at goal
+    }));
+  };
+
+  const decrementWater = () => {
+    setWaterIntake(prev => ({
+      ...prev,
+      current: Math.max(0, prev.current - 1), // no negative values
+    }));
+  };
+
+  
 const SidebarItem = ({ icon, title, desc }) => (
   <div className="flex items-start gap-3 p-3 hover:bg-gray-100 rounded-xl cursor-pointer transition">
     <div>{icon}</div>
@@ -131,56 +113,90 @@ const SidebarItem = ({ icon, title, desc }) => (
           <div className="grid grid-cols-3 gap-[25px]">
             {/* Workout of the Day Card */}
             <div className="bg-[#182828] rounded-[18px] p-[20px_22px] min-h-[130px] shadow-[0_2px_8px_rgba(20,_40,_40,_0.05)] flex flex-col justify-between">
-              <div className="text-[#7ed6c0] text-[0.95rem] font-semibold mb-[6px]">WORKOUT OF THE DAY</div>
+              <div className="text-[#7ed6c0] text-[0.95rem] font-semibold mb-[6px]">Workout of the Day</div>
               <ul className="ml-[20px] text-[#b2dfdb] text-[0.95rem]">
                 {workouts.map((workout, index) => (
                   <li key={index}>{workout}</li>
                 ))}
               </ul>
-              <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors">View Details</button>
+              <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors"
+              onClick={() => setShowTodayWorkout(true)}>View Details</button>
+              {showTodayWorkout && <ViewWorkout onClose={() => setShowTodayWorkout(false)} /> }
             </div>
 
             {/* Custom Workouts Card */}
             <div className="bg-[#182828] rounded-[18px] p-[20px_22px] min-h-[130px] shadow-[0_2px_8px_rgba(20,_40,_40,_0.05)] flex flex-col justify-between">
-              <div className="text-[#7ed6c0] text-[0.95rem] font-semibold mb-[6px]">CUSTOM WORKOUTS</div>
+              <div className="text-[#7ed6c0] text-[0.95rem] font-semibold mb-[6px]">My Workouts</div>
               <ul className="ml-[20px] text-[#b2dfdb] text-[0.95rem]">
                 {customWorkouts.map((workout, index) => (
                   <li key={index}>{workout}</li>
                 ))}
               </ul>
-              <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors">Create New</button>
+              <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors"
+              onClick={() => setCreateExercise(true)}>Create New Exercise</button>
+              {createExercise && <CreateCustomExercise onClose={() => setCreateExercise(false)} token={token}/>}
+              <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors"
+              onClick={() => setShowCreateWorkout(true)}>Create New Workout</button>
+              {showCreateEditWorkout && <CreateEditWorkoutModal onClose={() => setShowCreateWorkout(false)} exerciseList={exerciseList} setExerciseList={setExerciseList}/>}
             </div>
 
             {/* Diet Plan Card */}
             <div className="bg-[#182828] rounded-[18px] p-[20px_22px] min-h-[130px] shadow-[0_2px_8px_rgba(20,_40,_40,_0.05)] flex flex-col justify-between">
-              <div className="text-[#7ed6c0] text-[0.95rem] font-semibold mb-[6px]">DIET PLAN</div>
+              <div className="text-[#7ed6c0] text-[0.95rem] font-semibold mb-[6px]">Diet Plan</div>
               <ul className="ml-[20px] text-[#b2dfdb] text-[0.95rem]">
                 {todayDiet.map((meal, index) => (
                   <li key={index}>{meal}</li>
                 ))}
               </ul>
-              <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors">View Diet Plan</button>
+              <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors"
+               onClick={() => setAddFoodItem(true)}>Add Food Item</button>
+              {addFoodItem && <AddFoodItem onClose={() => setAddFoodItem(false)}/>}
+              <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors"
+               onClick={() => setShowDietPlan(true)}>View Diet Plan</button>
+              {showDietPlan && <ViewDiet onClose={() => setShowDietPlan(false)}/>}
+              <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors"
+               onClick={() => setAddNewDiet(true)}>Create New Diet</button>
+              {addNewDiet && <CreateNewDiet onClose={() => setAddNewDiet(false)}/>}
             </div>
 
             {/* Water Intake Card */}
             <div className="bg-[#182828] rounded-[18px] p-[20px_22px] min-h-[130px] shadow-[0_2px_8px_rgba(20,_40,_40,_0.05)] flex flex-col justify-between">
-              <div className="text-[#7ed6c0] text-[0.95rem] font-semibold mb-[6px]">WATER INTAKE</div>
-              <div className="text-[1.1rem] mb-[8px]">Water: {waterIntake.current}/{waterIntake.goal}ml</div>
-              <div className="relative pt-[5px]">
-                <div className="absolute top-0 left-0 w-full bg-[#2e6c6c] h-[10px] rounded-full"></div>
-                <div
-                  className="absolute top-0 left-0 bg-[#7ed6c0] h-[10px] rounded-full"
-                  style={{ width: `${calculateProgressPercentage(waterIntake.current, waterIntake.goal)}%` }}
-                ></div>
-              </div>
-              <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors">Edit Water Goal</button>
-            </div>
+      <div className="text-[#7ed6c0] text-[0.95rem] font-semibold mb-[6px]">Water Intake</div>
+      <div className="text-[1.1rem] mb-[8px]">Water: {waterIntake.current}/{waterIntake.goal}glasses</div>
+      
+      {/* Progress Bar */}
+      <div className="relative pt-[5px] mb-3">
+        <div className="absolute top-0 left-0 w-full bg-[#2e6c6c] h-[10px] rounded-full"></div>
+        <div
+          className="absolute top-0 left-0 bg-[#7ed6c0] h-[10px] rounded-full transition-all duration-300"
+          style={{ width: `${calculateProgressPercentage(waterIntake.current, waterIntake.goal)}%` }}
+        ></div>
+      </div>
+
+      {/* Plus & Minus Buttons */}
+      <div className="flex items-center justify-between mt-2 gap-5">
+        <button
+          onClick={decrementWater}
+          className="w-10 h-10 rounded-full bg-[#1e5a5a] hover:bg-[#3f8b8b] text-white text-xl flex items-center justify-center transition-colors"
+        >−</button>
+        <button
+          onClick={incrementWater}
+          className="w-10 h-10 rounded-full bg-[#1e5a5a] hover:bg-[#3f8b8b] text-white text-xl flex items-center justify-center transition-colors"
+        >+</button>
+        <button
+          className="ml-auto bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors text-sm"
+          onClick={() => setShowEditWaterGoal(true)}>
+          Edit Water Goal
+        </button>
+        {showEditWaterGoal && <WaterGoalModal onClose={() => setShowEditWaterGoal(false)}/>}
+      </div>
+    </div>
 
             {/* Weight Progress Card */}
             <div className="bg-[#182828] rounded-[18px] p-[20px_22px] min-h-[130px] shadow-[0_2px_8px_rgba(20,_40,_40,_0.05)] flex flex-col justify-between">
-              <div className="text-[#7ed6c0] text-[0.95rem] font-semibold mb-[6px]">WEIGHT PROGRESS</div>
-              <div className="text-[1.1rem] mb-[8px]">Weight: {weightProgress.current}kg</div>
-              <div className="text-[#b2dfdb] text-[0.95rem]">Goal: {weightProgress.goal}kg</div>
+              <div className="text-[#7ed6c0] text-[0.95rem] font-semibold mb-[6px]">Weight Progress</div>
+              <div className="text-[1.1rem] mb-[6px]">Weight: {weightProgress.current}kg</div>
+              <div className="text-[#b2dfdb] text-[0.95rem] mb-5">Goal: {weightProgress.goal}kg</div>
               <div className="relative pt-[5px]">
                 <div className="absolute top-0 left-0 w-full bg-[#2e6c6c] h-[10px] rounded-full"></div>
                 <div
@@ -188,7 +204,13 @@ const SidebarItem = ({ icon, title, desc }) => (
                   style={{ width: `${calculateProgressPercentage(weightProgress.current, weightProgress.goal)}%` }}
                 ></div>
               </div>
-              <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors">Edit Weight Goal</button>
+              <button className="mt-6 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors"
+               onClick={() => setLogWeight(true)}>Log Weight</button>
+              {logWeight && <LogWeightModal onClose={() => setLogWeight(false)}/>}
+              <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors"
+               onClick={() => setWeightGoal(true)}>Edit Weight Goal</button>
+              {weightGoal && <EditWeightGoal onClose={() => setWeightGoal(false)}/>}
+              
             </div>
 
             {/* Calorie Tracker Card */}
@@ -202,7 +224,9 @@ const SidebarItem = ({ icon, title, desc }) => (
                   style={{ width: `${calculateProgressPercentage(calories.consumed, calories.goal)}%` }}
                 ></div>
               </div>
-              <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors">Track Calories</button>
+              <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors"
+               onClick={() => setShowTodayCalories(true)}>Track Calories</button>
+              {showTodayCalories && <TrackCalories onClose={() => setShowTodayCalories(false)}/>}
             </div>
           </div>
         </div>
@@ -219,14 +243,16 @@ const SidebarItem = ({ icon, title, desc }) => (
 
     <div className="flex items-start gap-3 p-3 hover:bg-gray-100 rounded-xl cursor-pointer transition">
    
-      <div>
-        <h4 className="text-sm font-medium text-gray-200">View Profile</h4>
-        <p className="text-xs text-gray-500">Profile & preferences</p>
-      </div>
-    </div>  
-    
 
-   
+
+<Link to="/profilesettings">
+  <div className="cursor-pointer">
+    <h4 className="text-sm font-medium text-gray-200">View Profile</h4>
+    <p className="text-xs text-gray-500">Profile & preferences</p>
+  </div>
+</Link>
+
+    </div>     
   </div>
   </div>
   </div>

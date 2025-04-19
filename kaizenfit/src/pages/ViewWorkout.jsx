@@ -1,190 +1,115 @@
 import React from "react";
+import { useState, useEffect } from "react";
+import { jwtDecode } from "jwt-decode";
 
-export function ViewWorkout() {
-  const styles = {
-    overlay: {
-      position: "fixed",
-      top: 0,
-      left: 0,
-      width: "100vw",
-      height: "100vh",
-      backgroundColor: "rgba(0,0,0,0.45)",
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      zIndex: 1000,
-    },
-    modal: {
-      background: "#073032",
-      borderRadius: 14,
-      width: 340,
-      padding: "28px 22px 22px 22px",
-      boxShadow: "0 4px 24px rgba(0,0,0,0.16)",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      position: "relative",
-    },
-    header: {
-      width: "100%",
-      display: "flex",
-      justifyContent: "space-between",
-      alignItems: "center",
-      marginBottom: 18,
-    },
-    title: {
-      fontSize: "1.05rem",
-      fontWeight: 600,
-      letterSpacing: 1,
-      color: "#e0f7fa",
-    },
-    closeButton: {
-      fontSize: "1.2rem",
-      color: "#e0f7fa",
-      background: "none",
-      border: "none",
-      cursor: "pointer",
-      fontWeight: 700,
-      lineHeight: 1,
-      padding: 0,
-      transition: "color 0.2s",
-    },
-    closeButtonHover: {
-      color: "#e74c3c",
-    },
-    input: {
-      width: "100%",
-      background: "#0a2324",
-      border: "none",
-      borderRadius: 8,
-      padding: "9px 12px",
-      fontSize: "1rem",
-      fontFamily: "'Montserrat', sans-serif",
-      fontWeight: 500,
-      letterSpacing: 1,
-      color: "#e7f6f2",
-      textAlign: "center",
-      marginBottom: 18,
-      outline: "none",
-    },
-    table: {
-      width: "100%",
-      borderCollapse: "separate",
-      borderSpacing: "0 10px",
-      marginBottom: 24,
-    },
-    thTd: {
-      background: "#0a2324",
-      padding: "9px 0",
-      border: "none",
-      borderRadius: 8,
-      fontSize: "0.95rem",
-      color: "#b2dfdb",
-      textAlign: "center",
-    },
-    th: {
-      color: "#7ed6c0",
-      fontSize: "0.94rem",
-      fontWeight: 600,
-      letterSpacing: 0.5,
-    },
-    button: {
-      background: "#1dbd6b",
-      color: "#fff",
-      border: "none",
-      borderRadius: 8,
-      padding: "9px 18px",
-      fontSize: "1rem",
-      fontWeight: 600,
-      cursor: "pointer",
-      transition: "background 0.2s",
-      marginBottom: 7,
-    },
-    buttonHover: {
-      background: "#16a05b",
-    },
-  };
+export function ViewWorkout( {onClose}) {
+  const [hoverClose, setHoverClose] = useState(false);
+  const [hoverSave, setHoverSave] = useState(false);
+  const [userId, setUserId] = useState('');
 
-  const [hoverClose, setHoverClose] = React.useState(false);
-  const [hoverSave, setHoverSave] = React.useState(false);
+  const [todayWorkout, setTodayWorkout] = useState('')
+  const [token, setToken] = useState('');
+  useEffect(() => {
+      const token = localStorage.getItem('token');
+      if(token){
+        const decoded = jwtDecode(token);
+        setUserId(decoded.id);
+        setToken(token);
+      }
+    });
+  useEffect(() => {
+    if (token) {
+      getExerciseList();
+    }
+  }, [token]);
+
+  const getExerciseList = async () => {
+    const response = await axios.get('http://localhost:3000/api/user/getExerciseList', {
+        headers: {Authorization: `Bearer ${token}`}
+    })
+    setExerciseList(response.data);
+  }
+     
 
   return (
-    <div style={styles.overlay}>
-      <div style={styles.modal}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 px-4">
+      <div className="bg-[#073032] rounded-xl w-[340px] p-6 shadow-xl flex flex-col items-center relative">
+        
         {/* Header */}
-        <div style={styles.header}>
-          <div style={styles.title}>VIEW WORKOUT</div>
+        <div className="w-full flex justify-between items-center mb-4">
+          <div className="text-[#e0f7fa] text-[1.05rem] font-semibold tracking-wide">VIEW WORKOUT</div>
           <button
-            style={{
-              ...styles.closeButton,
-              ...(hoverClose ? styles.closeButtonHover : {}),
-            }}
+            className={`text-[#e0f7fa] text-xl font-bold transition-colors ${
+              hoverClose ? "text-red-500" : ""
+            }`}
             onMouseEnter={() => setHoverClose(true)}
             onMouseLeave={() => setHoverClose(false)}
-            onClick={() => alert("Close clicked")}
+            onClick={onClose}
             aria-label="Close"
           >
             &times;
           </button>
         </div>
+
         {/* Workout Name */}
         <input
-          style={styles.input}
-          value="FULL BODY HIIT"
           readOnly
+          value="FULL BODY HIIT"
+          className="w-full bg-[#0a2324] rounded-lg px-3 py-2 text-center text-[#e7f6f2] text-base font-medium tracking-wide mb-4 outline-none"
         />
+
         {/* Exercise Table */}
-        <table style={styles.table}>
+        <table className="w-full border-separate border-spacing-y-2 mb-6">
           <thead>
-            <tr>
-              <th style={{ ...styles.thTd, ...styles.th }}>EXERCISE NAME</th>
-              <th style={{ ...styles.thTd, ...styles.th }}>SETS</th>
-              <th style={{ ...styles.thTd, ...styles.th }}>REPS</th>
+            <tr className="text-[#7ed6c0] text-sm font-semibold tracking-wide">
+              <th className="bg-[#0a2324] rounded-md py-2">Exercise Name</th>
+              <th className="bg-[#0a2324] rounded-md py-2">Sets</th>
+              <th className="bg-[#0a2324] rounded-md py-2">Reps</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="text-[#b2dfdb] text-sm text-center">
             <tr>
-              <td style={styles.thTd}>Pushups</td>
-              <td style={styles.thTd}>3</td>
-              <td style={styles.thTd}>15</td>
+              <td className="bg-[#0a2324] rounded-md py-2">Pushups</td>
+              <td className="bg-[#0a2324] rounded-md py-2">3</td>
+              <td className="bg-[#0a2324] rounded-md py-2">15</td>
             </tr>
             <tr>
-              <td style={styles.thTd}>Donkey Kicks</td>
-              <td style={styles.thTd}>4</td>
-              <td style={styles.thTd}>15</td>
+              <td className="bg-[#0a2324] rounded-md py-2">Donkey Kicks</td>
+              <td className="bg-[#0a2324] rounded-md py-2">4</td>
+              <td className="bg-[#0a2324] rounded-md py-2">15</td>
             </tr>
             <tr>
-              <td style={styles.thTd}>Low Plank</td>
-              <td style={styles.thTd}>5</td>
-              <td style={styles.thTd}>30 sec</td>
+              <td className="bg-[#0a2324] rounded-md py-2">Low Plank</td>
+              <td className="bg-[#0a2324] rounded-md py-2">5</td>
+              <td className="bg-[#0a2324] rounded-md py-2">30 sec</td>
             </tr>
             <tr>
-              <td style={styles.thTd}>High Plank</td>
-              <td style={styles.thTd}>5</td>
-              <td style={styles.thTd}>30 sec</td>
+              <td className="bg-[#0a2324] rounded-md py-2">High Plank</td>
+              <td className="bg-[#0a2324] rounded-md py-2">5</td>
+              <td className="bg-[#0a2324] rounded-md py-2">30 sec</td>
             </tr>
             <tr>
-              <td style={styles.thTd}>Tuck Ins</td>
-              <td style={styles.thTd}>5</td>
-              <td style={styles.thTd}>15</td>
+              <td className="bg-[#0a2324] rounded-md py-2">Tuck Ins</td>
+              <td className="bg-[#0a2324] rounded-md py-2">5</td>
+              <td className="bg-[#0a2324] rounded-md py-2">15</td>
             </tr>
           </tbody>
         </table>
+
         {/* Buttons */}
         <button
-          style={styles.button}
+          className="w-full bg-[#1dbd6b] hover:bg-[#16a05b] text-white font-semibold py-2 rounded-lg transition-colors mb-2"
           onMouseEnter={() => setHoverSave(true)}
           onMouseLeave={() => setHoverSave(false)}
           onClick={() => alert("View Workout")}
         >
-          VIEW WORKOUT
+          View Workout
         </button>
+
         <button
-          style={{
-            ...styles.button,
-            background: hoverSave ? "#16a05b" : styles.button.background,
-            marginTop: 7,
-          }}
+          className={`w-full font-semibold py-2 rounded-lg transition-colors ${
+            hoverSave ? "bg-[#16a05b]" : "bg-[#1dbd6b]"
+          } text-white`}
           onMouseEnter={() => setHoverSave(true)}
           onMouseLeave={() => setHoverSave(false)}
           onClick={() => alert("Mark as completed")}

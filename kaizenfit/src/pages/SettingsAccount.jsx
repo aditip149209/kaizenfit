@@ -2,214 +2,8 @@ import React, { useState } from "react";
 
 export default function SettingsAccount() {
   const [activeNav, setActiveNav] = useState("Account");
-
-
-  const styles = {
-    container: {
-      display: "flex",
-      minHeight: "100vh",
-      borderRadius: 22,
-      overflow: "hidden",
-      background: "#0b181a",
-      fontFamily: "'Inter', sans-serif",
-      color: "#e3f6fc",
-      margin: 0,
-      padding: 0,
-    },
-    sidebar: {
-      width: 90,
-      background: "#162224",
-      display: "flex",
-      flexDirection: "column",
-      alignItems: "center",
-      padding: "32px 0",
-      gap: 18,
-      borderRadius: "22px 0 0 22px",
-    },
-    logoWrapper: {
-      marginBottom: 36,
-    },
-    logoImg: {
-      width: 40,
-      height: 40,
-    },
-    iconLink: {
-      display: "block",
-      width: 48,
-      height: 48,
-      marginBottom: 12,
-      borderRadius: 12,
-      background: "#223036",
-      displayFlex: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      cursor: "pointer",
-      transition: "background 0.2s",
-    },
-    iconLinkActive: {
-      background: "#2ec4b6",
-    },
-    iconImg: {
-      width: 28,
-      height: 28,
-      display: "block",
-      margin: "auto",
-      filter: "brightness(0) invert(1) grayscale(1) opacity(0.85)",
-      transition: "filter 0.2s",
-    },
-    iconImgActive: {
-      filter: "none",
-    },
-    sidebarBottom: {
-      marginTop: "auto",
-      marginBottom: 10,
-    },
-    mainPanel: {
-      flex: 1,
-      background: "#112224",
-      borderRadius: "0 22px 22px 0",
-      padding: "48px 0",
-      minWidth: 0,
-      display: "flex",
-      flexDirection: "row",
-      minHeight: "100vh",
-    },
-    settingsNav: {
-      width: 180,
-      paddingLeft: 38,
-      display: "flex",
-      flexDirection: "column",
-      gap: 6,
-    },
-    navTitle: {
-      fontSize: "1.13rem",
-      fontWeight: 600,
-      color: "#e3f6fc",
-      marginBottom: 22,
-    },
-    navLink: {
-      color: "#b5d7e5",
-      background: "none",
-      border: "none",
-      padding: "10px 18px",
-      borderRadius: 8,
-      fontSize: "1rem",
-      textAlign: "left",
-      cursor: "pointer",
-      transition: "background 0.2s, color 0.2s",
-      marginBottom: 2,
-      fontFamily: "inherit",
-    },
-    navLinkActive: {
-      background: "#2ec4b6",
-      color: "#fff",
-      fontWeight: 600,
-    },
-    settingsContent: {
-      flex: 1,
-      display: "flex",
-      alignItems: "flex-start",
-      justifyContent: "flex-start",
-      paddingLeft: 60,
-    },
-    settingsCard: {
-      background: "#0e2324",
-      borderRadius: 18,
-      padding: "36px 38px 28px 38px",
-      minWidth: 420,
-      maxWidth: 520,
-      color: "#e3f6fc",
-      boxShadow: "0 2px 12px 0 rgba(0,0,0,0.08)",
-      marginTop: 8,
-      display: "flex",
-      flexDirection: "column",
-    },
-    cardTitle: {
-      marginBottom: 18,
-      fontSize: "1.13rem",
-      fontWeight: 600,
-    },
-    label: {
-      fontSize: "0.98rem",
-      color: "#b5d7e5",
-      marginBottom: 6,
-      display: "block",
-    },
-    input: {
-      width: "100%",
-      background: "transparent",
-      border: "1px solid #244043",
-      borderRadius: 8,
-      padding: "10px 12px",
-      color: "#e3f6fc",
-      fontSize: "1rem",
-      outline: "none",
-      marginBottom: 18,
-    },
-    inputReadonly: {
-      color: "#b5d7e5",
-    },
-    row: {
-      display: "flex",
-      alignItems: "center",
-      gap: 12,
-      marginBottom: 18,
-    },
-    rowInput: {
-      marginBottom: 0,
-      width: 180,
-    },
-    btn: {
-      background: "#2ec4b6",
-      color: "#fff",
-      border: "none",
-      padding: "8px 20px",
-      borderRadius: 8,
-      fontSize: "1rem",
-      fontWeight: 600,
-      cursor: "pointer",
-      transition: "background 0.2s",
-      marginTop: 0,
-      marginBottom: 0,
-    },
-    btnHover: {
-      background: "#22b5a5",
-    },
-    deviceList: {
-      fontSize: "0.97rem",
-      color: "#b5d7e5",
-      marginBottom: 18,
-      marginTop: 8,
-      lineHeight: 1.3,
-    },
-    deviceListStrong: {
-      color: "#e3f6fc",
-    },
-    saveBtn: {
-      background: "#2ec4b6",
-      color: "#fff",
-      border: "none",
-      padding: "10px 32px",
-      borderRadius: 8,
-      fontSize: "1rem",
-      fontWeight: 600,
-      cursor: "pointer",
-      marginTop: 10,
-      transition: "background 0.2s",
-      alignSelf: "flex-start",
-    },
-    saveBtnHover: {
-      background: "#22b5a5",
-    },
-    lastSync: {
-      fontSize: "0.92rem",
-      color: "#7aafc6",
-      marginTop: 10,
-    },
-  };
-
-  const [btnHover, setBtnHover] = React.useState(false);
-  const [saveHover, setSaveHover] = React.useState(false);
+  const [btnHover, setBtnHover] = useState(false);
+  const [saveHover, setSaveHover] = useState(false);
 
   // Sidebar icons data
   const sidebarIcons = [
@@ -217,66 +11,60 @@ export default function SettingsAccount() {
     { href: "#", src: "icons/home.png", alt: "Home" },
     { href: "#", src: "icons/stats.png", alt: "Analytics" },
     { href: "#", src: "icons/meal.png", alt: "Billing" },
-    { href: "#", src: "icons/settings.png", alt: "Settings", active: true },
+    { href: "#", src: "icons/settings.png", alt: "Settings" },
     { href: "#", src: "icons/logout.png", alt: "Logout", bottom: true },
   ];
 
   // Settings nav links
-  const navLinks = ["Profile", "Account", "Your Plan", "Help"];
-
+  const navLinks = ["Profile", "Account",  "Help"];
 
   return (
-    <div style={styles.container}>
+    <div className="flex min-h-screen bg-[#0b181a] font-inter text-[#e3f6fc]">
       {/* Sidebar */}
-      <div style={styles.sidebar}>
+      <div className="w-24 bg-[#162224] flex flex-col items-center py-8 gap-4 rounded-l-2xl">
         {sidebarIcons.map(({ href, src, alt, isLogo, active, bottom }, i) => (
           <a
             key={i}
             href={href}
-            style={{
-              ...styles.iconLink,
-              ...(active ? styles.iconLinkActive : {}),
-              ...(bottom ? { marginTop: "auto", marginBottom: 10 } : {}),
-            }}
-            className={active ? "active" : ""}
+            className={`${
+              active ? "bg-[#2ec4b6]" : "bg-[#223036]"
+            } w-12 h-12 mb-3 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200`}
+            style={bottom ? { marginTop: "auto", marginBottom: "10px" } : {}}
           >
             <img
               src={src}
               alt={alt}
-              style={{
-                ...styles.iconImg,
-                ...(active ? styles.iconImgActive : {}),
-              }}
+              className={`w-7 h-7 transition-all duration-200 ${
+                active ? "filter-none" : "filter brightness-0 invert grayscale opacity-85"
+              }`}
             />
           </a>
         ))}
       </div>
 
       {/* Main Panel */}
-      <div style={styles.mainPanel}>
-        <nav style={styles.settingsNav}>
-          <div style={styles.navTitle}>Settings</div>
+      <div className="flex-1 bg-[#112224] rounded-r-2xl p-12 min-w-0 flex flex-row min-h-screen">
+        <nav className="w-44 pl-10 flex flex-col gap-6">
+          <div className="text-xl font-semibold text-[#e3f6fc] mb-6">Settings</div>
           {navLinks.map((link) => (
             <button
               key={link}
-              style={{
-                ...styles.navLink,
-                ...(activeNav === link ? styles.navLinkActive : {}),
-              }}
+              className={`${
+                activeNav === link ? "bg-[#2ec4b6] text-white font-semibold" : "bg-transparent text-[#b5d7e5]"
+              } p-2.5 rounded-lg text-lg text-left cursor-pointer transition-all duration-200`}
               onClick={() => setActiveNav(link)}
-              className={activeNav === link ? "active" : ""}
             >
               {link}
             </button>
           ))}
         </nav>
 
-        <div style={styles.settingsContent}>
+        <div className="flex-1 flex items-start justify-start pl-14">
           {activeNav === "Account" && (
-            <div style={styles.settingsCard}>
-              <div style={styles.cardTitle}>Account</div>
+            <div className="bg-[#0e2324] rounded-xl p-9 max-w-xl w-full text-[#e3f6fc] shadow-md mt-2 flex flex-col">
+              <div className="text-xl font-semibold mb-4">Account</div>
 
-              <label htmlFor="email" style={styles.label}>
+              <label htmlFor="email" className="text-sm text-[#b5d7e5] mb-1">
                 Email Address
               </label>
               <input
@@ -284,29 +72,24 @@ export default function SettingsAccount() {
                 type="email"
                 value="jagjeet@magical.com"
                 readOnly
-                style={{ ...styles.input, ...styles.inputReadonly }}
+                className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg mb-4"
               />
 
-              <label htmlFor="password" style={styles.label}>
+              <label htmlFor="password" className="text-sm text-[#b5d7e5] mb-1">
                 Password
               </label>
-              <div style={styles.row}>
+              <div className="flex items-center gap-4 mb-6">
                 <input
                   id="password"
                   type="password"
                   value="********"
                   readOnly
-                  style={{ ...styles.input, ...styles.rowInput }}
+                  className="w-44 bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg"
                 />
                 <button
-                  style={{
-                    ...styles.btn,
-                    ...(btnHover ? styles.btnHover : {}),
-                    marginTop: 0,
-                    marginBottom: 0,
-                    padding: "8px 16px",
-                    fontSize: "0.98rem",
-                  }}
+                  className={`${
+                    btnHover ? "bg-[#22b5a5]" : "bg-[#2ec4b6]"
+                  } text-white p-2 rounded-lg text-sm font-semibold`}
                   onMouseEnter={() => setBtnHover(true)}
                   onMouseLeave={() => setBtnHover(false)}
                   onClick={() => alert("Change password clicked")}
@@ -315,12 +98,10 @@ export default function SettingsAccount() {
                 </button>
               </div>
 
-  
               <button
-                style={{
-                  ...styles.saveBtn,
-                  ...(saveHover ? styles.saveBtnHover : {}),
-                }}
+                className={`${
+                  saveHover ? "bg-[#22b5a5]" : "bg-[#2ec4b6]"
+                } text-white p-3 rounded-lg text-lg font-semibold mt-4`}
                 onMouseEnter={() => setSaveHover(true)}
                 onMouseLeave={() => setSaveHover(false)}
                 onClick={() => alert("Save clicked")}
@@ -330,7 +111,110 @@ export default function SettingsAccount() {
             </div>
           )}
 
-         
+
+          {activeNav === "Profile" && (
+            <div className="bg-[#0e2324] rounded-xl p-9 max-w-xl w-full text-[#e3f6fc] shadow-md mt-2 flex flex-col">
+              <div className="text-xl font-semibold mb-4">Account</div>
+
+              <label htmlFor="email" className="text-sm text-[#b5d7e5] mb-1">
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                value="jagjeet@magical.com"
+                readOnly
+                className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg mb-4"
+              />
+
+              <label htmlFor="password" className="text-sm text-[#b5d7e5] mb-1">
+                Password
+              </label>
+              <div className="flex items-center gap-4 mb-6">
+                <input
+                  id="password"
+                  type="password"
+                  value="********"
+                  readOnly
+                  className="w-44 bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg"
+                />
+                <button
+                  className={`${
+                    btnHover ? "bg-[#22b5a5]" : "bg-[#2ec4b6]"
+                  } text-white p-2 rounded-lg text-sm font-semibold`}
+                  onMouseEnter={() => setBtnHover(true)}
+                  onMouseLeave={() => setBtnHover(false)}
+                  onClick={() => alert("Change password clicked")}
+                >
+                  Change Password
+                </button>
+              </div>
+
+              <button
+                className={`${
+                  saveHover ? "bg-[#22b5a5]" : "bg-[#2ec4b6]"
+                } text-white p-3 rounded-lg text-lg font-semibold mt-4`}
+                onMouseEnter={() => setSaveHover(true)}
+                onMouseLeave={() => setSaveHover(false)}
+                onClick={() => alert("Save clicked")}
+              >
+                Save
+              </button>
+            </div>
+          )}
+          
+
+
+          {activeNav === "Help" && (
+            <div className="bg-[#0e2324] rounded-xl p-9 max-w-xl w-full text-[#e3f6fc] shadow-md mt-2 flex flex-col">
+              <div className="text-xl font-semibold mb-4">Account</div>
+
+              <label htmlFor="email" className="text-sm text-[#b5d7e5] mb-1">
+                Email Address
+              </label>
+              <input
+                id="email"
+                type="email"
+                value="jagjeet@magical.com"
+                readOnly
+                className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg mb-4"
+              />
+
+              <label htmlFor="password" className="text-sm text-[#b5d7e5] mb-1">
+                Password
+              </label>
+              <div className="flex items-center gap-4 mb-6">
+                <input
+                  id="password"
+                  type="password"
+                  value="********"
+                  readOnly
+                  className="w-44 bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg"
+                />
+                <button
+                  className={`${
+                    btnHover ? "bg-[#22b5a5]" : "bg-[#2ec4b6]"
+                  } text-white p-2 rounded-lg text-sm font-semibold`}
+                  onMouseEnter={() => setBtnHover(true)}
+                  onMouseLeave={() => setBtnHover(false)}
+                  onClick={() => alert("Change password clicked")}
+                >
+                  Change Password
+                </button>
+              </div>
+
+              <button
+                className={`${
+                  saveHover ? "bg-[#22b5a5]" : "bg-[#2ec4b6]"
+                } text-white p-3 rounded-lg text-lg font-semibold mt-4`}
+                onMouseEnter={() => setSaveHover(true)}
+                onMouseLeave={() => setSaveHover(false)}
+                onClick={() => alert("Save clicked")}
+              >
+                Save
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
