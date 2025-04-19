@@ -191,16 +191,7 @@ export default function SettingsAccount() {
                   readOnly
                   className="w-44 bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg"
                 />
-                <button
-                  className={`${
-                    btnHover ? "bg-[#22b5a5]" : "bg-[#2ec4b6]"
-                  } text-white p-2 rounded-lg text-sm font-semibold`}
-                  onMouseEnter={() => setBtnHover(true)}
-                  onMouseLeave={() => setBtnHover(false)}
-                  onClick={() => alert("Change password clicked")}
-                >
-                  Change Password
-                </button>
+                
               </div>
 
               <button
