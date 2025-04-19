@@ -46,7 +46,7 @@ export const EditWeightGoal = ({onClose}) => {
                 placeholder="e.g. 140"
               />
               <div className="flex items-center justify-between px-4 py-3 bg-[#0a1f20] rounded-r-lg text-[#7ed6c0] cursor-pointer">
-                <span>Lb</span>
+                <span>Kg</span>
                 <span className="text-xs">▼</span>
               </div>
             </div>

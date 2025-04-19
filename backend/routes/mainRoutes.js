@@ -7,6 +7,7 @@ import { getLoggedWeightsController, logWeightController } from "../controllers/
 import { createWorkoutWithExercisesController, getRandomWorkoutWithExercisesController, markWorkoutAsCompletedController, 
     createExercise, getWorkoutListController, getExerciseListController } from "../controllers/workoutController.js";
 import { getUserProfileController, updateUserProfileController } from "../controllers/settingsController.js";
+import { createNewDietController, createFoodItemController } from "../controllers/dietController.js";
 
 const mainRouter = Router();
     
@@ -39,6 +40,14 @@ mainRouter.post('/markascomplete', protect, markWorkoutAsCompletedController)
 //user profile settings
 mainRouter.get('/profile', protect, getUserProfileController)
 mainRouter.put('/profile', protect, updateUserProfileController)
+
+//diet 
+mainRouter.post('/createnewdiet', protect, createNewDietController);
+mainRouter.post('/createnewfooditem', protect, createFoodItemController);
+mainRouter.get('/getfooditemlist', protect, getFoodItemListController);
+
+
+
 
 
 

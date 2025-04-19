@@ -67,19 +67,19 @@ const DietPlan = sequelize.define("DietPlan", {
     
     CaloriesConsumed: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
     CarbsConsumed: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     },
     ProteinCOnsumed: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true
     },
     FatsConsumed: {
         type: DataTypes.INTEGER,
-        allowNull: false
+        allowNull: true
     },
     Type: {
         type: DataTypes.ENUM('vegetarian', 'non_vegetarian', 'vegan', 'keto', 'eggetarian'),
@@ -87,7 +87,7 @@ const DietPlan = sequelize.define("DietPlan", {
         defaultValue: 'vegetarian'
     }, 
     Day: {
-        type: DataTypes.ENUM('Monday', 'Tuesday', 'Wednesday', 'THrusday', 'Friday', 'Saturday', 'Sunday'),
+        type: DataTypes.ENUM('Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'),
         allowNull: false,
         defaultValue: 'Monday'
     }
@@ -462,6 +462,10 @@ const DietPlanFoodItem = sequelize.define("DietPlanFoodItem", {
             model: FoodItem,
             key: 'FoodID'
         }
+    },
+    customQuantity: {
+        type: DataTypes.INTEGER,
+        allowNull: true
     }
 })
 
@@ -541,6 +545,11 @@ const WaterLog = sequelize.define("WaterLog", {
     Quantity: { // Amount of water consumed in this entry
         type: DataTypes.FLOAT, // Use FLOAT to allow partial values (e.g., 0.5 liters)
         allowNull: false,
+    },
+    Count: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 0,
     }
 });
 

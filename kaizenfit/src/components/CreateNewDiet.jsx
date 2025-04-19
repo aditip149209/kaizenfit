@@ -1,15 +1,23 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
+
 
 function CreateNewDiet({onClose}) {
 
-    const [foodList, setFoodList] = useState([]);  
+  const [foodList, setFoodList] = useState([]);  
+  const [foodItems, setFoodItems] = useState([
+    {id: '', name: '', quantity:'', measure:''}
+  ])
 
-  
+  const [dietName, setDietName] = useState('');
+  const [dietGoal, setDietGoal] = useState('')
+  const [dietType, setDietType] = useState('')
+  const [dietDesc, setDietDesc] = useState('')
+ 
 
   const [token, setToken] = useState('')
   const [hoverClose, setHoverClose] = useState(false);
   const [hoverSave, setHoverSave] = useState(false);
-           
+         
  
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -33,78 +41,53 @@ function CreateNewDiet({onClose}) {
   }
 
 
-  const handleExerciseChange = (index, field, value) => {
-    const updated = [...exercises];
   
-    if (field === 'name') {
-      const selected = exerciseList.find(e => e.Name === value);
-      if (selected) {
-        updated[index] = {
-          ExerciseID: selected.ExerciseID,
-          name: selected.Name,
-          sets: selected.defaultSets,
-          reps: selected.defaultReps
-        };
-      }
-    } else {
-      updated[index][field] = value;
-    }
-  
-    setExercises(updated);
-  };
-
-  const addExercise = () => {
-    setExercises([...exercises, { name: '', sets: '', reps: '' }]);
-  };
-
   const handleSave = async () => {
     if (
-      !workoutName ||
-      !workoutCal ||
-      !workoutDur ||
-      !workoutTarget ||
-      !workoutType
+      !dietName ||
+      !dietType||
+      !dietGoal 
     ) {
-      toast.warn('Please fill all required workout fields');
+      toast.warn('Please fill all required diet fields');
       return;
     }
   
     // Check for at least one complete/valid exercise
-    const hasAtLeastOneValidExercise = exercises.some(
-      ex => ex.ExerciseID && ex.sets && ex.reps
+    const hasAtLeastOneValidFood = foodItems.some(
+      foodItem => foodItem.id && foodItem.quantity
     );
   
-    if (!hasAtLeastOneValidExercise) {
+    if (!hasAtLeastOneValidFood) {
       toast.warn('Workout must have at least one valid exercise');
       return;
     }
   
-    const workoutData = {
-      Name: workoutName,
-      Duration: workoutDur,
-      CaloriesBurned: workoutCal,
-      Type: workoutType,
-      TargetPart: workoutTarget
+    const dietData = {
+      Name: dietName,
+      GoalType: dietGoal,
+      Type: dietType,
+      Description: dietDesc
     };
   
     // Only include valid exercises
-    const formattedExercises = exercises
-      .filter(ex => ex.ExerciseID && ex.sets && ex.reps)
+    const formattedFoodItems = foodItems
+      .filter(ex => ex.id && ex.name && ex.quantity)
       .map(ex => ({
-        ExerciseID: ex.ExerciseID,
-        reps: ex.reps,
-        sets: ex.sets
+        id: ex.id,
+        name: ex.name,
+        quantity: ex.quantity,
+        measure: ex.measure
       }));
   
     try {
-      const sendExercises = await axios.post('http://localhost:3000/api/user/customworkout', {
-        workoutData,
-        exercises: formattedExercises
+      const sendDiet = await axios.post('http://localhost:3000/api/user/', {
+        dietData,
+        exercises: formattedFoodItems
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
   
-      console.log('Saved!', sendExercises.data);
+      console.log('Saved!', sendDiet.data);
       toast.success('Workout saved successfully!');
   
       // Reset form
