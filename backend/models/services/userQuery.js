@@ -318,6 +318,8 @@ const logWaterIntake = async (userId, quantity) => {
 
 
 
+
+
 export {GetUserByEmail, insertIntoUser, onboardUserDetails, getUserBYID, todayFoodLog, 
     logWaterIntake, getTodaysWaterIntake, getFoodLogByType, logFoodByType, deleteLog};
 

@@ -7,7 +7,7 @@ import { getLoggedWeightsController, logWeightController } from "../controllers/
 import { createWorkoutWithExercisesController, getRandomWorkoutWithExercisesController, markWorkoutAsCompletedController, 
     createExercise, getWorkoutListController, getExerciseListController } from "../controllers/workoutController.js";
 import { getUserProfileController, updateUserProfileController } from "../controllers/settingsController.js";
-import { createNewDietController, createFoodItemController } from "../controllers/dietController.js";
+import { createNewDietController, createFoodItemController, getFoodItemListController } from "../controllers/dietController.js";
 
 const mainRouter = Router();
     
