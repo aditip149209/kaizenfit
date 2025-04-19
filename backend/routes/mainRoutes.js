@@ -44,7 +44,7 @@ mainRouter.put('/profile', protect, updateUserProfileController)
 //diet 
 mainRouter.post('/createnewdiet', protect, createNewDietController);
 mainRouter.post('/createnewfooditem', protect, createFoodItemController);
-mainRouter.get('/getfooditemlist', protect, getFoodItemListController);
+//mainRouter.get('/getfooditemlist', protect, getFoodItemListController);
 
 
 

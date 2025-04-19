@@ -19,7 +19,7 @@ const connectDB = async () => {
     try{
         await sequelize.authenticate();
         console.log('Successfully connected to database'),
-        await sequelize.sync();
+        await sequelize.sync({force: true});
         console.log("Database and tables synced")
     }
     catch(error){
