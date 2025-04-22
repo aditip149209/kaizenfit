@@ -20,7 +20,8 @@ const Login = () => {
       console.log(response);
       console.log(response.data.user);
       // Check if user has completed onboarding
-      if (!response.data.user.is_onboarded) {
+      console.log(response.data.user.isOnboarded);
+      if (!response.data.user.isOnboarded) {
         navigate('/onboarding');
       } else {
         navigate('/dashboard');

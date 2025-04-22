@@ -1,5 +1,6 @@
 import db from "../index.js";
 import { sequelize } from "../../utils/database.js";
+import { Op } from "sequelize";
 
 export const getRandomWorkoutWithExercises = async (day) => {
     try {
@@ -84,8 +85,18 @@ export const createWorkoutWithExercises = async (workoutData, exercises) => {
 export const getWorkoutListFromDB = async(UserID) => {
     try{
     const workouts = await db.Workout.findAll({
-        where: { createdByUserId: UserID },
-        attributes: ['Name', 'Duration', 'Type']
+        where: { [Op.or]: [
+            { createdByUserId: null }, // Default workouts
+            { createdByUserId: UserID }, // User-specific workouts
+        ] },
+        attributes: ['Name', 'Duration', 'Type', 'createdByUserId'],
+        include: [
+            {
+                model: db.Exercise,
+                through: { attributes: ['customReps', 'customSets'] }  // This removes the extra fields from the join table in the result
+
+            }
+        ]
       });
       console.log(workouts); 
       return workouts

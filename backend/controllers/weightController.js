@@ -3,14 +3,14 @@ import db from "../models/index.js";
 import { logWeight, getLoggedWeights } from "../models/services/weightQuery.js";
 
 export const logWeightController = async (req, res) => {
-    const { userId, weight } = req.body;
+    const { userId, weight, date } = req.body;
 
     if (!userId || !weight) {
         return res.status(400).json({ message: "User ID and weight are required." });
     }
 
     try {
-        const weightLog = await logWeight(userId, weight);
+        const weightLog = await logWeight(userId, weight, date);
 
         return res.status(201).json({
             message: "Weight logged successfully.",

@@ -5,7 +5,7 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 
-export const CreateEditWorkoutModal = ({ onClose, exerciseList, setExerciseList }) => {
+export const CreateEditWorkoutModal = ({ onClose, exerciseList, setExerciseList, onUpdate }) => {
   const [workoutName, setWorkoutName] = useState('');
   
   const [exercises, setExercises] = useState([
@@ -96,7 +96,8 @@ export const CreateEditWorkoutModal = ({ onClose, exerciseList, setExerciseList 
       Duration: workoutDur,
       CaloriesBurned: workoutCal,
       Type: workoutType,
-      TargetPart: workoutTarget
+      TargetPart: workoutTarget,
+      createdByUserId: userId
     };
   
     // Only include valid exercises
@@ -126,6 +127,8 @@ export const CreateEditWorkoutModal = ({ onClose, exerciseList, setExerciseList 
       setWorkoutType('');
       setWorkoutTarget('');
       setExercises([{ id: '', name: '', sets: '', reps: '' }]);
+
+      onUpdate()
   
       // Close form after delay
       setTimeout(() => {

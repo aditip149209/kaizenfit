@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import axios from "axios"; // Don’t forget this if it’s not imported already
 
-function AddFoodItem({ onClose, token }) {
+function AddFoodItem({ onClose}) {
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
   const [calories, setCalories] = useState("");
@@ -13,8 +13,11 @@ function AddFoodItem({ onClose, token }) {
   const [timing, setTiming] = useState("snack");
   const [quantity, setQuantity] = useState("1");
   const [type, setType] = useState("vegetarian");
+  const [avgWeight, setAvgWeight] = useState("");
 
   const [hoverClose, setHoverClose] = useState(false);
+
+  const token = localStorage.getItem("token");
 
   const handleSave = async () => {
     if (
@@ -33,7 +36,7 @@ function AddFoodItem({ onClose, token }) {
 
     try {
       const res = await axios.post(
-        "http://localhost:3000/api/user/foodItem",
+        "http://localhost:3000/api/user/createnewfoodItem",
         {
           Name: name,
           Description: description,
@@ -45,6 +48,7 @@ function AddFoodItem({ onClose, token }) {
           Timing: timing,
           Quantity: Number(quantity),
           Type: type,
+          AvgWeightPerServing: avgWeight
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -170,6 +174,19 @@ function AddFoodItem({ onClose, token }) {
             <option value="keto">Keto</option>
             <option value="eggetarian">Eggetarian</option>
           </select>
+
+          <input
+        type="number"
+        disabled={measure === "pieces"}
+        className={`h-10 px-4 rounded-[31px] ${
+          measure === "pieces"
+            ? "bg-transparent text-gray-400 cursor-not-allowed"
+            : "bg-transparent text-white"
+          } border border-white/30 text-sm`}
+        placeholder="Avg Weight Per Serving"
+        value={avgWeight}
+        onChange={(e) => setAvgWeight(e.target.value)}
+        />
         </div>
 
         <div className="flex justify-center">

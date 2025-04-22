@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Link, Navigate} from 'react-router-dom';
 import { LandingPage } from './pages/LandingPage';
 import { Dashboard } from './pages/Dashboard';
 import Login from './pages/LoginUser';
@@ -12,7 +12,15 @@ import SettingsAccount from './pages/SettingsAccount';
 
 
 
+
+
+
 function App() {
+
+  const PrivateRoute = ({ children }) => {
+    const token = localStorage.getItem('token');
+    return token ? children : <Navigate to="/login" />;
+  }
   return (
     <Router>
       {/* Routes */}
@@ -23,17 +31,12 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="/dashboard" element={<Dashboard /> } />
-        <Route path="/profilesettings" element={<SettingsAccount /> } />
-        
-        
-        <Route path="/analytics" element={<Analytics /> } />   
-           
+        <Route path="/dashboard" element={<PrivateRoute><Dashboard /></PrivateRoute>} />
+        <Route path="/profilesettings" element={<PrivateRoute><SettingsAccount /></PrivateRoute>} />
+        <Route path="/analytics" element={<PrivateRoute><Analytics /></PrivateRoute>} />   
       </Routes>
     </Router>
   );
 }
-
-
 
 export default App;

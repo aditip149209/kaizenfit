@@ -1,15 +1,46 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
 
-export const EditWeightGoal = ({onClose}) => {
+export const EditWeightGoal = ({ onClose, userId, token }) => {
 
-    const [hoverClose, setHoverClose] = useState(false);
-    const [hoverSave, setHoverSave] = useState(false);
-    
-    const handleSave = async () => {
-        
+  const [hoverClose, setHoverClose] = useState(false);
+  const [targetWeight, setTargetWeight] = useState(""); // State to store target weight
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+
+    // Ensure target weight is filled in
+    if (!targetWeight || targetWeight <= 0) {
+      toast.error("Please provide a valid target weight");
+      return;
     }
-    
+
+    try {
+      // Send a POST request to update weight goal
+      const response = await axios.post(
+        'http://localhost:3000/api/user/changeweightgoal',
+        {
+          userId: userId, // User ID passed as prop
+          updatedData: {
+            GoalWeight: targetWeight, // Send the target weight as weightGoal
+          },
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success(response.data.message);
+      onClose(); // Close the modal on success
+    } catch (error) {
+      toast.error('Error updating weight goal');
+      console.error("Error updating weight goal", error);
+    }
+  };
+
   return (
     <div className="flex items-center justify-center fixed inset-0 bg-black/50 px-4 py-8">
       <div className="relative bg-[#0c2627] rounded-xl w-[320px] p-6 shadow-xl text-[#e7f6f2]">
@@ -30,7 +61,7 @@ export const EditWeightGoal = ({onClose}) => {
         </div>
 
         {/* Form */}
-        <form>
+        <form onSubmit={handleSave}>
           {/* Target Weight */}
           <div className="mb-4">
             <label htmlFor="targetWeight" className="block text-sm text-[#a0c7c7] mb-2">
@@ -44,22 +75,13 @@ export const EditWeightGoal = ({onClose}) => {
                 min="0"
                 className="flex-1 px-4 py-3 bg-[#0a1f20] rounded-l-lg text-[#e7f6f2] text-sm outline-none"
                 placeholder="e.g. 140"
+                value={targetWeight}
+                onChange={(e) => setTargetWeight(e.target.value)} // Update state with input
               />
               <div className="flex items-center justify-between px-4 py-3 bg-[#0a1f20] rounded-r-lg text-[#7ed6c0] cursor-pointer">
                 <span>Kg</span>
-                <span className="text-xs">▼</span>
               </div>
             </div>
-          </div>
-
-          {/* Notes */}
-          <div className="mb-4">
-            <label htmlFor="goalNotes" className="block text-sm text-[#a0c7c7] mb-2">Notes</label>
-            <textarea
-              id="goalNotes"
-              className="w-full px-4 py-3 bg-[#0a1f20] rounded-lg text-[#e7f6f2] text-sm resize-none h-20"
-              placeholder="Optional notes..."
-            ></textarea>
           </div>
 
           {/* Save Button */}

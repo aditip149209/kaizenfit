@@ -1,7 +1,22 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
+import { toast } from "react-toastify";
+import AddFoodModal from "../components/AddFoodModal"; // Import the AddFoodModal component
 
 export default function TrackCalories({ onClose }) {
   const meals = ["Breakfast", "Lunch", "Snacks", "Dinner"];
+  const [foodList, setFoodList] = useState([]);
+  
+  // State to store food items and calories for each meal
+  const [mealData, setMealData] = useState({
+    Breakfast: [],
+    Lunch: [],
+    Snacks: [],
+    Dinner: [],
+  });
+
+  // State to track the modal visibility
+  const [showAddFoodModal, setShowAddFoodModal] = useState(false);
+  const [currentMeal, setCurrentMeal] = useState("");
 
   // Close modal on Escape key
   useEffect(() => {
@@ -11,6 +26,36 @@ export default function TrackCalories({ onClose }) {
     window.addEventListener("keydown", handleEsc);
     return () => window.removeEventListener("keydown", handleEsc);
   }, [onClose]);
+
+  // Add a food item to the selected meal
+  const handleAddFood = (meal, food) => {
+    setMealData((prevState) => ({
+      ...prevState,
+      [meal]: [...prevState[meal], food],
+    }));
+    setShowAddFoodModal(false); 
+  };
+
+    useEffect(() => {
+      const token = localStorage.getItem('token');
+      if(token){
+        const decoded = jwtDecode(token);
+        setUserId(decoded.id);
+        setToken(token);
+      }
+    });
+    useEffect(() => {
+      if (token) {
+        getFoodItemList();
+      }
+    }, [token]);
+  
+    const getFoodItemList = async () => {
+      const response = await axios.get('http://localhost:3000/api/user/getfooditemlist', {
+          headers: {Authorization: `Bearer ${token}`}
+      })
+      setFoodList(response.data);
+    }
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
@@ -50,38 +95,42 @@ export default function TrackCalories({ onClose }) {
               key={meal}
               className="bg-[#113131] rounded-xl flex-1 min-w-[120px] p-4 shadow-md flex flex-col"
             >
-              <h3 className="text-base font-semibold mb-3 tracking-wide">{meal}</h3>
+              <div className="flex justify-between">
+                <h3 className="text-base font-semibold mb-3 tracking-wide">{meal}</h3>
+                <button
+                  onClick={() => {
+                    setCurrentMeal(meal);
+                    setShowAddFoodModal(true);
+                  }}
+                  className="text-[#7ed6c0] text-2xl font-bold"
+                >
+                  +
+                </button>
+              </div>
               <div className="flex flex-col gap-2 mt-2 text-sm text-[#b2dfdb] font-medium">
-                <div className="flex items-center gap-2">
-                  <span>🌾</span> Carbs
-                </div>
-                <div className="flex items-center gap-2">
-                  <span>🥚</span> Proteins
-                </div>
-                <div className="flex items-center gap-2">
-                  <span>💧</span> Fats
-                </div>
+                {mealData[meal].map((food, index) => (
+                  <div key={index} className="flex items-center gap-2">
+                    <span>🍽️ {food.name}</span>
+                    <span>{food.calories} Cals</span>
+                  </div>
+                ))}
               </div>
             </div>
           ))}
         </div>
 
         {/* Actions */}
-        <div className="flex gap-6 mt-7">
-          <a
-            href="#"
-            className="flex-1 flex items-center justify-center gap-2 border border-[#7ed6c0] text-[#e7f6f2] rounded-full px-6 py-2 font-medium text-base hover:bg-[#7ed6c0] hover:text-[#182828] transition"
-          >
-            <span>📖</span> My Recipes
-          </a>
-          <a
-            href="#"
-            className="flex-1 flex items-center justify-center gap-2 border border-[#7ed6c0] text-[#e7f6f2] rounded-full px-6 py-2 font-medium text-base hover:bg-[#7ed6c0] hover:text-[#182828] transition"
-          >
-            <span>🍽️</span> My Meals
-          </a>
-        </div>
+        
       </div>
+
+      {/* Add Food Modal */}
+      {showAddFoodModal && (
+        <AddFoodModal
+          onClose={() => setShowAddFoodModal(false)}
+          onAddFood={handleAddFood}
+          meal={currentMeal}
+        />
+      )}
     </div>
   );
 }

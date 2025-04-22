@@ -5,11 +5,19 @@ import jwt from 'jsonwebtoken'
 
 
 const onboardUser = async (req, res) => {
-  const {gender, height, weight, goal, fitnessLevel} = req.body;
+  const {gender, height, weight, goal, fitnessLevel, goalWeight} = req.body;
   if(!height || !weight || !gender || !goal || !fitnessLevel){
     return res.status(400).json({
       message: "Some fields are missing please recheck"
     })
+  }
+  const data = {
+    Height: height,
+    FitnessGoal: goal,
+    FitnessLevel: fitnessLevel,
+    Gender: gender,
+    WeightGoal: weight,
+    GoalWeight: goalWeight
   }
  
   const authHeader = req.headers.authorization;
@@ -31,13 +39,16 @@ const onboardUser = async (req, res) => {
   const UserID = decoded.id; 
   
   try{
-    const tryUpdate = await onboardUserDetails(UserID, req.body);
+    const tryUpdate = await onboardUserDetails(UserID, data);
     return res.status(200).json({
       message: "Onboarding complete"
     })
   }
   catch(error){
     console.log(error);
+    return res.status(500).json({
+      message: "Server error"
+    })  
   }
 }
 const isOnboarded = async (req, res) => {
@@ -51,6 +62,9 @@ const isOnboarded = async (req, res) => {
     }
     catch(error){
         console.log(error);
+        return res.status(500).json({
+            message: "Server error"
+        })
     }
 }
 

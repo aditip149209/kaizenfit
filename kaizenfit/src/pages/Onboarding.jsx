@@ -4,7 +4,7 @@ import axios from "axios";
 
 
 const Onboarding = () => {
-    const [data, setData] = useState({height : '', weight: '', goal: '', gender: '', fitnessLevel: ''});
+    const [data, setData] = useState({height : '', weight: '', goalWeight: '', goal: '', gender: '', fitnessLevel: ''});
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
 
@@ -16,6 +16,7 @@ const Onboarding = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         let token = localStorage.getItem('token');
+        console.log(data);
 
         try {
             await axios.post('http://localhost:3000/api/user/onboarding', data, {
@@ -48,15 +49,16 @@ const Onboarding = () => {
       <div className="w-full bg-gray-700 h-2 rounded-full">
         <div
           className={`h-2 bg-cyan-400 rounded-full transition-all duration-500 shadow-[0_0_10px_#1E90FF`}
-          style={{ width: `${(step / 5) * 100}%` }}
+          style={{ width: `${(step / 6) * 100}%` }}
         ></div>
       </div>
       <div className="absolute top-3 left-0 w-full flex justify-between text-xs text-gray-400 font-medium">
         <span className={`${step >= 1 ? 'text-cyan-400' : ''}`}>Height</span>
         <span className={`${step >= 2 ? 'text-cyan-400' : ''}`}>Weight</span>
-        <span className={`${step >= 3 ? 'text-cyan-400' : ''}`}>Goal</span>
-        <span className={`${step >= 4 ? 'text-cyan-400' : ''}`}>Birthday</span>
-        <span className={`${step >= 5 ? 'text-cyan-400' : ''}`}>Fitness Level</span>
+        <span className={`${step >= 3 ? 'text-cyan-400' : ''}`}>Goal Weight</span>
+        <span className={`${step >= 4 ? 'text-cyan-400' : ''}`}>Fitness Goal</span>
+        <span className={`${step >= 5 ? 'text-cyan-400' : ''}`}>Gender</span>
+        <span className={`${step >= 6 ? 'text-cyan-400' : ''}`}>Fitness Level</span>
       </div>
     </div>
 
@@ -85,7 +87,7 @@ const Onboarding = () => {
       </div>
     )}
 
-    {/* ✅ Step 2 - Weight */}
+    {/* ✅ Step 2 - Current Weight */}
     {step === 2 && (
       <div className="animate-fade-in">
         <h2 className="text-3xl font-extrabold text-[#00CED1] mb-6 text-center">
@@ -119,8 +121,43 @@ const Onboarding = () => {
       </div>
     )}
 
-    {/* ✅ Step 3 - Goal */}
+    {/* ✅ Step 3 - Goal Weight */}
     {step === 3 && (
+      <div className="animate-fade-in">
+        <h2 className="text-3xl font-extrabold text-[#00CED1] mb-6 text-center">
+          Step 3: Goal Weight
+        </h2>
+        <input 
+          type="number"
+          name="weight"
+          placeholder="Enter Weight (kg)"
+          value={data.goalWeight}
+          onChange={handleChange}
+          className="w-full px-4 py-3 bg-gray-800 text-gray-200 border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1E90FF] transition duration-300"
+          required 
+        />
+        <div className="flex justify-between mt-6">
+          <button
+            type="button"
+            onClick={prevStep}
+            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-xl transition-all"
+          >
+            Back
+          </button>
+          <button
+            type="button"
+            onClick={nextStep}
+            className="bg-cyan-500 hover:bg-[#00CED1] text-white font-bold py-3 px-6 rounded-xl transition-all"
+          >
+            Next
+          </button>
+        </div>
+      </div>
+    )}
+
+
+    {/* ✅ Step 4 - Goal */}
+    {step === 4 && (
       <div className="animate-fade-in">
         <h2 className="text-3xl font-extrabold text-[#00CED1] mb-6 text-center">
           Step 3: Goal
@@ -156,11 +193,11 @@ const Onboarding = () => {
       </div>
     )}
 
-    {/* ✅ Step 4 - Gender */}
-{step === 4 && (
+    {/* ✅ Step 5 - Gender */}
+{step === 5 && (
   <div className="animate-fade-in">
     <h2 className="text-3xl font-extrabold text-[#00CED1] mb-6 text-center">
-      Step 4: Gender
+      Step 5: Gender
     </h2>
     <select
       name="gender"
@@ -193,11 +230,11 @@ const Onboarding = () => {
   </div>
 )}
 
-    {/* ✅ Step 5 - Fitness Level */}
-    {step === 5 && (
+    {/* ✅ Step 6 - Fitness Level */}
+    {step === 6 && (
       <div className="animate-fade-in">
         <h2 className="text-3xl font-extrabold text-[#00CED1] mb-6 text-center">
-          Step 5: Fitness Level
+          Step 6: Fitness Level
         </h2>
         <select
           name="fitnessLevel"

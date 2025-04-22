@@ -1,24 +1,32 @@
 import React, { useState, useEffect } from 'react'
+import { ToastContainer, toast } from 'react-toastify';
+import {jwtDecode} from 'jwt-decode';
+import axios from 'axios';  
 
+function CreateNewDiet({onClose, onUpdate}) {
 
-function CreateNewDiet({onClose}) {
-
-  const [foodList, setFoodList] = useState([]);  
   const [foodItems, setFoodItems] = useState([
-    {id: '', name: '', quantity:'', measure:''}
+    {id: '', name: '', quantity:''}
   ])
+
+  const [foodList, setFoodList] = useState([]);
+
+  const days = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday']
+  const types = ['non_vegetarian', 'vegetarian', 'vegan', 'eggetarian']
+  const goals = ['weight_loss', 'muscle_gain', 'maintenance']
 
   const [dietName, setDietName] = useState('');
   const [dietGoal, setDietGoal] = useState('')
   const [dietType, setDietType] = useState('')
   const [dietDesc, setDietDesc] = useState('')
- 
+  const [dietDay, setDietDay] = useState('')
+  const [userId, setUserId] = useState('');
 
+ 
   const [token, setToken] = useState('')
   const [hoverClose, setHoverClose] = useState(false);
   const [hoverSave, setHoverSave] = useState(false);
          
- 
   useEffect(() => {
     const token = localStorage.getItem('token');
     if(token){
@@ -29,24 +37,27 @@ function CreateNewDiet({onClose}) {
   });
   useEffect(() => {
     if (token) {
-      getExerciseList();
+      getFoodItemList();
     }
   }, [token]);
 
   const getFoodItemList = async () => {
-    const response = await axios.get('http://localhost:3000/api/user/getFoodList', {
+    const response = await axios.get('http://localhost:3000/api/user/getfooditemlist', {
         headers: {Authorization: `Bearer ${token}`}
     })
-    setExerciseList(response.data);
+    setFoodList(response.data);
   }
 
-
+  const addFood = () => {
+    setFoodItems([...foodItems, { id: '',name : '', quantity: '' }]);
+  };
   
   const handleSave = async () => {
     if (
       !dietName ||
       !dietType||
-      !dietGoal 
+      !dietGoal ||
+      !dietDay
     ) {
       toast.warn('Please fill all required diet fields');
       return;
@@ -66,8 +77,11 @@ function CreateNewDiet({onClose}) {
       Name: dietName,
       GoalType: dietGoal,
       Type: dietType,
-      Description: dietDesc
+      Description: dietDesc,
+      Day: dietDay,
     };
+
+    
   
     // Only include valid exercises
     const formattedFoodItems = foodItems
@@ -76,13 +90,12 @@ function CreateNewDiet({onClose}) {
         id: ex.id,
         name: ex.name,
         quantity: ex.quantity,
-        measure: ex.measure
       }));
   
     try {
-      const sendDiet = await axios.post('http://localhost:3000/api/user/', {
+      const sendDiet = await axios.post('http://localhost:3000/api/user/createnewdiet', {
         dietData,
-        exercises: formattedFoodItems
+        foodItems: formattedFoodItems
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
@@ -90,13 +103,7 @@ function CreateNewDiet({onClose}) {
       console.log('Saved!', sendDiet.data);
       toast.success('Workout saved successfully!');
   
-      // Reset form
-      setWorkoutName('');
-      setWorkoutDur('');
-      setWorkoutCal('');
-      setWorkoutType('');
-      setWorkoutTarget('');
-      setExercises([{ id: '', name: '', sets: '', reps: '' }]);
+     
   
       // Close form after delay
       setTimeout(() => {
@@ -106,6 +113,20 @@ function CreateNewDiet({onClose}) {
       console.error(error);
       toast.error(error.response?.data?.message || 'Something went wrong');
     }
+  };
+
+  const handleFoodChange = (index, field, value) => {
+    const updatedFoods = [...foodItems];
+    
+    if (field === 'name') {
+      const selectedFood = foodList.find(food => food.Name === value);
+      updatedFoods[index].id = selectedFood ? selectedFood.FoodID : '';
+      updatedFoods[index].name = value;
+    } else {
+      updatedFoods[index][field] = value;
+    }
+  
+    setFoodItems(updatedFoods);
   };
   
   
@@ -129,63 +150,71 @@ function CreateNewDiet({onClose}) {
 
 
         {/* Title */}
-        <h2 className="text-center text-[#7ed6c0] text-xl font-medium mb-6">CREATE/EDIT WORKOUT</h2>
+        <h2 className="text-center text-[#7ed6c0] text-xl font-medium mb-6">CREATE NEW DIET</h2>
 
-        {/* Workout Name */}
-        {/* Workout Details Grid */}
+  
 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-6 gap-y-4 mb-6">
   <div>
-    <label className="block text-lg font-light mb-1">Workout Name</label>
+    <label className="block text-lg font-light mb-1">Diet Name</label>
     <input
       type="text"
       className="w-full h-10 px-6 rounded-[31px] bg-transparent border border-white/30 text-white text-lg"
-      placeholder="Enter workout name"
-      value={workoutName}
-      onChange={(e) => setWorkoutName(e.target.value)}
+      placeholder="Enter diet name"
+      value={dietName}
+      onChange={(e) => setDietName(e.target.value)}
     />
   </div>
 
   <div>
-    <label className="block text-lg font-light mb-1">Workout Type</label>
-    <input
-      type="text"
+    <label className="block text-lg font-light mb-1">Diet Type</label>
+    <select
       className="w-full h-10 px-6 rounded-[31px] bg-transparent border border-white/30 text-white text-lg"
-      placeholder="Enter workout type"
-      value={workoutType}
-      onChange={(e) => setWorkoutType(e.target.value)}
-    />
+      value={dietType}
+      onChange={(e) => setDietType(e.target.value)}
+    >
+      <option value="" disabled>Select diet type</option>
+      {types.map((type, index) => (
+        <option key={index} value={type} className='text-white bg-[#182828]'>{type}</option>
+      ))}
+    </select>
   </div>
 
   <div>
-    <label className="block text-lg font-light mb-1">Workout Duration</label>
-    <input
-      type="text"
-      className="w-full h-10 px-6 rounded-[31px] bg-transparent border border-white/30 text-white text-lg"
-      placeholder="Enter workout duration"
-      value={workoutDur}
-      onChange={(e) => setWorkoutDur(e.target.value)}
-    />
+    <label className="block text-lg font-light mb-1">Diet Goal</label>
+    <select
+    className="w-full h-10 px-6 rounded-[31px] bg-transparent border border-white/30 text-white text-lg"
+    value={dietGoal}
+    onChange={(e) => setDietGoal(e.target.value)}
+  >
+    <option value="" disabled>Select a goal</option>
+    {goals.map((goal, idx) => (
+      <option key={idx} value={goal} className="text-white bg-[#182828]">{goal}</option>
+    ))}
+  </select>
   </div>
 
   <div>
-    <label className="block text-lg font-light mb-1">Workout Calories</label>
-    <input
-      type="text"
-      className="w-full h-10 px-6 rounded-[31px] bg-transparent border border-white/30 text-white text-lg"
-      placeholder="Enter workout calories"
-      value={workoutCal}
-      onChange={(e) => setWorkoutCal(e.target.value)}
-    />
+    <label className="block text-lg font-light mb-1">Diet Day</label>
+    <select
+    className="w-full h-10 px-6 rounded-[31px] bg-transparent border border-white/30 text-white text-lg"
+    value={dietDay}
+    onChange={(e) => setDietDay(e.target.value)}
+  >
+    <option value="" disabled>Select a day</option>
+    {days.map((day, idx) => (
+      <option key={idx} value={day} className="text-white bg-[#182828]">{day}</option>
+    ))}
+  </select>
   </div>
 
   <div className="md:col-span-2">
-    <label className="block text-lg font-light mb-1">Workout Target Type</label>
+    <label className="block text-lg font-light mb-1">Diet Description</label>
     <input
       type="text"
       className="w-full h-10 px-6 rounded-[31px] bg-transparent border border-white/30 text-white text-lg"
       placeholder="Enter workout target type"
-      value={workoutTarget}
-      onChange={(e) => setWorkoutTarget(e.target.value)}
+      value={dietDesc}
+      onChange={(e) => setDietDesc(e.target.value)}
     />
   </div>
 </div>
@@ -193,37 +222,26 @@ function CreateNewDiet({onClose}) {
 
         {/* Exercises */}
         <div className="text-xl font-light mb-4 flex justify-between max-h overflow-y-auto">
-          <span>EXERCISE NAME</span>
-          <span className="w-[25%] text-center">SETS</span>
-          <span className="w-[25%] text-center">REPS</span>
+          <p>Add Food Items</p>
         </div>
-
         <div className="max-h-[300px] overflow-y-auto pr-2 space-y-4 scrollbar-thin scrollbar-thumb-[#4dd0e1]">
-          {exercises.map((exercise, index) => (
+          {foodItems.map((foodItem, index) => (
             <div key={index} className="flex items-center space-x-6">
-              <select className="w-[45%] h-14 px-4 rounded-[31px] border border-white/20 text-white bg-[#182828]" value={exercise.name} onChange={(e) => handleExerciseChange(index, 'name', e.target.value)}>
-                <option value="" disabled>Select exercise</option>
-                    {exerciseList?.map((exerciseOption, idx) => (
-                    <option key={idx} value={exerciseOption.Name} className='text-white bg-[#182828]'>
-                        {exerciseOption.Name}
+              <select className="w-[45%] h-14 px-4 rounded-[31px] border border-white/20 text-white bg-[#182828]" value={foodItem.name} onChange={(e) => handleFoodChange(index, 'name', e.target.value)}>
+                <option value="" disabled>Select food/dish</option>
+                    {foodList?.map((foodOption, idx) => (
+                    <option key={idx} value={foodOption.Name} className='text-white bg-[#182828]'>
+                        {foodOption.Name}
                     </option>
                     ))}
                 </select>
 
-
                 <input
                 type="text"
-                placeholder="Sets"
-                className="w-[25%] h-14 text-center rounded-[31px] bg-transparent border border-white/20 text-white"
-                value={exercise.sets}
-                onChange={(e) => handleExerciseChange(index, 'sets', e.target.value)}
-                />
-                <input
-                type="text"
-                placeholder="Reps"
-                className="w-[25%] h-14 text-center rounded-[31px] bg-transparent border border-white/20 text-white"
-                value={exercise.reps}
-                onChange={(e) => handleExerciseChange(index, 'reps', e.target.value)}
+                placeholder="Servings"
+                className="w-[25%] h-14 p-5 rounded-[31px] bg-transparent border border-white/20 text-white"
+                value={foodItem.quantity}
+                onChange={(e) => handleFoodChange(index, 'quantity', e.target.value)}
                 />
             </div>
           ))}
@@ -231,7 +249,7 @@ function CreateNewDiet({onClose}) {
 
         {/* Add Exercise */}
         <div className="mt-6">
-          <button onClick={addExercise} className="text-2xl font-light hover:underline">+ Add Exercise</button>
+          <button onClick={addFood} className="text-2xl font-light hover:underline">+ Add Food/Dish</button>
         </div>
 
         {/* Divider */}
@@ -243,7 +261,7 @@ function CreateNewDiet({onClose}) {
             onClick={handleSave}
             className="w-96 h-16 bg-teal-700 rounded-[31px] border border-white/20 text-white text-2xl font-normal"
           >
-            SAVE WORKOUT
+            SAVE DIET
           </button>
         </div>
       </div>

@@ -1,48 +1,55 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { toast, ToastContainer } from "react-toastify";
+import axios from "axios";
+import ChangePasswordModal from "./ChangePassword";
+import ChangeFitnessGoal from "../components/ChangeFitnessGoal";
+import ChangeFitnessLevel from "../components/ChangeFitnessLevel";
+import { jwtDecode } from "jwt-decode";
+
 
 export default function SettingsAccount() {
-  const [activeNav, setActiveNav] = useState("Account");
+  const [activeNav, setActiveNav] = useState("Profile");
   const [btnHover, setBtnHover] = useState(false);
   const [saveHover, setSaveHover] = useState(false);
   const [showChangePasswordModal, setShowChangePasswordModal] = useState(false);
   const [showContactModal, setShowContactModal] = useState(false);
-  const [passwords, setPasswords] = useState({
-    oldPassword: "",
-    newPassword: "",
-    confirmNewPassword: "",
-  });
+  const [userId, setUserId] = useState(null);
+  const [userDetails, setUserDetails] = useState(null);
+  const [deleteAccount, setDeleteAccount] = useState(false);
+  const [showFitnessGoalModal, setShowFitnessGoalModal] = useState(false);
+  const [showFitnessLevelModal, setShowFitnessLevelModal] = useState(false);
+ 
   const [contactDetails, setContactDetails] = useState(null);
 
-  // Sidebar icons data
-  const sidebarIcons = [
-    { href: "#", src: "icons/KaizenLogo.png", alt: "Logo", isLogo: true },
-    { href: "#", src: "icons/home.png", alt: "Home" },
-    { href: "#", src: "icons/stats.png", alt: "Analytics" },
-    { href: "#", src: "icons/meal.png", alt: "Billing" },
-    { href: "#", src: "icons/settings.png", alt: "Settings" },
-    { href: "#", src: "icons/logout.png", alt: "Logout", bottom: true },
-  ];
+  const navigate = useNavigate()
+
+  const handleLogout = () => { 
+    localStorage.removeItem('token');
+    navigate('/');
+  }
 
   // Settings nav links
   const navLinks = ["Profile", "Account", "Help"];
 
-  // Handle password input changes
-  const handlePasswordChange = (e) => {
-    const { name, value } = e.target;
-    setPasswords((prev) => ({ ...prev, [name]: value }));
-  };
-
   // Handle password change submission
-  const handleChangePassword = () => {
-    if (passwords.newPassword !== passwords.confirmNewPassword) {
-      alert("New password and confirm password do not match!");
-      return;
+
+  const getUserDetails = async () => {
+    try{
+      const response = await axios.get(`http://localhost:3000/api/user/getuserdetails?UserID=${userId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem('token')}`,
+        },
+      })
+      console.log("User details:", response.data);
+      setUserDetails(response.data);   
     }
-    // Add logic to handle password change (e.g., API call)
-    alert("Password changed successfully!");
-    setShowChangePasswordModal(false);
-    setPasswords({ oldPassword: "", newPassword: "", confirmNewPassword: "" });
-  };
+    catch(error){
+      console.error("Error fetching user details:", error);
+      toast.error("Error fetching user details");
+    }
+  }
+ 
 
   // Handle Contact Us button click
   const handleContactUs = () => {
@@ -56,31 +63,43 @@ export default function SettingsAccount() {
     setShowContactModal(true);
   };
 
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+
+    if (token) {
+      const decoded = jwtDecode(token);
+      setUserId(decoded.id);
+    }
+    if(userId){
+      getUserDetails();
+    }
+
+  }, [userId, showFitnessLevelModal, showFitnessGoalModal]);
+
+
   return (
     <div className="flex min-h-screen bg-[#0b181a] font-inter text-[#e3f6fc]">
       {/* Sidebar */}
-      <div className="w-24 bg-[#162224] flex flex-col items-center py-8 gap-4 rounded-l-2xl">
-        {sidebarIcons.map(({ href, src, alt, isLogo, active, bottom }, i) => (
-          <a
-            key={i}
-            href={href}
-            className={`${
-              active ? "bg-[#2ec4b6]" : "bg-[#223036]"
-            } w-12 h-12 mb-3 rounded-lg flex items-center justify-center cursor-pointer transition-all duration-200`}
-            style={bottom ? { marginTop: "auto", marginBottom: "10px" } : {}}
-          >
-            <img
-              src={src}
-              alt={alt}
-              className={`w-7 h-7 transition-all duration-200 ${
-                active ? "filter-none" : "filter brightness-0 invert grayscale opacity-85"
-              }`}
-            />
-          </a>
-        ))}
+      <div className="bg-[#142626] w-[80px] flex flex-col items-center py-[30px] gap-[30px] rounded-tl-[20px] rounded-bl-[20px]">
+        <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={() => navigate('/dashboard')}>
+          <img src="icons/KaizenLogo.png" alt="Logo" className="w-[22px] h-[22px] object-contain block" />
+        </div>
+        <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={() => navigate('/dashboard')}>
+          <img src="icons/home.png" alt="Home" className="w-[22px] h-[22px] object-contain block" />
+        </div>
+        <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={() => navigate('/diet')}>
+          <img src="icons/meal.png" alt="Diet" className="w-[22px] h-[22px] object-contain block" />
+        </div>
+        <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={() => navigate('/profilesettings')}>
+          <img src="icons/settings.png" alt="Settings" className="w-[22px] h-[22px] object-contain block" />
+        </div>
+        <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={handleLogout}>
+          <img src="icons/logout.png" alt="Logout" className="w-[22px] h-[22px] object-contain block" />
+        </div>
       </div>
 
       {/* Main Panel */}
+      <ToastContainer hideProgressBar={true} position="top-center"/>
       <div className="flex-1 bg-[#112224] rounded-r-2xl p-12 min-w-0 flex flex-row min-h-screen">
         <nav className="w-44 pl-10 flex flex-col gap-6">
           <div className="text-xl font-semibold text-[#e3f6fc] mb-6">Settings</div>
@@ -98,99 +117,123 @@ export default function SettingsAccount() {
         </nav>
 
         <div className="flex-1 flex items-start justify-start pl-14">
-          {/* Profile Section */}
-          {activeNav === "Profile" && (
-            <div className="bg-[#0e2324] rounded-xl p-9 max-w-xl w-full text-[#e3f6fc] shadow-md mt-2 flex flex-col">
-              <div className="text-xl font-semibold mb-4">Profile</div>
+        {activeNav === "Profile" && (
+  <div className="bg-[#0e2324] rounded-xl p-9 max-w-xl w-full text-[#e3f6fc] shadow-md mt-2 flex flex-col">
+    <div className="text-xl font-semibold mb-4">Profile</div>
 
-              <div className="grid grid-cols-2 gap-4 mb-4">
-                <div>
-                  <label htmlFor="firstName" className="text-sm text-[#b5d7e5] mb-1">
-                    First Name
-                  </label>
-                  <input
-                    id="firstName"
-                    type="text"
-                    value="Aditi"
-                    readOnly
-                    className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="lastName" className="text-sm text-[#b5d7e5] mb-1">
-                    Last Name
-                  </label>
-                  <input
-                    id="lastName"
-                    type="text"
-                    value="Pandey"
-                    readOnly
-                    className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg"
-                  />
-                </div>
-              </div>
+    <div className="grid grid-cols-2 gap-4 mb-4">
+      <div>
+        <label htmlFor="firstName" className="text-sm text-[#b5d7e5] mb-1">First Name</label>
+        <input
+          id="firstName"
+          type="text"
+          value={userDetails?.FirstName || ""}
+          readOnly
+          className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg"
+        />
+      </div>
+      <div>
+        <label htmlFor="lastName" className="text-sm text-[#b5d7e5] mb-1">Last Name</label>
+        <input
+          id="lastName"
+          type="text"
+          value={userDetails?.LastName || ""}
+          readOnly
+          className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg"
+        />
+      </div>
+    </div>
 
-              <label htmlFor="contact" className="text-sm text-[#b5d7e5] mb-1">
-                Contact
-              </label>
-              <input
-                id="contact"
-                type="text"
-                value="9896975980"
-                readOnly
-                className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg mb-4"
-              />
+    <label htmlFor="gender" className="text-sm text-[#b5d7e5] mb-1">Gender</label>
+    <input
+      id="gender"
+      type="text"
+      value={userDetails?.Gender || ""}
+      readOnly
+      className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg mb-4"
+    />
 
-              <label htmlFor="gender" className="text-sm text-[#b5d7e5] mb-1">
-                Gender
-              </label>
-              <input
-                id="gender"
-                type="text"
-                value="Female"
-                readOnly
-                className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg mb-4"
-              />
+    <label htmlFor="dob" className="text-sm text-[#b5d7e5] mb-1">Date of Birth</label>
+    <input
+      id="dob"
+      type="text"
+      value={userDetails?.DateOfBirth ? new Date(userDetails.DateOfBirth).toLocaleDateString("en-GB") : ""}
+      readOnly
+      className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg mb-4"
+    />
 
-              <label htmlFor="dob" className="text-sm text-[#b5d7e5] mb-1">
-                Date of Birth
-              </label>
-              <input
-                id="dob"
-                type="text"
-                value="07/02/2005"
-                readOnly
-                className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg mb-4"
-              />
+    <div className="grid grid-cols-2 gap-4 mb-4">
+      <div>
+        <label htmlFor="height" className="text-sm text-[#b5d7e5] mb-1">Height</label>
+        <input
+          id="height"
+          type="text"
+          value={userDetails?.Height || ""}
+          readOnly
+          className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg"
+        />
+      </div>
+      <div>
+        <label htmlFor="weight" className="text-sm text-[#b5d7e5] mb-1">Weight</label>
+        <input
+          id="weight"
+          type="text"
+          value={userDetails?.WeightGoal || ""}
+          readOnly
+          className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg"
+        />
+      </div>
+    </div>
 
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <label htmlFor="height" className="text-sm text-[#b5d7e5] mb-1">
-                    Height
-                  </label>
-                  <input
-                    id="height"
-                    type="text"
-                    value="170 cm"
-                    readOnly
-                    className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg"
-                  />
-                </div>
-                <div>
-                  <label htmlFor="weight" className="text-sm text-[#b5d7e5] mb-1">
-                    Weight
-                  </label>
-                  <input
-                    id="weight"
-                    type="text"
-                    value="123 lb"
-                    readOnly
-                    className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg"
-                  />
-                </div>
-              </div>
-            </div>
-          )}
+    {/* 🔥 Fitness Level Field */}
+    <div className="mb-4">
+      <label htmlFor="fitnessLevel" className="text-sm text-[#b5d7e5] mb-1">Fitness Level</label>
+      <div className="flex items-center gap-2">
+        <input
+          id="fitnessLevel"
+          type="text"
+          value={userDetails?.FitnessLevel || ""}
+          readOnly
+          className="flex-1 bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg"
+        />
+        <button
+          onClick={() => setShowFitnessLevelModal(true)}
+          className="px-3 py-2 text-sm bg-[#244043] rounded-lg hover:bg-[#30565c] text-[#e3f6fc]"
+        >
+          Change Level
+        </button>
+        {showFitnessLevelModal && (
+  <ChangeFitnessLevel onClose={() => setShowFitnessLevelModal(false)} />
+)}
+      </div>
+    </div>
+
+    {/* 🔥 Fitness Goal Field */}
+    <div className="mb-4">
+      <label htmlFor="fitnessGoal" className="text-sm text-[#b5d7e5] mb-1">Fitness Goal</label>
+      <div className="flex items-center gap-2">
+        <input
+          id="fitnessGoal"
+          type="text"
+          value={userDetails?.FitnessGoal || ""}
+          readOnly
+          className="flex-1 bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg"
+        />
+        <button
+    onClick={() => setShowFitnessGoalModal(true)}
+    className="px-3 py-2 text-sm bg-[#244043] rounded-lg hover:bg-[#30565c] text-[#e3f6fc] shadow-sm"
+  >
+    Change Goal
+  </button>
+
+{showFitnessGoalModal && (
+  <ChangeFitnessGoal onClose={() => setShowFitnessGoalModal(false)} />
+)}
+      </div>
+    </div>
+  </div>
+)}
+
 
           {/* Help Section */}
           {activeNav === "Help" && (
@@ -248,7 +291,7 @@ export default function SettingsAccount() {
               <input
                 id="email"
                 type="email"
-                value="jagjeet@magical.com"
+                value={userDetails?.Email || ""}
                 readOnly
                 className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg mb-4"
               />
@@ -264,89 +307,16 @@ export default function SettingsAccount() {
                   readOnly
                   className="w-44 bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg"
                 />
-                <button
-                  className={`${
-                    btnHover ? "bg-[#22b5a5]" : "bg-[#2ec4b6]"
-                  } text-white p-2 rounded-lg text-sm font-semibold`}
-                  onMouseEnter={() => setBtnHover(true)}
-                  onMouseLeave={() => setBtnHover(false)}
-                  onClick={() => setShowChangePasswordModal(true)}
-                >
-                  Change Password
-                </button>
-              </div>
-
-              <button
-                className={`${
-                  saveHover ? "bg-[#22b5a5]" : "bg-[#2ec4b6]"
-                } text-white p-3 rounded-lg text-lg font-semibold mt-4`}
-                onMouseEnter={() => setSaveHover(true)}
-                onMouseLeave={() => setSaveHover(false)}
-                onClick={() => alert("Save clicked")}
-              >
-                Save
-              </button>
+              <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors"
+               onClick={() => setShowChangePasswordModal(true)}>Change Password</button>
+             {showChangePasswordModal && (
+            <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
+                <ChangePasswordModal onClose={() => setShowChangePasswordModal(false)} />
             </div>
           )}
-
-          {/* Change Password Modal */}
-          {showChangePasswordModal && (
-            <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-              <div className="bg-[#0e2324] rounded-xl p-6 w-[400px] text-[#e3f6fc] shadow-lg">
-                <h2 className="text-xl font-semibold mb-4">Change Password</h2>
-                <label htmlFor="oldPassword" className="text-sm text-[#b5d7e5] mb-1 block">
-                  Old Password
-                </label>
-                <input
-                  id="oldPassword"
-                  name="oldPassword"
-                  type="password"
-                  value={passwords.oldPassword}
-                  onChange={handlePasswordChange}
-                  className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg mb-4"
-                />
-
-                <label htmlFor="newPassword" className="text-sm text-[#b5d7e5] mb-1 block">
-                  New Password
-                </label>
-                <input
-                  id="newPassword"
-                  name="newPassword"
-                  type="password"
-                  value={passwords.newPassword}
-                  onChange={handlePasswordChange}
-                  className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg mb-4"
-                />
-
-                <label htmlFor="confirmNewPassword" className="text-sm text-[#b5d7e5] mb-1 block">
-                  Confirm New Password
-                </label>
-                <input
-                  id="confirmNewPassword"
-                  name="confirmNewPassword"
-                  type="password"
-                  value={passwords.confirmNewPassword}
-                  onChange={handlePasswordChange}
-                  className="w-full bg-transparent border border-[#244043] rounded-lg p-3 text-[#e3f6fc] text-lg mb-4"
-                />
-
-                <div className="flex justify-end gap-4">
-                  <button
-                    className="bg-red-500 text-white p-2 rounded-lg text-sm font-semibold"
-                    onClick={() => setShowChangePasswordModal(false)}
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    className="bg-[#2ec4b6] text-white p-2 rounded-lg text-sm font-semibold"
-                    onClick={handleChangePassword}
-                  >
-                    Change Password
-                  </button>
-                </div>
               </div>
             </div>
-          )}
+          )}         
         </div>
       </div>
     </div>

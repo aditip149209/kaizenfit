@@ -1,4 +1,4 @@
-import { createNewDiet, createNewFoodItem, getFoodListFromDB } from "../models/services/dietQuery.js";
+import { createNewDiet, createNewFoodItem, getDietListFromDB, getFoodListFromDB } from "../models/services/dietQuery.js";
 
 export const createNewDietController = async (req, res) => {
     const {dietData, foodItems} = req.body;
@@ -21,7 +21,7 @@ export const createNewDietController = async (req, res) => {
 
 
 export const createFoodItemController = async (req, res) => {
-    const {Name, Description, Calories, Quantity, Measure, Protein, Carbohydrates, Fats, Timing, Type} = req.body;
+    const {Name, Description, Calories, Quantity, Measure, Protein, Carbohydrates, Fats, Timing, Type, AvgWeightPerServing} = req.body;
 
     console.log(req.body);
     const data = {
@@ -34,10 +34,14 @@ export const createFoodItemController = async (req, res) => {
         Fats: Fats, 
         Carbohydrates: Carbohydrates,
         Type: Type,
-        Timing: Timing
+        Timing: Timing,
+        
+    }
+    const AvgWeightPerServingData = {
+        AvgWeightPerServing: AvgWeightPerServing
     }
     try{
-        const createFood = await createNewFoodItem(data);
+        const createFood = await createNewFoodItem(data, AvgWeightPerServingData);
         return res.status(201).json({
             message: "Food Item created",
             createFood
@@ -63,6 +67,18 @@ export const getFoodItemListController = async (req, res) => {
         }
 }
 
-
+export const getDietListController = async (req, res) => {
+    const UserID = req.query.UserID
+    try{
+        const diets = await getDietListFromDB(UserID);
+        console.log(diets);
+        return res.status(200).json(diets);
+    }
+    catch(error){
+        return res.status(500).json({
+            message: "S erver error"
+        })
+    }
+}
 
 

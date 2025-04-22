@@ -40,7 +40,6 @@ const Workout = sequelize.define("Workout", {
         allowNull: false,
         defaultValue: 'Monday'
     },
-    
 })
 
 const DietPlan = sequelize.define("DietPlan", {
@@ -73,7 +72,7 @@ const DietPlan = sequelize.define("DietPlan", {
         type: DataTypes.INTEGER,
         allowNull: true
     },
-    ProteinCOnsumed: {
+    ProteinConsumed: {
         type: DataTypes.INTEGER,
         allowNull: true
     },
@@ -99,7 +98,7 @@ const Users = sequelize.define("Users", {
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
-        unique: true,
+
     },
     FirstName: {
         type: DataTypes.STRING,
@@ -177,14 +176,18 @@ const Users = sequelize.define("Users", {
         allowNull: false,
         defaultValue: 8,
     },
-    WaterIntakeGoal: {
+    WaterIntakeGoalGlasses: {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 8,
     },
+    WaterIntakeGoalVolume: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        defaultValue: 250
+    },
     WeightGoal: {
         type: DataTypes.FLOAT,
-
     },
     isOnboarded: {
         type: DataTypes.BOOLEAN,
@@ -210,8 +213,46 @@ const Users = sequelize.define("Users", {
         type: DataTypes.INTEGER,
         allowNull: false,
         defaultValue: 20
-    }
+    },
+    GoalWeight: {
+        type: DataTypes.FLOAT,
+        allowNull: true,
+    },
 })
+
+const Trainers = sequelize.define("Trainers", {
+    TrainerID: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true,
+    },
+    UserID: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      unique: true,
+      references: {
+        model: Users,
+        key: 'UserID',
+      },
+    },
+    Certification: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    ExperienceYears: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
+    Specialization: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    Rating: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0
+    }
+  });
+  
 
 const Exercise = sequelize.define("Exercise", {
     ExerciseID: {
@@ -219,7 +260,6 @@ const Exercise = sequelize.define("Exercise", {
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
-        unique: true,
     },
     Name: {
         type: DataTypes.STRING,
@@ -257,7 +297,7 @@ const Exercise = sequelize.define("Exercise", {
 
 const FoodItem = sequelize.define("FoodItem", {
     FoodID: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.INTEGER.UNSIGNED,
         primaryKey: true,
         autoIncrement: true,
         allowNull: false,
@@ -309,6 +349,26 @@ const FoodItem = sequelize.define("FoodItem", {
     }
 })
 
+const FoodServingReference = sequelize.define("FoodServingReference", {
+    ReferenceID: {
+      type: DataTypes.INTEGER,
+      primaryKey: true,
+      autoIncrement: true
+    },
+    FoodID: {
+      type: DataTypes.INTEGER.UNSIGNED,
+      allowNull: false,
+      unique: true,
+      references: {
+        model: FoodItem,
+        key: 'FoodID'
+      }
+    },
+    AvgWeightPerServing: {
+      type: DataTypes.FLOAT,
+      allowNull: false // In grams
+    }
+  });  
 
 const HealthMetric = sequelize.define("HealthMetric", {
     MetricID: {
@@ -470,6 +530,11 @@ const DietPlanFoodItem = sequelize.define("DietPlanFoodItem", {
 })
 
 const WorkoutExercise = sequelize.define("WorkoutExercise", {
+    ID: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+      },
     WorkoutID: {
         type: DataTypes.INTEGER,
         primaryKey: true,
@@ -545,6 +610,11 @@ const WaterLog = sequelize.define("WaterLog", {
     Quantity: { // Amount of water consumed in this entry
         type: DataTypes.FLOAT, // Use FLOAT to allow partial values (e.g., 0.5 liters)
         allowNull: false,
+    },
+    Volume: {
+        type: DataTypes.FLOAT,
+        allowNull: false,
+        defaultValue: 250
     },
     Count: {
         type: DataTypes.INTEGER,
@@ -639,7 +709,6 @@ const SleepStage = sequelize.define("SleepStage",{
 })
 
 //JOIN TABLE for tracking todays food items consumed 
-
 const LogTodayFoodItem = sequelize.define("LogTodayFoodItem", {
     EntryID: {
         type: DataTypes.INTEGER,
@@ -659,6 +728,11 @@ const LogTodayFoodItem = sequelize.define("LogTodayFoodItem", {
             key: 'FoodID'
         }
     },
+    Timestamp: {
+        type: DataTypes.DATE,
+        primaryKey:true,
+        allowNull: false,
+    },
     CustomQuantity: {
         type: DataTypes.FLOAT,
         allowNull: true,
@@ -667,9 +741,6 @@ const LogTodayFoodItem = sequelize.define("LogTodayFoodItem", {
 })
 
 //need a table that just has all the workouts created by the user 
-
-
-
 const UserWorkoutLog = sequelize.define("UserWorkoutLog", {
     UserID: {
         type: DataTypes.INTEGER,
@@ -713,7 +784,7 @@ Membership.belongsTo(Users, { foreignKey: 'UserID' });
 Users.hasMany(Payment, { foreignKey: 'UserID' });
 Payment.belongsTo(Users, { foreignKey: 'UserID' });
 
-Users.hasMany(Workout, { foreignKey: 'WorkoutPlan' });
+Users.hasMany(Workout, { foreignKey: 'WorkoutPlan' , onDelete: "CASCADE"});
 Workout.belongsTo(Users, { foreignKey: 'WorkoutPlan' });
 
 Users.hasMany(Workout, {
@@ -728,13 +799,25 @@ Users.hasMany(Workout, {
     targetKey: 'UserID'
   });
 
-Users.hasMany(DietPlan, { foreignKey: 'DietPlan' });
+  Users.hasMany(DietPlan, {
+    foreignKey: 'createdByUserId',
+    as: 'customDiet',
+    sourceKey: 'UserID'
+  });
+  
+  DietPlan.belongsTo(Users, {
+    foreignKey: 'createdByUserId',
+    as: 'creator',
+    targetKey: 'UserID'
+  });
+
+Users.hasMany(DietPlan, { foreignKey: 'DietPlan' , onDelete: "CASCADE"});
 DietPlan.belongsTo(Users, { foreignKey: 'DietPlan' });
 
-Users.hasMany(WeightLog, { foreignKey: 'UserID' });
+Users.hasMany(WeightLog, { foreignKey: 'UserID' , onDelete: "CASCADE"});
 WeightLog.belongsTo(Users, { foreignKey: 'UserID' });
 
-Users.hasMany(SleepLog, { foreignKey: 'UserID' });
+Users.hasMany(SleepLog, { foreignKey: 'UserID' , onDelete: "CASCADE"});
 SleepLog.belongsTo(Users, { foreignKey: 'UserID' });
 
 
@@ -748,6 +831,14 @@ Plan.belongsTo(Membership, {foreignKey: 'PlanID'});
 //for tracking stages in sleep
 SleepLog.hasMany(SleepStage, { foreignKey: 'SleepLogID' });
 SleepStage.belongsTo(SleepLog, { foreignKey: 'SleepLogID' });
+
+// Associations
+Trainers.hasMany(Users, { foreignKey: 'TrainerID' });
+Users.belongsTo(Trainers, { foreignKey: 'TrainerID' });
+
+FoodServingReference.belongsTo(FoodItem, { foreignKey: "FoodID" });
+FoodItem.hasOne(FoodServingReference, { foreignKey: "FoodID", onDelete: 'CASCADE' });
+
 
 //tracking todays diet
 LogToday.belongsToMany(FoodItem, {
@@ -775,6 +866,8 @@ FoodItem.belongsToMany(DietPlan, {
     otherKey: 'DietPlanID'
 })
 
+
+
 //for workout and exercise
 Workout.belongsToMany(Exercise, {
     through: WorkoutExercise,
@@ -799,8 +892,20 @@ Workout.belongsToMany(Users, {
     otherKey: 'UserID'
 })
 
+Workout.belongsToMany(Exercise, {
+    through: WorkoutExercise,
+    foreignKey: 'WorkoutID',
+    otherKey: 'ExerciseID'  
+})
+
+Exercise.belongsToMany(Workout, {
+    through: WorkoutExercise,
+    foreignKey: 'ExerciseID',
+    otherKey: 'WorkoutID'
+})
+
 const db = { Users, FoodItem, DietPlan, Workout, Exercise, WaterLog, HealthMetric, Membership,
-     Payment, Plan, DietPlanFoodItem, WorkoutExercise, SleepLog, SleepStage, WeightLog, LogToday, UserWorkoutLog, LogTodayFoodItem}; 
+     Payment, Plan, DietPlanFoodItem, WorkoutExercise, SleepLog, SleepStage, WeightLog, LogToday, UserWorkoutLog, LogTodayFoodItem, FoodServingReference, Trainers, sequelize }; 
 export default db;
 
 

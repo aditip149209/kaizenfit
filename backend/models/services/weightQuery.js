@@ -1,13 +1,19 @@
 import db from "../index.js";
 import { Op } from "sequelize";
 
-export const logWeight = async (userId, weight) => {
+export const logWeight = async (userId, weight, date) => {
     try {
         const weightLog = await db.WeightLog.create({
             UserID: userId,
             Weight: weight,
-            Timestamp: new Date(), // Current timestamp
+            Date: date,
+
         });
+
+        await db.Users.update(
+            { WeightGoal: weight }, // Update the user's weight
+            { where: { UserID: userId } } // Specify the user to update
+        );
 
         return weightLog; // Return the created weight log entry
     } catch (error) {

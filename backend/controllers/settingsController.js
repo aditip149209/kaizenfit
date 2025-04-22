@@ -1,4 +1,4 @@
-import { getUserProfile, updateUserProfile } from "../models/services/settings.js";
+import { getUserProfile, updateUserProfile , updateUserGoals} from "../models/services/settings.js";
 
 export const getUserProfileController = async (req, res) => {
     const { userId } = req.params;
@@ -21,8 +21,9 @@ export const getUserProfileController = async (req, res) => {
 };
 
 export const updateUserProfileController = async (req, res) => {
-    const { userId } = req.params;
-    const updatedData = req.body;
+  
+    const {userId, updatedData} = req.body;
+    console
 
     if (!userId || !updatedData) {
         return res.status(400).json({ message: "User ID and updated data are required." });
@@ -40,3 +41,37 @@ export const updateUserProfileController = async (req, res) => {
     }
 };
 
+export const deleteUserProfileController = async (req, res) => {
+    const { userId } = req.params;
+
+    if (!userId) {
+        return res.status(400).json({ message: "User ID is required." });
+    }
+    try {
+        const result = await deleteUserProfile(userId);
+
+        return res.status(200).json({
+            message: result.message,
+        });
+    } catch (error) {
+        console.error("Error deleting user profile:", error);
+        return res.status(500).json({ message: "Error deleting user profile.", error });
+    }
+}
+
+export const updateUserGoalsController = async (req, res) => {
+    const { userId, updatedData } = req.body;
+    if (!userId || !updatedData) {
+        return res.status(400).json({ message: "User ID and updated data are required." });
+    }
+    try {
+        const result = await updateUserGoals(userId, updatedData);
+
+        return res.status(200).json({
+            message: result.message,
+        });
+    } catch (error) {
+        console.error("Error updating user goals:", error);
+        return res.status(500).json({ message: "Error updating user goals.", error });
+    }
+}

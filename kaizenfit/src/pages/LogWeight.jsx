@@ -1,17 +1,66 @@
-import React from 'react';
-import { useState, useEffect } from 'react';
-import { toast, ToastContainer } from 'react-toastify';
-export const LogWeightModal = ({onClose}) => {
+import React, { useState } from 'react';
+import axios from 'axios';
+import { toast } from 'react-toastify';
+import DatePicker from 'react-datepicker';
+import 'react-datepicker/dist/react-datepicker.css';
 
-
+export const LogWeightModal = ({ onClose, userId, token }) => {
   const [hoverClose, setHoverClose] = useState(false);
   const [hoverSave, setHoverSave] = useState(false);
+  const [formData, setFormData] = useState({
+    date: '',
+    weight: ''
+  });
 
-  const handleSave = async () => {
+  // Handle input changes
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({
+      ...prevData,
+      [name]: value,
+    }));
+  };
 
-  }
+  // Handle Save button click
+  const handleSave = async (e) => {
+    e.preventDefault();
+    const { date, weight } = formData;
 
-             
+    if (!date || !weight) {
+      toast.error('Please fill in all required fields');
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        'http://localhost:3000/api/user/logweight', // Replace with your API endpoint
+        {
+          userId: userId,
+          date: date,
+          weight: weight
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      toast.success('Weight logged successfully');
+      onClose(); // Close modal on successful save
+    } catch (error) {
+      toast.error('Error logging weight');
+      console.error('Error logging weight', error);
+    }
+  };
+
+  const handleDateChange = (date) => {
+    setFormData((prevData) => ({
+      ...prevData,
+      date: date,  // Update the date
+    }));
+  };
+
   return (
     <div className="flex items-center justify-center fixed inset-0 bg-black/50 px-4 py-8">
       <div className="relative bg-[#0c2627] rounded-xl w-[320px] p-6 shadow-xl text-[#e7f6f2]">
@@ -21,7 +70,7 @@ export const LogWeightModal = ({onClose}) => {
 
           <button
             className={` absolute top-10 right-10 text-[#e0f7fa] text-xl font-bold transition-colors ${
-              hoverClose ? "text-red-500" : ""
+              hoverClose ? 'text-red-500' : ''
             }`}
             onMouseEnter={() => setHoverClose(true)}
             onMouseLeave={() => setHoverClose(false)}
@@ -30,18 +79,20 @@ export const LogWeightModal = ({onClose}) => {
           >
             &times;
           </button>
-
         </div>
 
         {/* Form */}
-        <form>
+        <form onSubmit={handleSave}>
           {/* Date */}
           <div className="mb-4">
-            <label htmlFor="date" className="block text-sm text-[#a0c7c7] mb-2">Date</label>
+            <label htmlFor="date" className="block text-sm text-[#a0c7c7] mb-2">
+              Date
+            </label>
             <div className="relative">
-              <input
-                type="date"
-                id="date"
+              <DatePicker
+                selected={formData.date}
+                onChange={handleDateChange}
+                dateFormat="yyyy-MM-dd" // Date format (optional)
                 className="w-full px-4 py-3 bg-[#0a1f20] rounded-lg text-[#e7f6f2] text-sm outline-none"
                 required
               />
@@ -58,31 +109,26 @@ export const LogWeightModal = ({onClose}) => {
 
           {/* Weight */}
           <div className="mb-4">
-            <label htmlFor="weight" className="block text-sm text-[#a0c7c7] mb-2">Weight</label>
+            <label htmlFor="weight" className="block text-sm text-[#a0c7c7] mb-2">
+              Weight
+            </label>
             <div className="flex">
               <input
                 type="number"
                 id="weight"
+                name="weight"
+                value={formData.weight}
+                onChange={handleChange}
                 step="0.1"
                 min="0"
                 className="flex-1 px-4 py-3 bg-[#0a1f20] rounded-l-lg text-[#e7f6f2] text-sm outline-none"
+                required
               />
               <div className="flex items-center justify-between px-4 py-3 bg-[#0a1f20] rounded-r-lg text-[#7ed6c0] cursor-pointer">
-                <span>Lb</span>
-                <span className="text-xs">▼</span>
+                <span>Kg</span>
               </div>
             </div>
           </div>
-
-          {/* Notes */}
-          <div className="mb-4">
-            <label htmlFor="notes" className="block text-sm text-[#a0c7c7] mb-2">Notes</label>
-            <textarea
-              id="notes"
-              className="w-full px-4 py-3 bg-[#0a1f20] rounded-lg text-[#e7f6f2] text-sm resize-none h-20"
-            ></textarea>
-          </div>
-
           {/* Save Button */}
           <button
             type="submit"

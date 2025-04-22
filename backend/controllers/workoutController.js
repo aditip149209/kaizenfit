@@ -103,7 +103,7 @@ export const createExercise = async (req, res) => {
 }
 
 export const getWorkoutListController = async (req, res) => {
-    const UserID = req.query.UserID
+    const UserID = req.query.UserId
     try{
         const workoutList = await getWorkoutListFromDB(UserID);
         return res.status(200).json(workoutList)

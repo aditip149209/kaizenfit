@@ -1,3 +1,4 @@
+import { updateUserGoalsController } from "../../controllers/settingsController.js";
 import db from "../index.js";
 import { Op, where } from "sequelize";
 
@@ -41,15 +42,15 @@ const insertIntoUser = async (data) => {
 }
 
 const onboardUserDetails = async (UserID, data) => {
+    console.log(data);
     try{
         const updateUser = await db.Users.update({
-            data
+            ...data, isOnboarded: true
         }, {
             where: {UserID: UserID}
         })  
-        return res.status(200).json({
-            message: "Onboarding complete"
-        })      
+        console.log(updateUser);
+        return updateUser;
     }
     catch(error){
         console.log(error);
@@ -274,35 +275,50 @@ const deleteLog = async (EntryId) => {
 
 
 const getTodaysWaterIntake = async (userId) => {
-    const today = new Date();
-    const startOfDay = new Date(today.setHours(0, 0, 0, 0));
-    const endOfDay = new Date(today.setHours(23, 59, 59, 999));
+    const now = new Date();
+    const startOfDay = new Date(now.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(now.setHours(23, 59, 59, 999));
 
     try {
-        const totalWaterIntake = await db.WaterLog.sum('Quantity', {
+        const latestEntry = await db.WaterLog.findOne({
             where: {
                 UserID: userId,
                 Timestamp: {
-                    [db.Sequelize.Op.gte]: startOfDay,
-                    [db.Sequelize.Op.lt]: endOfDay,
+                    [Op.gte]: startOfDay,
+                    [Op.lt]: endOfDay,
                 },
             },
+            order: [['Timestamp', 'DESC']],
         });
 
-        return totalWaterIntake || 0; // Return 0 if no entries are found
+        return latestEntry ? latestEntry : 0;
     } catch (error) {
-        console.error("Error fetching today's water intake:", error);
+        console.error("Error fetching today's latest water log:", error);
         throw error;
     }
 };
 
-const logWaterIntake = async (userId, quantity) => {
+export const getGoalIntake = async (userId) => {
+    try {
+      const goal = await db.Users.findOne({
+        attributes: ['WaterIntakeGoalGlasses', 'WaterIntakeGoalVolume'],
+        where: { UserID: userId },
+      });
+      return goal; // ← don't forget to return it!
+    } catch (error) {
+      console.log(error);
+    }
+  };
+  
+
+const logWaterIntake = async (userId, quantity, volume) => {
     try {
         // Create a new entry in the WaterLog table
         const waterLog = await db.WaterLog.create({
             UserID: userId,
             Timestamp: new Date(), // Current timestamp
-            Quantity: quantity, // Amount of water consumed
+            Quantity: quantity, 
+            Volume: volume// Amount of water consumed
         });
 
         return waterLog; // Return the created log entry
@@ -311,13 +327,6 @@ const logWaterIntake = async (userId, quantity) => {
         throw error;
     }
 };
-
-
-
-
-
-
-
 
 
 export {GetUserByEmail, insertIntoUser, onboardUserDetails, getUserBYID, todayFoodLog, 
