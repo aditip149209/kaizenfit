@@ -87,9 +87,7 @@ export default function SettingsAccount() {
         <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={() => navigate('/dashboard')}>
           <img src="icons/home.png" alt="Home" className="w-[22px] h-[22px] object-contain block" />
         </div>
-        <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={() => navigate('/diet')}>
-          <img src="icons/meal.png" alt="Diet" className="w-[22px] h-[22px] object-contain block" />
-        </div>
+
         <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={() => navigate('/profilesettings')}>
           <img src="icons/settings.png" alt="Settings" className="w-[22px] h-[22px] object-contain block" />
         </div>

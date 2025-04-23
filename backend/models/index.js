@@ -710,9 +710,14 @@ const SleepStage = sequelize.define("SleepStage",{
 
 //JOIN TABLE for tracking todays food items consumed 
 const LogTodayFoodItem = sequelize.define("LogTodayFoodItem", {
+    id: {
+        type: DataTypes.INTEGER,
+        autoIncrement: true,
+        primaryKey: true
+      },
+
     EntryID: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
         allowNull: false,
         references: {
             model: LogToday,
@@ -721,7 +726,6 @@ const LogTodayFoodItem = sequelize.define("LogTodayFoodItem", {
     },
     FoodID: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
         allowNull: false,
         references: {
             model: FoodItem,
@@ -730,15 +734,13 @@ const LogTodayFoodItem = sequelize.define("LogTodayFoodItem", {
     },
     Timestamp: {
         type: DataTypes.DATE,
-        primaryKey:true,
         allowNull: false,
     },
     CustomQuantity: {
         type: DataTypes.FLOAT,
         allowNull: true,
-    },
-   
-})
+    }
+});
 
 //need a table that just has all the workouts created by the user 
 const UserWorkoutLog = sequelize.define("UserWorkoutLog", {

@@ -71,24 +71,11 @@ const Login = () => {
             Sign In
           </button>
           <div className="flex items-center justify-between">
-              <label className="flex items-center">
-                <input
-                  type="checkbox"
-                  className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-                />
-                <span className="ml-2 text-sm text-gray-600 py-2" >Remember me</span>
-              </label>
-              <a href="#" className="text-sm text-indigo-600 hover:text-indigo-500 py-2">
-                Forgot password?
-              </a>
+              
+              
             </div>
         </form>
-        <div className="mt-6 text-center text-sm text-gray-600">
-            Don't have an account?{" "}
-            <a href="#" className="text-indigo-600 hover:text-indigo-500 font-medium">
-              Sign up
-            </a>
-          </div>
+        
       </div>
     </div>
   );

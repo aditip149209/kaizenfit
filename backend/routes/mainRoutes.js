@@ -4,7 +4,7 @@ import { isOnboarded, onboardUser} from "../controllers/onboardController.js";
 import { editWaterIntakeGoalController, getFoodDetails, getTodaysWaterIntakeController, logWaterIntakeController,
     getWaterGoalController
  } from "../controllers/userController.js";
-import { deleteLogController, getFoodLogByTypeController, logFoodByTypeController } from "../controllers/trackController.js";
+import { deleteLogController, logFoodController, getFoodLogController } from "../controllers/trackController.js";
 import { getLoggedWeightsController, logWeightController } from "../controllers/weightController.js";
 import { createWorkoutWithExercisesController, getRandomWorkoutWithExercisesController, markWorkoutAsCompletedController, 
     createExercise, getWorkoutListController, getExerciseListController } from "../controllers/workoutController.js";
@@ -15,25 +15,22 @@ import { getDietListController } from "../controllers/dietController.js";
 import {deleteUserProfileController, updateUserGoalsController} from "../controllers/settingsController.js";
 
 const mainRouter = Router();
-    
+
 mainRouter.post('/onboarding', protect, onboardUser);
 mainRouter.post('isOnboarded', protect, isOnboarded);
 mainRouter.get('/foodlogdata',protect, getFoodDetails);
 mainRouter.get('/getuserdetails', protect, getUserDetailsController)
 
 //track calories page
-mainRouter.post('/foodlogbytype', protect, getFoodLogByTypeController);
-mainRouter.post('/makenewfoodlogbytype', protect, logFoodByTypeController)
-mainRouter.post('/deletefoodlogbytype', protect, deleteLogController)
+mainRouter.post('/trackfoodfortoday', protect, logFoodController);
+mainRouter.post('/getfoodlogfortoday', protect, getFoodLogController)
+mainRouter.post('/deletetrackedfood', protect, deleteLogController)
 
 //weight card
 mainRouter.post('/logweight', protect, logWeightController);
 mainRouter.post('/getloggedweights', protect, getLoggedWeightsController)
 mainRouter.delete('/deleteweightlog', protect, deleteLogController)
 mainRouter.post('/changeweightgoal', protect, updateUserGoalsController) //focus on this
-
-
-
 
 //water intake card 
 mainRouter.post('/logwater', protect, logWaterIntakeController) //this works too
@@ -61,7 +58,6 @@ mainRouter.post('/createnewdiet', protect, createNewDietController); //this work
 mainRouter.post('/createnewfooditem', protect, createFoodItemController); //this works 
 mainRouter.get('/getfooditemlist', protect, getFoodItemListController); //this works
 mainRouter.get('/dietlist', protect, getDietListController); 
-
 
 export default mainRouter
 

@@ -129,7 +129,7 @@ const Onboarding = () => {
         </h2>
         <input 
           type="number"
-          name="weight"
+          name="goalWeight"
           placeholder="Enter Weight (kg)"
           value={data.goalWeight}
           onChange={handleChange}

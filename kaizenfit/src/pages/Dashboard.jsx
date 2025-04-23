@@ -101,19 +101,19 @@ export const Dashboard = () => {
       }, {
         headers: { Authorization: `Bearer ${token}` }
       });
-      console.log(response.data)
-      const Quantity = response.data.data.totalWaterIntake.Quantity;
-      const Volume = response.data.data.totalWaterIntake.Volume;
-
-      setGlasses(Quantity);
-      setVolume(Volume);
-
-      if(!Quantity || !Volume) {
-        setGlasses(0);
-        setVolume(0);
-      }
+  
+      const data = response?.data?.data?.totalWaterIntake;
+      const Quantity = data?.Quantity;
+      const Volume = data?.Volume;
+  
+      // Fallback values: if undefined or not a number, fallback to 0 or default
+      setGlasses(Number.isFinite(Quantity) ? Quantity : 0);
+      setVolume(Number.isFinite(Volume) && Volume > 0 ? Volume : 250);
     } catch (err) {
-      console.error(err);
+      console.error("Error fetching current water intake:", err);
+      // Fallback in case of error
+      setGlasses(0);
+      setVolume(250);
     }
   };
 
@@ -203,9 +203,7 @@ const SidebarItem = ({ icon, title, desc }) => (
         <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={() => navigate('/dashboard')}>
           <img src="icons/home.png" alt="Home" className="w-[22px] h-[22px] object-contain block" />
         </div>
-        <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={() => navigate('/diet')}>
-          <img src="icons/meal.png" alt="Diet" className="w-[22px] h-[22px] object-contain block" />
-        </div>
+        
         <div className="w-[40px] h-[40px] bg-[#1d3434] rounded-[12px] mb-[10px] flex items-center justify-center transition-all" onClick={() => navigate('/profilesettings')}>
           <img src="icons/settings.png" alt="Settings" className="w-[22px] h-[22px] object-contain block" />
         </div>
@@ -381,19 +379,12 @@ const SidebarItem = ({ icon, title, desc }) => (
             </div>
 
             {/* Calorie Tracker Card */}
-            <div className="bg-[#182828] rounded-[18px] p-[20px_22px] min-h-[130px] shadow-[0_2px_8px_rgba(20,_40,_40,_0.05)] flex flex-col justify-between">
+            <div className="bg-[#182828] rounded-[18px] p-[20px_22px] min-h-[130px] shadow-[0_2px_8px_rgba(20,_40,_40,_0.05)] flex flex-col">
               <div className="text-[#7ed6c0] text-[0.95rem] font-semibold mb-[6px]">CALORIE TRACKER</div>
-              <div className="text-[1.1rem] mb-[8px]">Calories Consumed: {calories.consumed}/{calories.goal} kcal</div>
-              <div className="relative pt-[5px]">
-                <div className="absolute top-0 left-0 w-full bg-[#2e6c6c] h-[10px] rounded-full"></div>
-                <div
-                  className="absolute top-0 left-0 bg-[#7ed6c0] h-[10px] rounded-full"
-                  style={{ width: `${calculateProgressPercentage(calories.consumed, calories.goal)}%` }}
-                ></div>
-              </div>
+       
               <button className="mt-4 bg-[#1e5a5a] text-white py-2 px-4 rounded-full hover:bg-[#3f8b8b] transition-colors"
                onClick={() => setShowTodayCalories(true)}>Track Calories</button>
-              {showTodayCalories && <TrackCalories onClose={() => setShowTodayCalories(false)}/>}
+              {showTodayCalories && <TrackCalories onClose={() => setShowTodayCalories(false)} token={token} id={id}/>}
             </div>
           </div>
         </div>
