@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const db = require('../config/db');
+import jwt from 'jsonwebtoken'
+import { getUserBYID } from '../models/services/userQuery.js';
 
 const protect = async (req, res, next) => {
     let token;
@@ -14,13 +14,12 @@ const protect = async (req, res, next) => {
 
             // Verify token
             const decoded = jwt.verify(token, process.env.JWT_SECRET);
+            console.log(decoded);
             // Get user from database by decoded UserID
-            const [user] = await db.promise().query(
-                'SELECT * FROM User WHERE UserID = ?',
-                [decoded.UserID] // Use id from decoded payload
-            );
+            const user = await getUserBYID(decoded.id);
+            // console.log(user.dataValues);
 
-            if (user.length === 0) {
+            if (!user) {
                 return res.status(401).json({ message: 'Not authorized, user not found' });
             }
 
@@ -36,4 +35,4 @@ const protect = async (req, res, next) => {
     }
 };
 
-module.exports = { protect };
+export {protect};

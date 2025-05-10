@@ -1,31 +1,44 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
-const bodyParser = require('body-parser');
-const db = require('./config/db');
-const router = express.Router();
-const app = express();
-app.use(cors());
-app.use(bodyParser.json()); // Parse JSON request bodies
+import express from 'express'
+import cors from 'cors';
+import { Router } from 'express';
+import { connectDB } from './utils/database.js';
+import dotenv from 'dotenv'
+dotenv.config()
 
 // Import routes
-const authRoutes = require('./routes/authRoutes');
-app.use('/api/auth', authRoutes);
-
-const userRoutes = require('./routes/userRoutes');
-const onboardRoutes = require('./routes/onboardRoutes');
-router.use('/', userRoutes);
-router.use('/', onboardRoutes);
-app.use('/api/users', router);
-const workoutRoutes = require('./routes/workoutplanRoutes');
-app.use('/api/workouts', workoutRoutes);
+import authRouter from './routes/authRoutes.js';
+import mainRouter from './routes/mainRoutes.js';
 
 
+const router = Router();
+const app = express();
+app.use(cors());
+app.use(express.json()); // Parse JSON request bodies
+
+// Function to start the server properly
+const startServer = async () => {
+    try {
+        connectDB();
+        // Start the server after everything is ready
+        const PORT = process.env.PORT || 3000;
+        app.listen(PORT, () => {
+            console.log(`🚀 Server running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error('❌ Error starting the server:', error);
+        process.exit(1); // Exit the process if there's a failure
+    }
+};
+
+// Call the function to start everything
+startServer();
+
+router.use('/user', mainRouter);
+router.use('/auth', authRouter);
+
+app.use('/api', router);
 
 // Default route
 app.get('/', (req, res) => {
     res.send('Fitness Tracker API is running');
 });
-
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

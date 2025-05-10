@@ -1,20 +1,58 @@
-const db = require('../config/db');
+import db from "../models/index.js";
+import { onboardUserDetails } from "../models/services/userQuery.js";
+import { jwtDecode } from "jwt-decode"
+import jwt from 'jsonwebtoken'
+
 
 const onboardUser = async (req, res) => {
-    const {height, weight, goal, birthday} = req.body;
-    const uid = req.user.UserID;
+  const {gender, height, weight, goal, fitnessLevel} = req.body;
+  if(!height || !weight || !gender || !goal || !fitnessLevel){
+    return res.status(400).json({
+      message: "Some fields are missing please recheck"
+    })
+  }
+ 
+  const authHeader = req.headers.authorization;
+  if (!authHeader || !authHeader.startsWith("Bearer ")) {
+    return res.status(401).json({ message: "No token provided" });
+  }
 
-    try {
-        await db.promise().query(
-          'UPDATE User SET Height = ?, Weight = ?, Goal = ?, is_onboarded = ?, DOB = ? WHERE UserID = ?',
-          [height, weight, goal, true, birthday, uid]
-        );
-        res.status(200).json({ message: 'Onboarding successful' });
-      } catch (error) {
-        console.error(error);
-        res.status(500).json({ error: 'Failed to update user info' });
-      }
+  const token = authHeader.split(" ")[1]; // Extract the token part
+  let decoded;
 
-};
+  try {
+    // Decode the token using the secret key
+    decoded = jwt.verify(token, process.env.JWT_SECRET);
+  } catch (error) {
+    console.error("Token verification failed:", error.message);
+    return res.status(401).json({ message: "Invalid or expired token" });
+  }
 
-module.exports = onboardUser;
+  const UserID = decoded.id; 
+  
+  try{
+    const tryUpdate = await onboardUserDetails(UserID, req.body);
+    return res.status(200).json({
+      message: "Onboarding complete"
+    })
+  }
+  catch(error){
+    console.log(error);
+  }
+}
+const isOnboarded = async (req, res) => {
+    try{
+        const UserID = req.body;
+        const getStat = await db.Users.findOne({
+            where: {UserID}, 
+            attributes: ['isOnboarded']
+        })
+        return res.status(200).json(getStat);
+    }
+    catch(error){
+        console.log(error);
+    }
+}
+
+
+export {onboardUser, isOnboarded};

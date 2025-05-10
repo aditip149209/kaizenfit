@@ -4,7 +4,7 @@ import axios from "axios";
 
 
 const Onboarding = () => {
-    const [data, setData] = useState({height : '', weight: '', goal: '', birthday: '', fitnessLevel: ''});
+    const [data, setData] = useState({height : '', weight: '', goal: '', gender: '', fitnessLevel: ''});
     const navigate = useNavigate();
     const [step, setStep] = useState(1);
 
@@ -13,47 +13,22 @@ const Onboarding = () => {
         setData((prev) => ({...prev, [e.target.name]: e.target.value}));
     };
 
-    const refreshToken = async () => {
-        try {
-            const refreshToken = localStorage.getItem('refreshToken');
-            const response = await axios.post('http://localhost:5000/api/auth/refresh', { token: refreshToken });
-            localStorage.setItem('token', response.data.accessToken);
-            return response.data.accessToken;
-        } catch (err) {
-            console.error('Error refreshing token:', err);
-            // Handle error, possibly redirect to login
-        }
-    };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         let token = localStorage.getItem('token');
 
         try {
-            await axios.post('http://localhost:5000/api/users/onboarding', data, {
+            await axios.post('http://localhost:3000/api/user/onboarding', data, {
                 headers: {
-                    'Authorization': `Bearer ${token}`
+                    Authorization: `Bearer ${token}`
                 }
             });
             navigate('/dashboard');
-        } catch (err) {
-            if (err.response && err.response.status === 401) {
-                // Token might be expired, try refreshing
-                token = await refreshToken();
-                if (token) {
-                    // Retry the request with the new token
-                    await axios.post('http://localhost:5000/api/users/onboarding', data, {
-                        headers: {
-                            'Authorization': `Bearer ${token}`
-                        }
-                    });
-                    navigate('/dashboard');
-                }
-            } else {
+        } catch (err) {          
                 console.error('Error:', err.response ? err.response.data : err.message);
             }
         }
-    };
+    
 
     const nextStep = () => {
         setStep(step + 1);
@@ -158,11 +133,9 @@ const Onboarding = () => {
           required
         >
           <option value="" disabled>Select Goal</option>
-          <option value="Lose Fat">Lose Fat</option>
-          <option value="Build Muscle">Build Muscle</option>
-          <option value="Improve Endurance & Performance">Improve Endurance & Performance</option>
-          <option value="Enhance Overall Health & Wellness">Enhance Overall Health & Wellness</option>
-          <option value="Maintain & Tone">Maintain & Tone</option>
+          <option value="weight_loss">Lose Fat</option>
+          <option value="muscle_gain">Build Muscle</option>
+          <option value="maintenance">Maintain & Tone</option>
         </select>
         <div className="flex justify-between mt-6">
           <button
@@ -183,38 +156,42 @@ const Onboarding = () => {
       </div>
     )}
 
-    {/* ✅ Step 4 - Birthday */}
-    {step === 4 && (
-      <div className="animate-fade-in">
-        <h2 className="text-3xl font-extrabold text-[#00CED1] mb-6 text-center">
-          Step 4: Birthday
-        </h2>
-        <input 
-          type="date"
-          name="birthday"
-          value={data.birthday}
-          onChange={handleChange}
-          className="w-full px-4 py-3 bg-gray-800 text-gray-200 border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1E90FF] transition duration-300"
-          required
-        />
-        <div className="flex justify-between mt-6">
-          <button
-            type="button"
-            onClick={prevStep}
-            className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-xl transition-all"
-          >
-            Back
-          </button>
-          <button
-            type="button"
-            onClick={nextStep}
-            className="bg-cyan-500 hover:bg-[#00CED1] text-white font-bold py-3 px-6 rounded-xl transition-all"
-          >
-            Next
-          </button>
-        </div>
-      </div>
-    )}
+    {/* ✅ Step 4 - Gender */}
+{step === 4 && (
+  <div className="animate-fade-in">
+    <h2 className="text-3xl font-extrabold text-[#00CED1] mb-6 text-center">
+      Step 4: Gender
+    </h2>
+    <select
+      name="gender"
+      value={data.gender}
+      onChange={handleChange}
+      className="w-full px-4 py-3 bg-gray-800 text-gray-200 border border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#1E90FF] transition duration-300"
+      required
+    >
+      <option value="" disabled>Select Gender</option>
+      <option value="male">Male</option>
+      <option value="female">Female</option>
+      <option value="prefernottosay">Prefer Not to Say</option>
+    </select>
+    <div className="flex justify-between mt-6">
+      <button
+        type="button"
+        onClick={prevStep}
+        className="bg-gray-300 hover:bg-gray-400 text-gray-800 font-bold py-3 px-6 rounded-xl transition-all"
+      >
+        Back
+      </button>
+      <button
+        type="button"
+        onClick={nextStep}
+        className="bg-cyan-500 hover:bg-[#00CED1] text-white font-bold py-3 px-6 rounded-xl transition-all"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+)}
 
     {/* ✅ Step 5 - Fitness Level */}
     {step === 5 && (
@@ -261,4 +238,3 @@ const Onboarding = () => {
 }
 
 export default Onboarding;
-
