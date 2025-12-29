@@ -1,31 +1,53 @@
-const express = require('express');
-const cors = require('cors');
-require('dotenv').config();
-const bodyParser = require('body-parser');
-const db = require('./config/db');
-const router = express.Router();
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import bodyParser from 'body-parser';
+import { db, connectDB } from './config/db.js';
+import './models/User.js'
+import { Router } from 'express';
+import { jwtCheck, syncUser } from './controllers/authController.js';
+
 const app = express();
+
 app.use(cors());
-app.use(bodyParser.json()); // Parse JSON request bodies
+app.use(bodyParser.json()); 
 
-// Import routes
-const authRoutes = require('./routes/authRoutes');
-app.use('/api/auth', authRoutes);
+const startServer = async () => {
+    try {
+        await connectDB();
+        // Start the server after everything is ready
+        const PORT = process.env.PORT || 3001;
+        app.listen(PORT, () => {
+            console.log(` Server running on port ${PORT}`);
+        });
+    } catch (error) {
+        console.error(' Error starting the server:', error);
+        process.exit(1); // Exit the process if there's a failure
+    }
+};
 
-const userRoutes = require('./routes/userRoutes');
-const onboardRoutes = require('./routes/onboardRoutes');
-router.use('/', userRoutes);
-router.use('/', onboardRoutes);
-app.use('/api/users', router);
-const workoutRoutes = require('./routes/workoutplanRoutes');
-app.use('/api/workouts', workoutRoutes);
+// Call the function to start everything
+startServer();
 
+app.get('/', ()=> {
+    console.log('yahoo');
+}) 
 
-
-// Default route
-app.get('/', (req, res) => {
-    res.send('Fitness Tracker API is running');
+// Add a test endpoint
+app.get('/api/test/auth', jwtCheck, syncUser, (req, res) => {
+  res.json({
+    message: 'Authentication successful',
+    auth0Data: req.auth,      // Data from Auth0 JWT
+    databaseUser: req.user,   // Data from your database
+    comparison: {
+      auth0Id: req.auth.sub,
+      yourDbId: req.user._id,
+      areTheSame: req.auth.sub === req.user._id.toString()
+    }
+  });
 });
 
-const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+
+
+
+

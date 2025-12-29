@@ -1,21 +1,33 @@
-const mysql = require('mysql2');
+import { Sequelize } from "sequelize";
 
-// Create a connection to the database
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'aditi',         // Your MySQL username
-    password: 'root',      // Your MySQL password
-    database: 'kaizenfit'   // Your database name
-});
+import configInfo from "./db.config.js";
 
-// Connect to MySQL
-db.connect((err) => {
-    if (err) {
-        console.error('❌ MySQL connection failed:', err.message);
-    } else {
-        console.log('✅ MySQL connected successfully!');
+export const db = new Sequelize(
+    configInfo.DB,
+    configInfo.USER,
+    configInfo.PASSWORD,
+    {
+        host: configInfo.HOST,
+        dialect: configInfo.DIALECT,
+        logging: false,
     }
-});
+);
 
-module.exports = db;
+
+export const connectDB = async () => {
+    try {
+      await db.authenticate(); // Test connection
+      console.log('_/ Successfully connected to database');
+      await db.sync({ force: true }); // Sync tables
+      console.log('_/ Database and tables synced');
+    } catch (error) {
+      console.error('X Error syncing database:', error.message);
+      console.error(error); // Full error stack trace
+    }
+  };
+  
+export default {
+    db, connectDB
+};
+
 

@@ -17,4 +17,6 @@ const onboardUser = async (req, res) => {
 
 };
 
-module.exports = onboardUser;
+export {
+  onboardUser
+}

@@ -1,18 +1,8 @@
-const WorkoutPlan = require('../models/WorkoutPlan');
 
-const createWorkoutPlan = async (req, res) => {
+
+const createUserWorkoutPlan = async (req, res) => {
     try {
-        const { userID, name, description } = req.body;
-
-        const newWorkoutPlan = await WorkoutPlan.create({
-            userID: userID,
-            name: name,
-            description: description
-        });
-
-        res.status(201).json({ message: 'Workout plan created successfully', 
-            workout: newWorkoutPlan
-        });
+        
     }
         catch(error){
             console.log(error);
@@ -22,13 +12,36 @@ const createWorkoutPlan = async (req, res) => {
 
     const getWorkoutPlans = async (req, res) => {
         try {
-            const userId = req.user.id;  // Access authenticated user
-            const workoutPlans = await WorkoutPlan.findAll({where: {userId: userId}});
-            res.status(200).json(workoutPlans);
+            
         } catch (error) {
             console.error(error);
             res.status(500).json({ message: 'Server error' });
         }
     };
+
+    const getUserWorkouts = async (req, res) => {
+        try{
+
+        }   
+        catch(error) {
+            console.error(error);
+            res.status(500).json({message: 'Server error in fetching user workouts'})
+        }
+    };
+
+    const getWorkoutLog = async(req, res) => {
+
+    };
+
+    const createWorkoutLog = async(req, res) => {
+
+    };
+
     
-    module.exports = {createWorkoutPlan, getWorkoutPlans};
+
+    
+    
+    export {
+        createUserWorkoutPlan, getUserWorkouts, getWorkoutLog, createWorkoutLog
+    }
+    

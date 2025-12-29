@@ -26,6 +26,26 @@ const updateUserProfile = async (req, res) => {
 // Validate inputs, update the database, handle errors
 };
 
+const createUser = async (req, res) => {
+  try{
+    //create user when the user registers/logs in for the first time using auth0.
+  }
+  catch(error) {
+
+  }
+}
+
+const onboardUser = async (req, res) => {
+  //if user is not onboarded, then onboard the user
+  //first check if user is onboarded
+  try{
+
+  }
+  catch(error) {
+
+  }
+}
+
 
 
 module.exports = { getUserProfile, updateUserProfile };
