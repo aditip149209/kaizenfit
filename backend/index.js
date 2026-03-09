@@ -4,19 +4,23 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import { db, connectDB } from './config/db.js';
 import './models/User.js'
-import { Router } from 'express';
-import { jwtCheck, syncUser } from './controllers/authController.js';
+import router from './route.ts';
+
+dotenv.config();
 
 const app = express();
 
 app.use(cors());
 app.use(bodyParser.json()); 
 
+// Register API routes
+app.use('/api', router);
+
 const startServer = async () => {
     try {
         await connectDB();
         // Start the server after everything is ready
-        const PORT = process.env.PORT || 3001;
+        const PORT = process.env.PORT || 3000;
         app.listen(PORT, () => {
             console.log(` Server running on port ${PORT}`);
         });
@@ -29,23 +33,10 @@ const startServer = async () => {
 // Call the function to start everything
 startServer();
 
-app.get('/', ()=> {
-    console.log('yahoo');
-}) 
+app.get('/', (req, res)=> {
+    res.send('Server is running!');
+}); 
 
-// Add a test endpoint
-app.get('/api/test/auth', jwtCheck, syncUser, (req, res) => {
-  res.json({
-    message: 'Authentication successful',
-    auth0Data: req.auth,      // Data from Auth0 JWT
-    databaseUser: req.user,   // Data from your database
-    comparison: {
-      auth0Id: req.auth.sub,
-      yourDbId: req.user._id,
-      areTheSame: req.auth.sub === req.user._id.toString()
-    }
-  });
-});
 
 
 

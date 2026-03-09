@@ -8,7 +8,7 @@ function Section1 () {
       <div className="border-b-1 border-black">
         <div className="max-w-7xl mx-auto text-center">
           <h1 className="text-5xl md:text-7xl lg:text-9xl font-black font-bold font-bebas leading-tight">
-            TRAIN HARD. <span className="text-[#4ADE80]">LIVE BETTER</span>
+            TRAIN HARD. <span className="text-kaizen-green">LIVE BETTER</span>
           </h1>
         </div>
       </div>
@@ -78,7 +78,7 @@ function Section1 () {
           {/* Join The Community */}
           <div className="p-5 md:p-8 lg:p-10 border-b-1 border-black">
             <h2 className="text-5xl md:text-9xl font-black font-bebas">
-              JOIN THE <span className="text-[#4ADE80]">COMMUNITY</span>
+              JOIN THE <span className="text-kaizen-green">COMMUNITY</span>
             </h2>
           </div>
 

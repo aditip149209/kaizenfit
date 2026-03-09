@@ -44,7 +44,7 @@ const UserProfile = db.define('UserProfile', {
         type: DataTypes.FLOAT,
     },
     weightType: {
-        type: DataTypes.ENUM('cm', 'inch')
+        type: DataTypes.ENUM('kg', 'lb')
     },
     goal: {
         type: DataTypes.ENUM('lose_weight', 'gain_muscle', 'maintain_weight','improve_fitness'),

@@ -3,6 +3,13 @@
 
 @theme {
   --font-bebas: "Bebas Neue", sans-serif;
+  --color-kaizen-green: #008268;
+  --color-kaizen-black: #0c0c0c;
+  --color-kaizen-white: #ffffff;
+  --color-kaizen-gray: #f5f5f5;
+  --color-kaizen-alert: #FF4D4D;
+  --color-kaizen-lightgreen: #d9ffe8;
+  --color-kaizen-mint: #A1FFCB;
 }
 
 @layer base {

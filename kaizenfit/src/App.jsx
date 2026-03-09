@@ -1,14 +1,30 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import Login from './pages/AuthUser';
-import Dashboard from './pages/Dashboard';
-import Register from './pages/Register';
-import Onboarding from './pages/Onboarding';
 import Header from './components/Header';
 import Section1 from './components/Section1';
 import Footer from './components/Footer';
-import { useAuth0 } from '@auth0/auth0-react';
-import { useState } from 'react';
+import Login from './pages/Login';
+import Register from './pages/Register';
+import { Dashboard } from './pages/Dashboard';
+import { Community } from './pages/Community';
+import { Program } from './pages/Program';
+import Onboarding from './pages/Onboarding';
+import Nutrition from './components/NutritionSection';
+import SideBar from './components/SideBar';
+import DashboardMain from './components/DashboardMain';
+import CommSection from './components/CommSection';
+import Settings from './components/SettingsMain';
+import ProgramsMain from './components/ProgramsMain';
+
+// Layout wrapper for authenticated pages
+const AppLayout = ({ children }) => {
+  return (
+    <div className="flex h-screen overflow-hidden">
+      <SideBar />
+      {children}
+    </div>
+  );
+};
 
 function App() {
   return (
@@ -19,8 +35,11 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/onboarding" element={<Onboarding />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        
+        <Route path="/dashboard" element={<AppLayout><DashboardMain /></AppLayout>} />
+        <Route path="/nutrition" element={<AppLayout><Nutrition /></AppLayout>} />
+        <Route path="/community" element={<AppLayout><CommSection /></AppLayout>} />
+        <Route path="/programs" element={<AppLayout><ProgramsMain /></AppLayout>} />
+        <Route path="/settings" element={<AppLayout><Settings /></AppLayout>} />
       </Routes>
     </Router>
   );
@@ -28,28 +47,11 @@ function App() {
 
 // Example Landing Page Component
 const LandingPage = () => {
-  const { getAccessTokenSilently, isAuthenticated, loginWithRedirect } = useAuth0();
-  const [token, setToken] = useState('');
-
-  const getToken = async () => {
-    try {
-      const accessToken = await getAccessTokenSilently();
-      setToken(accessToken);
-      // Copy to clipboard
-      navigator.clipboard.writeText(accessToken);
-      alert('Token copied to clipboard!');
-      console.log('Token:', accessToken);
-    } catch (error) {
-      console.error('Error getting token:', error);
-    }
-  };
   return (
-   
        <>
        <Header />
        <Section1 />
        <Footer />
-       
        </>
   );
 };
