@@ -2,7 +2,7 @@ import { useState } from "react";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios";
+import { api } from "../lib/api";
 
 export default function Register() {
   const navigate = useNavigate();
@@ -22,13 +22,10 @@ export default function Register() {
     setError("");
 
     try {
-      const result = await createUserWithEmailAndPassword(auth, email, password);
-      const token = await result.user.getIdToken();
+      await createUserWithEmailAndPassword(auth, email, password);
       
       // Sync user with backend database
-      await axios.get('http://localhost:3000/api/syncUser', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.get('/syncUser');
       
       // Redirect to onboarding for new users
       navigate("/onboarding");

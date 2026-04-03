@@ -15,17 +15,26 @@ const WaterModal: React.FC<WaterModalProps> = ({
   onClose, 
   mode, 
   currentLevel, 
+  currentGoal,
   onConfirm 
 }) => {
   // Local state for the input
   const [inputValue, setInputValue] = useState<number>(0);
+  const STEP_ML = 250;
+
+  const adjustValue = (delta: number) => {
+    setInputValue((prev) => {
+      const next = prev + delta;
+      return Math.max(-5000, Math.min(5000, next));
+    });
+  };
 
   // Reset/Preset input when modal opens or mode changes
   useEffect(() => {
     if (isOpen) {
-      setInputValue(mode === 'LOG' ? 250 : 3000); // Default add 250ml or set goal to 3000
+      setInputValue(mode === 'LOG' ? STEP_ML : currentGoal || 3000);
     }
-  }, [isOpen, mode]);
+  }, [isOpen, mode, currentGoal]);
 
   if (!isOpen) return null;
 
@@ -51,32 +60,49 @@ const WaterModal: React.FC<WaterModalProps> = ({
           
           {mode === 'LOG' ? (
             <>
-              {/* LOG MODE: Visuals & Quick Add */}
+              {/* LOG MODE: Plus/Minus controls for today's intake */}
               <div className="text-center mb-4">
                 <span className="font-mono text-xs text-gray-500 uppercase font-bold">Current Level</span>
                 <div className="font-heading text-5xl mt-1">{currentLevel}<span className="text-lg text-gray-400">ml</span></div>
+                <p className="font-mono text-[11px] uppercase text-gray-500 mt-1">Goal: {currentGoal}ml</p>
               </div>
-              
+
+              <div className="flex items-center gap-3">
+                <button
+                  onClick={() => adjustValue(-STEP_ML)}
+                  className="w-14 h-14 border-3 border-black bg-white text-2xl font-heading hover:bg-gray-100 transition-colors"
+                >
+                  -
+                </button>
+
+                <div className="flex-1 border-3 border-black bg-kaizen-lightgreen py-3 text-center">
+                  <div className="font-heading text-3xl leading-none">
+                    {inputValue > 0 ? `+${inputValue}` : inputValue}
+                    <span className="text-lg text-gray-500">ml</span>
+                  </div>
+                  <p className="font-mono text-[10px] uppercase mt-1 text-gray-600">
+                    {inputValue >= 0 ? 'ADD TO TODAY' : 'SUBTRACT FROM TODAY'}
+                  </p>
+                </div>
+
+                <button
+                  onClick={() => adjustValue(STEP_ML)}
+                  className="w-14 h-14 border-3 border-black bg-white text-2xl font-heading hover:bg-gray-100 transition-colors"
+                >
+                  +
+                </button>
+              </div>
+
               <div className="grid grid-cols-3 gap-2">
-                {[250, 500, 1000].map(amt => (
-                  <button 
+                {[-250, 250, 500].map((amt) => (
+                  <button
                     key={amt}
                     onClick={() => setInputValue(amt)}
                     className={`py-3 border-3 border-black font-heading text-xs hover:bg-black hover:text-white transition-all uppercase ${inputValue === amt ? 'bg-kaizen-green' : 'bg-white'}`}
                   >
-                    +{amt}ml
+                    {amt > 0 ? `+${amt}` : amt}ml
                   </button>
                 ))}
-              </div>
-
-              <div className="relative pt-2">
-                <label className="block font-heading uppercase text-xs mb-1 font-bold">Custom Amount (ml)</label>
-                <input 
-                  type="number" 
-                  value={inputValue}
-                  onChange={(e) => setInputValue(Number(e.target.value))}
-                  className="w-full border-3 border-black p-3 font-mono text-lg font-bold focus:bg-kaizen-lightgreen focus:outline-none transition-colors"
-                />
               </div>
             </>
           ) : (
@@ -84,7 +110,7 @@ const WaterModal: React.FC<WaterModalProps> = ({
               {/* GOAL MODE: Set Target */}
               <div className="bg-kaizen-lightgreen border-3 border-black p-4 text-center mb-4">
                 <p className="font-heading text-sm uppercase mb-1">Recommended Target</p>
-                <p className="font-mono text-xs">Based on activity level: <strong>3000ml - 4000ml</strong></p>
+                <p className="font-mono text-xs"><strong>3000ml - 4000ml</strong></p>
               </div>
 
               <div>
@@ -102,18 +128,12 @@ const WaterModal: React.FC<WaterModalProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t-3 border-black bg-gray-50 flex gap-4">
-          <button 
-            onClick={onClose} 
-            className="flex-1 bg-white text-black border-3 border-black py-3 font-heading uppercase text-sm hover:bg-gray-200 transition-colors"
-          >
-            Cancel
-          </button>
+        <div className="p-4 border-t-3 border-black bg-gray-50">
           <button 
             onClick={() => onConfirm(inputValue)} 
-            className="flex-1 bg-black text-white border-3 border-black py-3 font-heading uppercase text-sm shadow-neo hover:translate-x-1 hover:translate-y-1 hover:shadow-none hover:bg-kaizen-green hover:text-black transition-all"
+            className="w-full bg-black text-white border-3 border-black py-3 font-heading uppercase text-sm shadow-neo hover:translate-x-1 hover:translate-y-1 hover:shadow-none hover:bg-kaizen-green hover:text-black transition-all"
           >
-            {mode === 'LOG' ? 'ADD ENTRY' : 'UPDATE GOAL'}
+            {mode === 'LOG' ? 'APPLY CHANGE' : 'UPDATE GOAL'}
           </button>
         </div>
 

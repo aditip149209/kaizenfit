@@ -59,9 +59,60 @@ const UserProfile = db.define('UserProfile', {
     }, 
     injuries: {
         type: DataTypes.TEXT
-    }, 
+    },
+    username: {
+        type: DataTypes.STRING,
+        unique: false,
+    },
+    address: {
+        type: DataTypes.TEXT,
+    },
+    profilePictureUrl: {
+        type: DataTypes.STRING,
+    },
+    dailyCalorieIntake: {
+        type: DataTypes.INTEGER,
+    },
+    age: {
+        type: DataTypes.INTEGER,
+    },
 });
 
+    const NotificationPreferences = db.define('NotificationPreferences', {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        userid: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: User,
+                key: 'userid',
+            },
+            unique: true,
+        },
+        pushNotifications: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: false,
+        },
+        weeklyIntelReport: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true,
+        },
+        missionReminders: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true,
+        },
+        emailNotifications: {
+            type: DataTypes.BOOLEAN,
+            defaultValue: true,
+        },
+        lastWeeklyReportSent: {
+            type: DataTypes.DATE,
+        },
+    });
 
     const Exercise = db.define('Exercise', {
         id: {
@@ -405,6 +456,158 @@ const UserProfile = db.define('UserProfile', {
         },
     });
 
+    const TransformationReport = db.define('TransformationReport', {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        reportType: {
+            type: DataTypes.ENUM('daily', 'weekly', 'monthly'),
+            allowNull: false,
+            defaultValue: 'weekly',
+        },
+        content: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
+        payloadMeta: {
+            type: DataTypes.JSON,
+            allowNull: true,
+        },
+        userid: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: User,
+                key: 'userid',
+            },
+        },
+        journalId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: TransformationJournal,
+                key: 'id',
+            },
+        },
+    });
+
+    const CommunityPost = db.define('CommunityPost', {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        author: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        badge: {
+            type: DataTypes.ENUM('PR ALERT', 'INTEL NEEDED', 'GENERAL', 'MOTIVATION'),
+            allowNull: false,
+            defaultValue: 'GENERAL',
+        },
+        content: {
+            type: DataTypes.TEXT,
+            allowNull: false,
+        },
+        likes: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+        },
+        likedBy: {
+            type: DataTypes.JSON,
+            allowNull: false,
+            defaultValue: [],
+        },
+        userid: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: User,
+                key: 'userid',
+            },
+        },
+    });
+
+    const CommunityChallenge = db.define('CommunityChallenge', {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        title: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        targetReps: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 500,
+        },
+        rewardXp: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 500,
+        },
+        startDate: {
+            type: DataTypes.DATEONLY,
+            allowNull: false,
+        },
+        endDate: {
+            type: DataTypes.DATEONLY,
+            allowNull: false,
+        },
+        isActive: {
+            type: DataTypes.BOOLEAN,
+            allowNull: false,
+            defaultValue: true,
+        },
+    });
+
+    const CommunityChallengeProgress = db.define('CommunityChallengeProgress', {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+        },
+        reps: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+        },
+        xp: {
+            type: DataTypes.INTEGER,
+            allowNull: false,
+            defaultValue: 0,
+        },
+        userid: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: User,
+                key: 'userid',
+            },
+        },
+        challengeId: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            references: {
+                model: CommunityChallenge,
+                key: 'id',
+            },
+        },
+    }, {
+        indexes: [
+            {
+                unique: true,
+                fields: ['userid', 'challengeId'],
+            },
+        ],
+    });
+
 
     const HealthData = db.define('HealthData', {
         id: {
@@ -427,6 +630,30 @@ const UserProfile = db.define('UserProfile', {
         },
         bloodPressureDiastolic: {
             type: DataTypes.INTEGER,
+        },
+        weight: {
+            type: DataTypes.FLOAT,
+        },
+        bodyFat: {
+            type: DataTypes.FLOAT,
+        },
+        muscleMass: {
+            type: DataTypes.FLOAT,
+        },
+        waist: {
+            type: DataTypes.FLOAT,
+        },
+        chest: {
+            type: DataTypes.FLOAT,
+        },
+        arms: {
+            type: DataTypes.FLOAT,
+        },
+        thighs: {
+            type: DataTypes.FLOAT,
+        },
+        notes: {
+            type: DataTypes.TEXT,
         },
         // Foreign key for the User
         userid: {
@@ -597,7 +824,7 @@ const UserProfile = db.define('UserProfile', {
             defaultValue: Sequelize.NOW,
         },
         status: {
-            type: DataTypes.ENUM('succeeded', 'failed', 'pending'),
+            type: DataTypes.ENUM('succeeded', 'failed', 'pending', 'refunded'),
             allowNull: false,
         },
         // Store the payment intent or charge ID from your payment provider
@@ -606,7 +833,26 @@ const UserProfile = db.define('UserProfile', {
         },
     });
 
-
+    const AIScans = db.define('AIScans', {
+        id: {
+            type: DataTypes.UUID,
+            defaultValue: DataTypes.UUIDV4,
+            primaryKey: true,
+            allowNull: false,
+        },
+        image_url: {
+            type: DataTypes.STRING,
+            allowNull: false,
+        },
+        ai_result_json: {
+            type: DataTypes.JSON,
+        },
+        status: {
+            type: DataTypes.ENUM('processing', 'success', 'failed'),
+            defaultValue: 'processing',
+            allowNull: false
+        }
+    });
 
     //relationships and associations
 
@@ -617,6 +863,9 @@ const UserProfile = db.define('UserProfile', {
     User.hasMany(WaterLog, { foreignKey: 'userid', onDelete: 'CASCADE' });
     User.hasMany(UserGoal, { foreignKey: 'userid', onDelete: 'CASCADE' });
     User.hasMany(TransformationJournal, { foreignKey: 'userid', onDelete: 'CASCADE' });
+    User.hasMany(TransformationReport, { foreignKey: 'userid', onDelete: 'CASCADE' });
+    User.hasMany(CommunityPost, { foreignKey: 'userid', onDelete: 'CASCADE' });
+    User.hasMany(CommunityChallengeProgress, { foreignKey: 'userid', onDelete: 'CASCADE' });
     User.hasMany(HealthData, { foreignKey: 'userid', onDelete: 'CASCADE' });
     User.hasMany(FoodItem, { foreignKey: 'userid' }); // User-created foods
     User.hasMany(UserDietPlan, { foreignKey: 'userid', onDelete: 'CASCADE' });
@@ -671,6 +920,23 @@ const UserProfile = db.define('UserProfile', {
 
     // TransformationJournal Relationships
     TransformationJournal.belongsTo(User, { foreignKey: 'userid' });
+    TransformationJournal.hasMany(TransformationReport, { foreignKey: 'journalId', onDelete: 'CASCADE' });
+
+    // TransformationReport Relationships
+    TransformationReport.belongsTo(User, { foreignKey: 'userid' });
+    TransformationReport.belongsTo(TransformationJournal, { foreignKey: 'journalId' });
+
+    // NotificationPreferences Relationships
+    NotificationPreferences.belongsTo(User, { foreignKey: 'userid' });
+    User.hasOne(NotificationPreferences, { foreignKey: 'userid' });
+
+    // CommunityPost Relationships
+    CommunityPost.belongsTo(User, { foreignKey: 'userid' });
+
+    // Community Challenge Relationships
+    CommunityChallenge.hasMany(CommunityChallengeProgress, { foreignKey: 'challengeId', onDelete: 'CASCADE' });
+    CommunityChallengeProgress.belongsTo(CommunityChallenge, { foreignKey: 'challengeId' });
+    CommunityChallengeProgress.belongsTo(User, { foreignKey: 'userid' });
 
     // HealthData Relationships
     HealthData.belongsTo(User, { foreignKey: 'userid' });
@@ -713,6 +979,12 @@ Payments.belongsTo(Subscriptions, { foreignKey: 'subscriptionId' });
         UserWorkoutExercise,
         DietPlanFoodItem,
         TransformationJournal,
+        TransformationReport,
+        NotificationPreferences,
+        CommunityPost,
+        CommunityChallenge,
+        CommunityChallengeProgress,
+        AIScans,
         HealthData,
         Payments, 
         Tiers, 

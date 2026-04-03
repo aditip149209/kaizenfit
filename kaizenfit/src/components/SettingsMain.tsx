@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { api } from "../lib/api";
 
 // --- REUSABLE COMPONENTS ---
 const SectionHeader = ({ title, subtitle }: { title: string; subtitle?: string }) => (
@@ -33,6 +34,8 @@ const ToggleSwitch = ({ label, active, onClick }: { label: string; active: boole
 
 export default function Settings() {
   const { user } = useAuth();
+  const [profile, setProfile] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
   
   // State
   const [notifications, setNotifications] = useState({
@@ -42,6 +45,31 @@ export default function Settings() {
   });
 
   const [units, setUnits] = useState("METRIC"); // METRIC or IMPERIAL
+
+  useEffect(() => {
+    let active = true;
+
+    const loadProfile = async () => {
+      try {
+        const response = await api.get('/me');
+        if (active) {
+          setProfile(response.data?.profile ?? null);
+        }
+      } catch (error) {
+        console.error('Failed to load settings profile:', error);
+      } finally {
+        if (active) {
+          setLoading(false);
+        }
+      }
+    };
+
+    loadProfile();
+
+    return () => {
+      active = false;
+    };
+  }, []);
 
   return (
     <div className="flex flex-col h-full w-full bg-kaizen-gray overflow-y-auto">
@@ -62,8 +90,9 @@ export default function Settings() {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <InputGroup label="Display Name" value="ADITI_FIT" />
+            <InputGroup label="Goal" value={profile?.goal ?? '—'} disabled />
             <InputGroup label="Email Address" value={user?.email} disabled />
-            <InputGroup label="Location" value="BENGALURU, IN" />
+            <InputGroup label="Location" value={loading ? 'Loading...' : 'BENGALURU, IN'} />
             
             <div className="space-y-1">
               <label className="block font-mono text-xs font-bold uppercase">Avatar</label>
@@ -95,9 +124,9 @@ export default function Settings() {
            </div>
 
            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-             <InputGroup label="Current Weight" value="72.4" />
-             <InputGroup label="Height" value="165" />
-             <InputGroup label="Daily Calorie Target" value="2400" />
+             <InputGroup label="Current Weight" value={profile?.weight ?? '—'} />
+             <InputGroup label="Height" value={profile?.height ?? '—'} />
+             <InputGroup label="Daily Calorie Target" value={profile?.calorieGoal ?? '—'} />
            </div>
         </section>
 

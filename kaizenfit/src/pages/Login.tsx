@@ -2,7 +2,7 @@ import { useState } from "react";
 import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { auth } from "../lib/firebase";
 import { useNavigate, Link } from "react-router-dom";
-import axios from "axios"; 
+import { api } from "../lib/api"; 
 
 export default function Login() {
   const navigate = useNavigate();
@@ -17,13 +17,10 @@ export default function Login() {
     setError("");
 
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
-      const token = await result.user.getIdToken();
+      await signInWithEmailAndPassword(auth, email, password);
       
       // Sync user with backend database
-      await axios.get('http://localhost:3000/api/syncUser', {
-        headers: { Authorization: `Bearer ${token}` }
-      });
+      await api.get('/syncUser');
       
       navigate("/dashboard"); // Redirect to your command center
     } catch (err: any) {
@@ -39,13 +36,10 @@ export default function Login() {
 
     try {
         const provider = new GoogleAuthProvider();
-        const result = await signInWithPopup(auth, provider);
-        const token = await result.user.getIdToken();
+      await signInWithPopup(auth, provider);
         
         // Sync user with backend database
-        await axios.get('http://localhost:3000/api/syncUser', {
-          headers: { Authorization: `Bearer ${token}` }
-        });
+        await api.get('/syncUser');
         
         navigate('/dashboard');
     }

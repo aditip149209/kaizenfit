@@ -42,15 +42,15 @@ export default function SideBar() {
   };
 
   return (
-    <aside className="h-screen w-72 bg-kaizen-green border-r-3 border-kaizen-black flex flex-col flex-shrink-0 sticky top-0">
+    <aside className="h-full w-80 min-w-80 basis-80 bg-kaizen-green border-r-4 flex flex-col shrink-0 border-kaizen-black overflow-y-auto lg:w-96 lg:min-w-96 lg:basis-96">
       {/* Logo / Brand Area */}
-      <div className="p-6 border-b-2 border-black bg-kaizen-mint flex items-center gap-3">
+      <div className="p-6 border-b-2 border-black bg-kaizen-mint flex items-center gap-3 justify-center lg:justify-start">
         {/* Simple placeholder for your logo icon */}
         <div className="flex gap-1">
           <div className="w-4 h-4 bg-black rounded-full"></div>
           <div className="w-4 h-4 bg-black rounded-full"></div>
         </div>
-        <h1 className="font-heading text-2xl uppercase text-black font-bebas">
+        <h1 className="font-heading text-2xl uppercase text-black font-bebas tracking-wide">
           KaizenFit
         </h1>
       </div>
@@ -71,7 +71,7 @@ export default function SideBar() {
       {/* User Info & Logout */}
       <div className="p-6 border-t-2 border-kaizen-black bg-kaizen-green">
         {user && (
-          <div className="mb-4 font-mono text-sm text-white font-bold">
+          <div className="mb-4 font-mono text-sm text-white font-bold break-words">
             LOGGED IN AS: <br />
             <span className="truncate block">{user.email}</span>
           </div>

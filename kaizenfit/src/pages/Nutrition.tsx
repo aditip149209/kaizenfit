@@ -1,7 +1,7 @@
-import NutritionSection from "../components/DashboardMain"
+import NutritionSection from "../components/NutritionSection"
 import  SideBar  from "../components/SideBar"
 
-export const Dashboard = () => {
+export const Nutrition = () => {
     return(
         <div className="flex h-screen overflow-hidden">
             <SideBar />

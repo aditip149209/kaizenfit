@@ -1,7 +1,7 @@
-import SettingsMain from "../components/CommSection"
+import SettingsMain from "../components/SettingsMain"
 import SideBar from "../components/SideBar"
 
-export const Community = () => {
+export const Settings = () => {
     return (
         <div className="flex h-screen overflow-hidden">
             <SideBar />

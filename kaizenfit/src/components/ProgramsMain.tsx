@@ -1,9 +1,10 @@
-import React, { useState } from "react";
-import { useAuth } from "../context/AuthContext";
+import React, { useEffect, useMemo, useState } from "react";
+import { api } from "../lib/api";
+import { showToast } from "../lib/toast";
 
 // --- COMPONENTS ---
 
-const PricingCard = ({ title, price, features, recommended = false, onSelect }: any) => (
+const PricingCard = ({ title, price, features, recommended = false, onSelect, disabled = false }: any) => (
   <div className={`relative border-3 border-black bg-white flex flex-col p-6 shadow-neo transition-all hover:-translate-y-2 ${recommended ? 'ring-4 ring-black/10' : ''}`}>
     
     {recommended && (
@@ -29,14 +30,15 @@ const PricingCard = ({ title, price, features, recommended = false, onSelect }: 
 
     <button 
       onClick={onSelect}
+      disabled={disabled}
       className={`w-full py-4 font-heading uppercase text-sm border-3 border-black transition-all shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none ${recommended ? 'bg-kaizen-green text-black' : 'bg-black text-white hover:bg-white hover:text-black'}`}
     >
-      Initialize Protocol
+      {disabled ? 'PROCESSING...' : 'Initialize Protocol'}
     </button>
   </div>
 );
 
-const ActivePlanCard = ({ plan }: { plan: any }) => (
+const ActivePlanCard = ({ plan, onCancel, busy }: { plan: any; onCancel: () => void; busy: boolean }) => (
   <div className="max-w-2xl mx-auto">
     {/* The "Physical Card" Look */}
     <div className="bg-kaizen-green border-3 border-black p-8 shadow-neo relative overflow-hidden">
@@ -61,7 +63,7 @@ const ActivePlanCard = ({ plan }: { plan: any }) => (
         </div>
         <div>
           <p className="font-mono text-[10px] uppercase mb-1 opacity-60">Valid Until</p>
-          <p className="font-heading text-xl uppercase">DEC 31, 2025</p>
+          <p className="font-heading text-xl uppercase">{plan.validUntil}</p>
         </div>
       </div>
 
@@ -82,25 +84,96 @@ const ActivePlanCard = ({ plan }: { plan: any }) => (
       <button className="bg-white border-3 border-black py-4 font-heading uppercase text-sm hover:bg-gray-100">
         Download Invoice
       </button>
-      <button className="bg-white text-red-600 border-3 border-black py-4 font-heading uppercase text-sm hover:bg-red-50">
-        Cancel Subscription
+      <button
+        onClick={onCancel}
+        disabled={busy}
+        className="bg-white text-red-600 border-3 border-black py-4 font-heading uppercase text-sm hover:bg-red-50 disabled:opacity-50"
+      >
+        {busy ? 'CANCELING...' : 'Cancel Subscription'}
       </button>
     </div>
   </div>
 );
 
 export default function Programs() {
-  const { user } = useAuth();
-  
-  // --- MOCK STATE TO TOGGLE VIEW ---
-  // Set this to TRUE to see the "Active Plan" view
-  // Set this to FALSE to see the "Pricing Table" view
-  const [hasSubscription, setHasSubscription] = useState(false); 
+  const [tiers, setTiers] = useState<any[]>([]);
+  const [subscription, setSubscription] = useState<any>(null);
+  const [loading, setLoading] = useState(true);
+  const [busyTierId, setBusyTierId] = useState<string | null>(null);
+  const [isCanceling, setIsCanceling] = useState(false);
 
-  const handleSubscribe = (tier: string) => {
-    alert(`INITIATING PAYMENT GATEWAY FOR: ${tier}`);
-    setHasSubscription(true); // Simulate successful sub
+  const loadProgramData = async () => {
+    try {
+      const [tiersResponse, subscriptionResponse] = await Promise.all([
+        api.get('/subscriptions/tiers'),
+        api.get('/subscriptions/me'),
+      ]);
+
+      const incomingTiers = Array.isArray(tiersResponse.data) ? tiersResponse.data : [];
+      const uniqueByName = incomingTiers.filter((tier, index, source) => {
+        const current = String(tier?.name ?? '').toLowerCase();
+        return source.findIndex((candidate) => String(candidate?.name ?? '').toLowerCase() === current) === index;
+      });
+
+      setTiers(uniqueByName);
+      setSubscription(subscriptionResponse.data ?? null);
+    } catch (error) {
+      console.error('Failed to load program data:', error);
+      showToast.error('Failed to load tiers');
+    } finally {
+      setLoading(false);
+    }
   };
+
+  useEffect(() => {
+    loadProgramData();
+  }, []);
+
+  const hasSubscription = subscription?.status === 'active';
+
+  const handleSubscribe = async (tierId: string) => {
+    try {
+      setBusyTierId(tierId);
+      const response = await api.post('/subscriptions/me', { tierId });
+      setSubscription(response.data?.subscription ?? null);
+      showToast.success('Subscription activated');
+    } catch (error) {
+      console.error('Failed to subscribe:', error);
+      showToast.error('Failed to activate subscription');
+    } finally {
+      setBusyTierId(null);
+    }
+  };
+
+  const handleCancel = async () => {
+    try {
+      setIsCanceling(true);
+      const response = await api.patch('/subscriptions/me/cancel');
+      setSubscription(response.data?.subscription ?? null);
+      showToast.success('Subscription canceled');
+    } catch (error) {
+      console.error('Failed to cancel subscription:', error);
+      showToast.error('Failed to cancel subscription');
+    } finally {
+      setIsCanceling(false);
+    }
+  };
+
+  const activePlan = useMemo(() => {
+    if (!subscription?.Tier) {
+      return null;
+    }
+
+    const nextBillingDate = subscription.nextBillingDate
+      ? new Date(subscription.nextBillingDate).toLocaleDateString()
+      : 'N/A';
+
+    return {
+      tier: String(subscription.Tier.name).toUpperCase(),
+      perks: Array.isArray(subscription.Tier.features) ? subscription.Tier.features : [],
+      validUntil: nextBillingDate,
+    };
+  }, [subscription]);
 
   return (
     <div className="flex flex-col h-full w-full bg-kaizen-gray overflow-y-auto">
@@ -115,59 +188,30 @@ export default function Programs() {
 
       <main className="flex-1 p-8 w-full">
         
-        {hasSubscription ? (
+        {hasSubscription && activePlan ? (
           // VIEW 1: USER HAS A PLAN
           <ActivePlanCard 
-            plan={{
-              tier: "TACTICAL",
-              perks: ["Unlimited AI Coaching", "Advanced Analytics", "Squad Access", "Custom Nutrition"]
-            }} 
+            plan={activePlan}
+            onCancel={handleCancel}
+            busy={isCanceling}
           />
         ) : (
           // VIEW 2: PRICING TABLE
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-            
-            {/* TIER 1 */}
-            <PricingCard 
-              title="Operative" 
-              price="0" 
-              onSelect={() => handleSubscribe("OPERATIVE")}
-              features={[
-                "Access to Daily Mission",
-                "Basic Progress Tracking",
-                "Community Read-Only",
-                "Ad-Supported Experience"
-              ]} 
-            />
-
-            {/* TIER 2 (Highlight) */}
-            <PricingCard 
-              title="Tactical" 
-              price="19" 
-              recommended={true}
-              onSelect={() => handleSubscribe("TACTICAL")}
-              features={[
-                "Full Protocol Library",
-                "Advanced Biometrics",
-                "Squad Leaderboards",
-                "Nutrition Command Center",
-                "Ad-Free Interface"
-              ]} 
-            />
-
-            {/* TIER 3 */}
-            <PricingCard 
-              title="Elite" 
-              price="49" 
-              onSelect={() => handleSubscribe("ELITE")}
-              features={[
-                "1-on-1 Human Coaching",
-                "Video Form Analysis",
-                "Custom Meal Prep Delivery",
-                "Priority Support Line",
-                "Exclusive Gear Drops"
-              ]} 
-            />
+            {tiers.map((tier) => (
+              <PricingCard
+                key={tier.id}
+                title={tier.name}
+                price={tier.price}
+                recommended={String(tier.name).toLowerCase() === 'tactical'}
+                onSelect={() => handleSubscribe(tier.id)}
+                disabled={busyTierId === tier.id || loading}
+                features={Array.isArray(tier.features) ? tier.features : []}
+              />
+            ))}
+            {!loading && tiers.length === 0 && (
+              <div className="font-mono text-sm col-span-full">NO TIERS AVAILABLE RIGHT NOW.</div>
+            )}
           </div>
         )}
       </main>

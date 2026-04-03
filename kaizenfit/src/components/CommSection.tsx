@@ -1,9 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth } from "../context/AuthContext";
+import { api } from "../lib/api";
+import { showToast } from "../lib/toast";
 
 // --- TYPES ---
 type Post = {
-  id: number;
+  id: string;
   author: string;
   badge: "PR ALERT" | "INTEL NEEDED" | "GENERAL" | "MOTIVATION";
   content: string;
@@ -12,36 +14,19 @@ type Post = {
   likedByMe: boolean;
 };
 
-// --- MOCK DATA ---
-const INITIAL_POSTS: Post[] = [
-  {
-    id: 1,
-    author: "J_DOE",
-    badge: "PR ALERT",
-    content: "Finally broke the 100kg barrier on deadlifts today. Grip strength was the bottleneck, switched to mixed grip and it flew up.",
-    likes: 24,
-    timestamp: "2 HOURS AGO",
-    likedByMe: false,
-  },
-  {
-    id: 2,
-    author: "SARAH_FIT",
-    badge: "INTEL NEEDED",
-    content: "Anyone have recommendations for high-protein vegan breakfasts that aren't just protein shakes? Hitting a wall with oatmeal.",
-    likes: 8,
-    timestamp: "5 HOURS AGO",
-    likedByMe: true,
-  },
-  {
-    id: 3,
-    author: "KAIZEN_OP",
-    badge: "MOTIVATION",
-    content: "Discipline > Motivation. You don't have to like it, you just have to do it. Get after it today team.",
-    likes: 156,
-    timestamp: "1 DAY AGO",
-    likedByMe: false,
-  },
-];
+type LeaderboardRow = {
+  rank: number;
+  name: string;
+  totalXp: number;
+  isCurrentUser: boolean;
+};
+
+type WeeklyBountyState = {
+  title: string;
+  reps: number;
+  targetReps: number;
+  progressPct: number;
+};
 
 // --- COMPONENTS ---
 
@@ -62,7 +47,7 @@ const Badge = ({ type }: { type: string }) => {
   );
 };
 
-const PostCard = ({ post, onLike }: { post: Post; onLike: (id: number) => void }) => (
+const PostCard = ({ post, onLike }: { post: Post; onLike: (id: string) => void }) => (
   <div className="bg-white border-3 border-black shadow-neo p-6 transition-all hover:-translate-y-1">
     
     {/* Post Header */}
@@ -105,39 +90,183 @@ export default function Community() {
   const { user } = useAuth();
   const username = user?.email?.split('@')[0].toUpperCase() || "OPERATOR";
   
-  const [posts, setPosts] = useState<Post[]>(INITIAL_POSTS);
+  const [posts, setPosts] = useState<Post[]>([]);
   const [newPostContent, setNewPostContent] = useState("");
   const [selectedTag, setSelectedTag] = useState<Post["badge"]>("GENERAL");
+  const [loading, setLoading] = useState(true);
+  const [leaderboard, setLeaderboard] = useState<LeaderboardRow[]>([]);
+  const [bounty, setBounty] = useState<WeeklyBountyState | null>(null);
+  const [repsInput, setRepsInput] = useState('25');
+  const [submittingReps, setSubmittingReps] = useState(false);
 
-  const handlePost = (e: React.FormEvent) => {
+  const toRelativeTime = (iso: string) => {
+    const diffMs = Date.now() - new Date(iso).getTime();
+    const diffMinutes = Math.max(1, Math.floor(diffMs / 60000));
+
+    if (diffMinutes < 60) {
+      return `${diffMinutes} MIN AGO`;
+    }
+
+    const diffHours = Math.floor(diffMinutes / 60);
+    if (diffHours < 24) {
+      return `${diffHours} HOUR${diffHours > 1 ? 'S' : ''} AGO`;
+    }
+
+    const diffDays = Math.floor(diffHours / 24);
+    return `${diffDays} DAY${diffDays > 1 ? 'S' : ''} AGO`;
+  };
+
+  const mapPost = (row: any): Post => ({
+    id: row.id,
+    author: row.author,
+    badge: row.badge,
+    content: row.content,
+    likes: Number(row.likes ?? 0),
+    timestamp: row.createdAt ? toRelativeTime(row.createdAt) : 'JUST NOW',
+    likedByMe: Boolean(row.likedByMe),
+  });
+
+  const loadPosts = async () => {
+    try {
+      const response = await api.get('/community/posts', { params: { limit: 50, offset: 0 } });
+      const rows = response.data?.rows ?? [];
+      setPosts(rows.map(mapPost));
+    } catch (error) {
+      console.error('Failed to load community posts:', error);
+      showToast.error('Failed to load feed');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    loadPosts();
+  }, []);
+
+  const loadLeaderboard = async () => {
+    try {
+      const response = await api.get('/community/leaderboard', { params: { limit: 10 } });
+      setLeaderboard(response.data?.rows ?? []);
+    } catch (error) {
+      console.error('Failed to load leaderboard:', error);
+      showToast.error('Failed to load rankings');
+    }
+  };
+
+  const loadWeeklyBounty = async () => {
+    try {
+      const response = await api.get('/community/bounty/current');
+      const challenge = response.data?.challenge;
+      const progress = response.data?.progress;
+
+      if (!challenge) {
+        setBounty(null);
+        return;
+      }
+
+      setBounty({
+        title: challenge.title,
+        reps: Number(progress?.reps ?? 0),
+        targetReps: Number(challenge.targetReps ?? 500),
+        progressPct: Number(progress?.progressPct ?? 0),
+      });
+    } catch (error) {
+      console.error('Failed to load weekly bounty:', error);
+      showToast.error('Failed to load weekly bounty');
+    }
+  };
+
+  useEffect(() => {
+    loadLeaderboard();
+    loadWeeklyBounty();
+  }, []);
+
+  const handlePost = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!newPostContent.trim()) return;
 
-    const newPost: Post = {
-      id: Date.now(),
-      author: username,
-      badge: selectedTag,
-      content: newPostContent,
-      likes: 0,
-      timestamp: "JUST NOW",
-      likedByMe: false,
-    };
+    try {
+      const response = await api.post('/community/posts', {
+        author: username,
+        badge: selectedTag,
+        content: newPostContent,
+      });
 
-    setPosts([newPost, ...posts]);
-    setNewPostContent("");
+      const created = response.data?.post;
+      if (created) {
+        setPosts((prev) => [mapPost(created), ...prev]);
+      }
+
+      setNewPostContent("");
+      showToast.success('Post transmitted');
+    } catch (error) {
+      console.error('Failed to create post:', error);
+      showToast.error('Failed to transmit post');
+    }
   };
 
-  const handleLike = (id: number) => {
-    setPosts(posts.map(post => {
-      if (post.id === id) {
-        return {
-          ...post,
-          likes: post.likedByMe ? post.likes - 1 : post.likes + 1,
-          likedByMe: !post.likedByMe
-        };
+  const handleLike = async (id: string) => {
+    const previousPosts = posts;
+    setPosts((prev) =>
+      prev.map((post) =>
+        post.id === id
+          ? {
+              ...post,
+              likedByMe: !post.likedByMe,
+              likes: post.likedByMe ? Math.max(0, post.likes - 1) : post.likes + 1,
+            }
+          : post
+      )
+    );
+
+    try {
+      const response = await api.patch(`/community/posts/${id}/like`);
+      const updated = response.data?.post;
+
+      if (!updated) {
+        return;
       }
-      return post;
-    }));
+
+      setPosts((prev) => prev.map((post) => (post.id === id ? mapPost(updated) : post)));
+      loadLeaderboard();
+    } catch (error) {
+      console.error('Failed to toggle like:', error);
+      setPosts(previousPosts);
+      showToast.error('Failed to update respect');
+    }
+  };
+
+  const handleLogReps = async () => {
+    const reps = Number.parseInt(repsInput, 10);
+
+    if (!Number.isFinite(reps) || reps <= 0) {
+      showToast.error('Enter valid reps');
+      return;
+    }
+
+    try {
+      setSubmittingReps(true);
+      const response = await api.post('/community/bounty/current/log', { reps });
+      const challenge = response.data?.challenge;
+      const progress = response.data?.progress;
+
+      if (challenge) {
+        setBounty({
+          title: challenge.title,
+          reps: Number(progress?.reps ?? 0),
+          targetReps: Number(challenge.targetReps ?? 500),
+          progressPct: Number(progress?.progressPct ?? 0),
+        });
+      }
+
+      await loadLeaderboard();
+      showToast.success(`Logged ${reps} reps`);
+    } catch (error) {
+      console.error('Failed to log bounty reps:', error);
+      showToast.error('Failed to log reps');
+    } finally {
+      setSubmittingReps(false);
+    }
   };
 
   return (
@@ -193,9 +322,13 @@ export default function Community() {
 
           {/* Posts Feed */}
           <div className="space-y-6">
+            {loading && <div className="font-mono text-sm">LOADING FEED...</div>}
             {posts.map(post => (
               <PostCard key={post.id} post={post} onLike={handleLike} />
             ))}
+            {!loading && posts.length === 0 && (
+              <div className="font-mono text-sm">NO TRANSMISSIONS YET. BE THE FIRST TO POST.</div>
+            )}
           </div>
         </div>
 
@@ -210,23 +343,23 @@ export default function Community() {
             <div className="p-4">
               <ul className="space-y-4">
                 {[
-                  { name: "ALEX_LIFTS", points: 2450, rank: 1 },
-                  { name: "SARAH_FIT", points: 2100, rank: 2 },
-                  { name: "YOU", points: 1850, rank: 3 },
-                  { name: "MIKE_RUNS", points: 1600, rank: 4 },
-                ].map((user) => (
-                  <li key={user.name} className="flex items-center justify-between font-mono text-sm border-b-2 border-gray-100 pb-2 last:border-0">
+                  ...leaderboard,
+                ].map((entry) => (
+                  <li key={`${entry.name}-${entry.rank}`} className="flex items-center justify-between font-mono text-sm border-b-2 border-gray-100 pb-2 last:border-0">
                     <div className="flex items-center gap-3">
-                      <span className={`font-bold w-6 text-center ${user.rank === 1 ? 'text-yellow-500 text-lg' : 'text-gray-400'}`}>
-                        #{user.rank}
+                      <span className={`font-bold w-6 text-center ${entry.rank === 1 ? 'text-yellow-500 text-lg' : 'text-gray-400'}`}>
+                        #{entry.rank}
                       </span>
-                      <span className={user.name === "YOU" ? "font-bold bg-kaizen-green px-1" : ""}>
-                        {user.name}
+                      <span className={entry.isCurrentUser ? "font-bold bg-kaizen-green px-1" : ""}>
+                        {entry.isCurrentUser ? 'YOU' : entry.name}
                       </span>
                     </div>
-                    <span className="font-bold">{user.points} XP</span>
+                    <span className="font-bold">{entry.totalXp} XP</span>
                   </li>
                 ))}
+                {leaderboard.length === 0 && (
+                  <li className="font-mono text-xs uppercase text-gray-500">No ranking data yet.</li>
+                )}
               </ul>
             </div>
             <div className="bg-gray-50 p-3 border-t-3 border-black text-center">
@@ -241,18 +374,31 @@ export default function Community() {
              </div>
              <h3 className="font-heading uppercase text-xl mb-2">Weekly Bounty</h3>
              <p className="font-mono text-sm mb-4 font-bold">
-               PROTOCOL: 500 PUSHUPS
+               {bounty?.title ?? 'LOADING BOUNTY...'}
              </p>
              <div className="w-full bg-white border-2 border-black h-4 mb-1">
-               <div className="bg-black h-full w-3/4"></div>
+               <div className="bg-black h-full" style={{ width: `${Math.max(0, Math.min(100, bounty?.progressPct ?? 0))}%` }}></div>
              </div>
              <div className="flex justify-between font-mono text-xs mb-4">
-               <span>375 / 500</span>
-               <span>75%</span>
+               <span>{bounty?.reps ?? 0} / {bounty?.targetReps ?? 500}</span>
+               <span>{bounty?.progressPct ?? 0}%</span>
              </div>
-             <button className="w-full bg-black text-white py-2 font-heading uppercase text-xs hover:bg-white hover:text-black transition-all rounded">
-               LOG REPS
-             </button>
+             <div className="flex gap-2">
+               <input
+                 type="number"
+                 min="1"
+                 value={repsInput}
+                 onChange={(e) => setRepsInput(e.target.value)}
+                 className="w-24 border-2 border-black px-2 py-2 font-mono text-xs"
+               />
+               <button
+                 onClick={handleLogReps}
+                 disabled={submittingReps}
+                 className="flex-1 bg-black text-white py-2 font-heading uppercase text-xs hover:bg-white hover:text-black transition-all rounded disabled:opacity-60"
+               >
+                 {submittingReps ? 'LOGGING...' : 'LOG REPS'}
+               </button>
+             </div>
           </div>
 
         </aside>

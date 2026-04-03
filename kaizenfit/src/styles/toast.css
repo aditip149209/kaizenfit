@@ -1,0 +1,109 @@
+/* Custom Toastify styles for neo-brutalist design */
+.Toastify__toast-container {
+  padding: 0;
+  width: auto;
+  max-width: 400px;
+}
+
+.Toastify__toast {
+  border: 3px solid #0c0c0c;
+  border-radius: 0;
+  padding: 12px;
+  margin: 8px;
+  font-family: 'Source Sans Pro', sans-serif;
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.1);
+}
+
+.Toastify__toast:hover {
+  box-shadow: 4px 4px 0px rgba(0, 0, 0, 0.2);
+  transform: translate(-2px, -2px);
+  transition: all 0.2s ease;
+}
+
+.Toastify__toast-body {
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+}
+
+/* Success Toast */
+.Toastify__toast--success {
+  background: linear-gradient(135deg, #d9ffe8 0%, #A1FFCB 100%);
+  color: #0c0c0c;
+}
+
+.Toastify__toast--success .Toastify__toast-icon {
+  color: #008268;
+}
+
+/* Error Toast */
+.Toastify__toast--error {
+  background: linear-gradient(135deg, #FF4D4D 0%, #FF6B6B 100%);
+  color: #ffffff;
+}
+
+.Toastify__toast--error .Toastify__toast-icon {
+  color: #ffffff;
+}
+
+/* Info Toast */
+.Toastify__toast--info {
+  background: linear-gradient(135deg, #f5f5f5 0%, #e5e5e5 100%);
+  color: #0c0c0c;
+  border: 3px solid #0c0c0c;
+}
+
+.Toastify__toast--info .Toastify__toast-icon {
+  color: #0c0c0c;
+}
+
+/* Warning Toast */
+.Toastify__toast--warning {
+  background: linear-gradient(135deg, #FFE8A1 0%, #FFCBA1 100%);
+  color: #0c0c0c;
+}
+
+.Toastify__toast--warning .Toastify__toast-icon {
+  color: #FF8C00;
+}
+
+/* Close Button */
+.Toastify__close-button {
+  color: inherit;
+  opacity: 0.7;
+}
+
+.Toastify__close-button:hover {
+  opacity: 1;
+}
+
+.Toastify__toast--success .Toastify__close-button {
+  color: #0c0c0c;
+}
+
+.Toastify__toast--error .Toastify__close-button {
+  color: #ffffff;
+}
+
+/* Progress Bar */
+.Toastify__progress-bar {
+  height: 3px;
+  border-radius: 0;
+}
+
+.Toastify__progress-bar--success {
+  background: linear-gradient(90deg, #008268 0%, #A1FFCB 100%);
+}
+
+.Toastify__progress-bar--error {
+  background: linear-gradient(90deg, #FF4D4D 0%, #FF6B6B 100%);
+}
+
+.Toastify__progress-bar--info {
+  background: #0c0c0c;
+}
+
+.Toastify__progress-bar--warning {
+  background: linear-gradient(90deg, #FF8C00 0%, #FFCBA1 100%);
+}

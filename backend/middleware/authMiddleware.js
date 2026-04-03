@@ -21,7 +21,6 @@ export const verifyToken = async (req, res, next) => {
   }
 }
 
-//this has similar functionality to your protect function which you created with your own jwt code
 
 
 

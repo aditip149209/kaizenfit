@@ -53,11 +53,20 @@ export default function MetricsModal({ isOpen, onClose, onConfirm }: MetricsModa
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4 backdrop-blur-sm">
       <div className="bg-white border-4 border-black max-w-2xl w-full max-h-[90vh] overflow-y-auto">
         {/* Header */}
-        <div className="bg-black text-white p-4 border-b-4 border-black">
+        <div className="bg-black text-white p-4 border-b-4 border-black flex items-center justify-between">
+          <div className="w-10" aria-hidden="true"></div>
           <h2 className="font-heading text-xl uppercase text-center">LOG METRICS</h2>
+          <button
+            type="button"
+            onClick={onClose}
+            className="text-white hover:text-red-500 font-bold text-xl transition-colors"
+            aria-label="Close metrics modal"
+          >
+            ✕
+          </button>
         </div>
 
         {/* Form */}
@@ -189,17 +198,10 @@ export default function MetricsModal({ isOpen, onClose, onConfirm }: MetricsModa
           </div>
 
           {/* Buttons */}
-          <div className="flex gap-3 pt-4">
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex-1 bg-white border-2 border-black py-2 px-4 font-heading uppercase hover:bg-gray-100 transition-colors"
-            >
-              CANCEL
-            </button>
+          <div className="pt-4">
             <button
               type="submit"
-              className="flex-1 bg-kaizen-green text-black border-2 border-black py-2 px-4 font-heading uppercase hover:bg-kaizen-mint transition-colors"
+              className="w-full bg-kaizen-green text-black border-2 border-black py-2 px-4 font-heading uppercase hover:bg-kaizen-mint transition-colors"
             >
               LOG METRICS
             </button>

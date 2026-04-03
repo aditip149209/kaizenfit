@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
-import axios from 'axios';
+import { api } from '../lib/api';
 
 interface OnboardingData {
   gender: 'male' | 'female' | 'non-binary' | 'prefer_not_to_say' | '';
@@ -28,7 +27,6 @@ const SELECT_CLASS = "w-full bg-white border-3 border-black p-3 font-mono focus:
 
 const Onboarding: React.FC = () => {
   const navigate = useNavigate();
-  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState(1);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [error, setError] = useState('');
@@ -83,11 +81,9 @@ const Onboarding: React.FC = () => {
     setError('');
 
     try {
-      const token = await user?.getIdToken();
-      
       // 1. Submit Profile Data
-      await axios.post(
-        `http://localhost:3000/api/user/profile`,
+      await api.post(
+        `/user/profile`,
         {
           gender: formData.gender,
           height: parseFloat(formData.height),
@@ -98,19 +94,10 @@ const Onboarding: React.FC = () => {
           activityLevel: formData.activityLevel,
           injuries: formData.injuries || null,
         },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
       );
 
       // 2. Update Onboarding Status
-      await axios.patch(
-        `http://localhost:3000/api/user/onboard`,
-        { isOnboarded: true },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      await api.patch(`/user/onboard`, { isOnboarded: true });
 
       navigate('/dashboard');
     } catch (err: any) {
