@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 import bodyParser from 'body-parser';
 import { db, connectDB } from './config/db.js';
 import './models/User.js'
-import router from './route.ts';
+import router from './route.js';
 
 dotenv.config();
 

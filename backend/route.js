@@ -3,7 +3,7 @@ import { Router } from "express";
 import { verifyToken } from "./middleware/authMiddleware.js";
 import { syncUser } from "./controllers/authController.js";
 import { createProfile, updateOnboardStatus } from "./controllers/onboardController.js";
-import { getMe, getProfile, upsertProfile } from "./controllers/userController.js";
+import { getMe, getProfile, upsertProfile, updateAccountSettings, uploadProfilePicture, getNotificationPreferences, updateNotificationPreferences, getAccountSettings } from "./controllers/userController.js";
 import {
 	addExercise,
 	createWorkoutLogHandler,
@@ -74,6 +74,13 @@ router.post('/user/profile', verifyToken, createProfile);
 router.patch('/user/onboard', verifyToken, updateOnboardStatus);
 router.get('/user/profile', verifyToken, getProfile);
 router.put('/user/profile', verifyToken, upsertProfile);
+
+// Account settings routes
+router.get('/user/settings', verifyToken, getAccountSettings);
+router.patch('/user/settings', verifyToken, updateAccountSettings);
+router.post('/user/profile-picture', verifyToken, uploadProfilePicture);
+router.get('/user/preferences', verifyToken, getNotificationPreferences);
+router.patch('/user/preferences', verifyToken, updateNotificationPreferences);
 
 // Workout routes
 router.get('/workouts/exercises', verifyToken, getExercises);

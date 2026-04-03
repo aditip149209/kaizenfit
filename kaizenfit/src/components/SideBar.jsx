@@ -42,7 +42,7 @@ export default function SideBar() {
   };
 
   return (
-    <aside className="h-full w-80 min-w-80 basis-80 bg-kaizen-green border-r-4 flex flex-col shrink-0 border-kaizen-black overflow-y-auto lg:w-96 lg:min-w-96 lg:basis-96">
+    <aside className="h-full flex flex-col">
       {/* Logo / Brand Area */}
       <div className="p-6 border-b-2 border-black bg-kaizen-mint flex items-center gap-3 justify-center lg:justify-start">
         {/* Simple placeholder for your logo icon */}
@@ -69,7 +69,7 @@ export default function SideBar() {
       </nav>
 
       {/* User Info & Logout */}
-      <div className="p-6 border-t-2 border-kaizen-black bg-kaizen-green">
+      <div className="p-6 border-t-2 border-kaizen-black bg-kaizen-green mt-auto">
         {user && (
           <div className="mb-4 font-mono text-sm text-white font-bold break-words">
             LOGGED IN AS: <br />

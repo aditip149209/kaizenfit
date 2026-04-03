@@ -2,7 +2,8 @@ import admin from "firebase-admin";
 import serviceAccount from "../serviceAccount.json" with { type: "json" };
 
 admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount)
+    credential: admin.credential.cert(serviceAccount),
+    storageBucket: "kaizenfit-e6633.appspot.com"
 });
 
 export const verifyToken = async (req, res, next) => {

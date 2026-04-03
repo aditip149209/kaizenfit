@@ -739,7 +739,7 @@ export default function DashboardMain() {
   const windowOldest = waterHeatmap[waterHeatmap.length - 1]?.date;
 
   return (
-    <div className="flex-1 min-w-0 flex flex-col bg-gray-100 h-full">
+    <div className="h-full flex flex-col min-h-0 max-w-screen">
       <WaterModal 
         isOpen={isWaterModalOpen}
         onClose={() => setIsWaterModalOpen(false)}
@@ -796,9 +796,9 @@ export default function DashboardMain() {
       </header>
 
       {/* Main Grid Layout */}
-      <main className="flex-1 p-4 overflow-auto">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 auto-rows-max gap-4 w-full">
-          
+      <main className="flex-1 min-h-0 p-4 overflow-y-auto flex justify-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 auto-rows-max gap-4 w-full max-w-6xl">
+            
           {/* WORKOUT SECTION HEADER */}
           <div className="col-span-1 sm:col-span-2 lg:col-span-3 border-b-3 border-black pb-1 mb-2">
             <h2 className="font-heading text-xl uppercase tracking-wider">■ WORKOUT</h2>
