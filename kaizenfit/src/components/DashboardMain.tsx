@@ -1,7 +1,7 @@
 import React from "react";
 import { useAuth } from "../context/AuthContext";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { api } from "../lib/api";
 import { showToast } from "../lib/toast";
 import WaterModal from "./WaterModal";
@@ -35,6 +35,7 @@ const DashboardCard = ({ title, children, className = "", headerClassName = "" }
 export default function DashboardMain() {
   const { user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const HYDRATION_PAGE_SIZE = 24;
   const METRICS_HISTORY_SIZE = 5;
   const METRICS_FETCH_SIZE = 60;
@@ -272,6 +273,38 @@ export default function DashboardMain() {
       active = false;
     };
   }, [user, metricsReloadToken]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const fitbitStatus = params.get('fitbit');
+    const fitbitReason = params.get('reason');
+    const fitbitPersist = params.get('persist');
+
+    if (!fitbitStatus) {
+      return;
+    }
+
+    if (fitbitStatus === 'connected') {
+      if (fitbitPersist === 'failed') {
+        const reasonText = fitbitReason ? decodeURIComponent(fitbitReason) : '';
+        showToast.warning(reasonText ? `Fitbit connected, but token save failed: ${reasonText}` : 'Fitbit connected, but token save failed.');
+      } else {
+        showToast.success('Fitbit connected successfully');
+      }
+    } else if (fitbitStatus === 'cancelled') {
+      showToast.info('Fitbit connection was cancelled. You can continue without Fitbit.');
+    } else {
+      const reasonText = fitbitReason ? decodeURIComponent(fitbitReason) : '';
+      console.error('Fitbit connection failed:', reasonText || 'unknown reason');
+      showToast.error(reasonText ? `Could not connect Fitbit: ${reasonText}` : 'Could not connect Fitbit');
+    }
+
+    params.delete('fitbit');
+    params.delete('persist');
+    params.delete('reason');
+    const nextQuery = params.toString();
+    navigate(`/dashboard${nextQuery ? `?${nextQuery}` : ''}`, { replace: true });
+  }, [location.search, navigate]);
 
   // Handle Modal Submission
   const handleWaterSubmit = async (value: number) => {
@@ -738,6 +771,21 @@ export default function DashboardMain() {
   const windowNewest = waterHeatmap[0]?.date;
   const windowOldest = waterHeatmap[waterHeatmap.length - 1]?.date;
 
+  const handleConnectFitbit = async () => {
+    try {
+      const response = await api.get('/auth/fitbit/authorize');
+      const { url, verifier } = response.data;
+
+      sessionStorage.setItem('fitbit_verifier', verifier);
+
+      window.location.href = url;
+
+    } catch (error) {
+      console.log("Could not connect to Fitbit: ", error);
+      showToast.error("Could not connect to Fitbit");
+    }
+  };
+
   return (
     <div className="h-full flex flex-col min-h-0 max-w-screen">
       <WaterModal 
@@ -887,8 +935,8 @@ export default function DashboardMain() {
               <p className="font-mono text-sm text-gray-700 max-w-sm">
                 Connect Google Fit, Fitbit, or other trackers to show synced activity here.
               </p>
-              <NeoButton className="text-base px-4 py-3 w-full max-w-xs font-bold" onClick={() => navigate('/settings')}>
-                ADD INTEGRATIONS
+              <NeoButton className="text-base px-4 py-3 w-full max-w-xs font-bold" onClick={handleConnectFitbit}>
+                CONNECT WITH FITBIT
               </NeoButton>
             </div>
           )}

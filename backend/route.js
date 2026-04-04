@@ -60,6 +60,12 @@ import {
 	getWeeklyBounty,
 	toggleLikeCommunityPost,
 } from "./controllers/communityController.js";
+import {
+	getAuthUrl,
+	handleCallback,
+	getDashData,
+	disconnect,
+} from "./controllers/fitbitController.js";
 
 
 //sync the user in our own database when they register for the first time 
@@ -141,6 +147,18 @@ router.patch('/community/posts/:id/like', verifyToken, toggleLikeCommunityPost);
 router.get('/community/leaderboard', verifyToken, getLeaderboard);
 router.get('/community/bounty/current', verifyToken, getWeeklyBounty);
 router.post('/community/bounty/current/log', verifyToken, addWeeklyBountyReps);
+
+
+//the first callback fitbit hits i.e. for integration
+router.get('/auth/fitbit/authorize', verifyToken, getAuthUrl);
+router.get('/auth/fitbit/callback', handleCallback);
+
+//the endpoint where data is fetched from fitbit
+router.get('/fitbit/daily', verifyToken, getDashData);
+router.post('/fitbit/disconnect', verifyToken, disconnect);
+
+
+
 
 export default router;
 
