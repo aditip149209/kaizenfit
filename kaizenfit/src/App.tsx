@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import './styles/toast.css';
 import Header from './components/Header';
@@ -29,6 +29,8 @@ const ProfileAside = () => {
     waterGoal: null,
     calorieGoal: null,
   });
+  const [fitbitConnected, setFitbitConnected] = useState(false);
+  const [fitbitLoading, setFitbitLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
@@ -61,6 +63,38 @@ const ProfileAside = () => {
     };
   }, []);
 
+  useEffect(() => {
+    let active = true;
+
+    const loadFitbitStatus = async () => {
+      try {
+        const response = await api.get('/fitbit/stats');
+
+        if (!active) {
+          return;
+        }
+
+        setFitbitConnected(Boolean(response.data?.connected));
+      } catch {
+        if (!active) {
+          return;
+        }
+
+        setFitbitConnected(false);
+      } finally {
+        if (active) {
+          setFitbitLoading(false);
+        }
+      }
+    };
+
+    loadFitbitStatus();
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
   const displayName = user?.displayName || user?.email?.split('@')[0] || 'Kaizen Member';
   const initials = useMemo(() => {
     const words = displayName.split(/\s+/).filter(Boolean);
@@ -74,6 +108,17 @@ const ProfileAside = () => {
 
     return `${words[0][0] ?? ''}${words[1][0] ?? ''}`.toUpperCase();
   }, [displayName]);
+
+  const handleDisconnectFitbit = async () => {
+    try {
+      await api.post('/fitbit/disconnect');
+      setFitbitConnected(false);
+      toast.success('Fitbit disconnected');
+    } catch (error) {
+      console.error('Could not disconnect Fitbit:', error);
+      toast.error('Could not disconnect Fitbit');
+    }
+  };
 
   return (
     <aside className="hidden 2xl:block 2xl:w-80 bg-kaizen-lightgreen border-l-3 border-kaizen-black overflow-y-auto">
@@ -132,6 +177,34 @@ const ProfileAside = () => {
           >
             View Subscription
           </button>
+        </div>
+
+        <div className="border-3 border-kaizen-black bg-white p-4 space-y-3">
+          <p className="font-heading text-sm uppercase tracking-widest">Fitbit</p>
+          {fitbitLoading ? (
+            <p className="font-mono text-xs text-gray-600 uppercase">Checking connection...</p>
+          ) : fitbitConnected ? (
+            <>
+              <div className="border-2 border-black px-3 py-2 bg-kaizen-lightgreen">
+                <p className="font-heading text-sm uppercase">Connected</p>
+                <p className="font-mono text-[10px] text-gray-700 uppercase">Your Fitbit data is linked</p>
+              </div>
+              <button
+                type="button"
+                className="w-full bg-red-500 text-white border-2 border-black font-heading uppercase py-2 hover:bg-white hover:text-red-500 transition-colors"
+                onClick={handleDisconnectFitbit}
+              >
+                Disconnect Fitbit
+              </button>
+            </>
+          ) : (
+            <>
+              <div className="border-2 border-black px-3 py-2 bg-white">
+                <p className="font-heading text-sm uppercase">Not Connected</p>
+                <p className="font-mono text-[10px] text-gray-700 uppercase">Connect from the Fitbit card on the dashboard</p>
+              </div>
+            </>
+          )}
         </div>
       </div>
     </aside>

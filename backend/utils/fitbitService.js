@@ -72,10 +72,25 @@ export const refreshFitbitToken = async (refreshToken) => {
     }
 };
 
-export const fetchDailyStats = async (accessToken, date = "today") => {
+const formatFitbitDate = (dateInput = new Date()) => {
+    const date = dateInput instanceof Date ? dateInput : new Date(dateInput);
+
+    if (Number.isNaN(date.getTime())) {
+        return new Date().toISOString().slice(0, 10);
+    }
+
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const day = String(date.getDate()).padStart(2, '0');
+
+    return `${year}-${month}-${day}`;
+};
+
+export const fetchDailyStats = async (accessToken, date) => {
     try {
+        const requestDate = date ? formatFitbitDate(date) : formatFitbitDate();
         const response = await axios.get(
-            `https://api.fitbit.com/1/user/-/activities/date/${date}.json`,
+            `https://api.fitbit.com/1/user/-/activities/date/${requestDate}.json`,
             {
                 headers: {
                     Authorization: `Bearer ${accessToken}`,

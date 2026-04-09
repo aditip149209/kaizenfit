@@ -6,6 +6,7 @@ import {
     generateCodeVerifier,
     exchangeCodeForTokens,
     fetchDailyStats,
+    refreshFitbitToken,
     revokeToken,
 } from "../utils/fitbitService.js";
 
@@ -15,6 +16,49 @@ if (!admin.apps.length) {
         storageBucket: "kaizenfit-e6633.appspot.com",
     });
 }
+
+const saveFitbitTokens = async (uid, tokens) => {
+    await admin.firestore().collection("users").doc(uid).set(
+        {
+            integrations: {
+                fitbit: {
+                    connected: true,
+                    userId: tokens.user_id,
+                    accessToken: tokens.access_token ?? tokens.accessToken ?? null,
+                    refreshToken: tokens.refresh_token ?? tokens.refreshToken ?? null,
+                    scope: tokens.scope,
+                    tokenType: tokens.token_type,
+                    expiresIn: tokens.expires_in,
+                    expiresAt: Date.now() + (Number(tokens.expires_in ?? 0) * 1000),
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+                },
+            },
+        },
+        { merge: true }
+    );
+};
+
+const loadFitbitIntegration = async (uid) => {
+    const snapshot = await admin.firestore().collection("users").doc(uid).get();
+    return snapshot.exists ? snapshot.data()?.integrations?.fitbit ?? null : null;
+};
+
+const clearFitbitIntegration = async (uid) => {
+    await admin.firestore().collection("users").doc(uid).set(
+        {
+            integrations: {
+                fitbit: {
+                    connected: false,
+                    accessToken: null,
+                    refreshToken: null,
+                    expiresAt: null,
+                    updatedAt: admin.firestore.FieldValue.serverTimestamp(),
+                },
+            },
+        },
+        { merge: true }
+    );
+};
 
 export const getAuthUrl = async (req, res) => {
     const verifier = generateCodeVerifier();
@@ -75,26 +119,10 @@ export const handleCallback = async (req, res) => {
 
         if (uid) {
             try {
-                await admin.firestore().collection("users").doc(uid).set(
-                    {
-                        integrations: {
-                            fitbit: {
-                                connected: true,
-                                userId: tokens.user_id,
-                                accessToken: tokens.access_token,
-                                refreshToken: tokens.refresh_token,
-                                scope: tokens.scope,
-                                tokenType: tokens.token_type,
-                                expiresIn: tokens.expires_in,
-                                updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-                            },
-                        },
-                    },
-                    { merge: true }
-                );
+                await saveFitbitTokens(uid, tokens);
             } catch (firestoreError) {
                 const reason = encodeURIComponent(String(firestoreError?.message || "firestore_save_failed"));
-                return res.redirect(`${frontendDashboardUrl}?fitbit=connected&persist=failed&reason=${reason}`);
+                return res.redirect(`${frontendDashboardUrl}?fitbit=failed&persist=failed&reason=${reason}`);
             }
         }
 
@@ -105,58 +133,91 @@ export const handleCallback = async (req, res) => {
     }
 };
 
-export const getDashData = async (req, res) => {
-    try {
-        // For now, read Fitbit token from explicit request data.
-        // Do not use Authorization header because it carries your app auth token.
-        const accessToken =
-            req.headers["x-fitbit-access-token"] ||
-            req.query.accessToken ||
-            req.body?.accessToken;
+export const getFitbitStats = async (req, res) => {
+    const uid = req.user?.uid;
 
-        if (!accessToken) {
-            return res.status(400).json({ message: "Missing Fitbit access token" });
+    if (!uid) {
+        return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    try {
+        const fitbit = await loadFitbitIntegration(uid);
+
+        if (!fitbit?.connected || !fitbit.accessToken) {
+            return res.status(200).json({ connected: false });
         }
 
-        const data = await fetchDailyStats(accessToken);
-        
-        res.json(data);
-    }
-    catch (error) {
-        // If error is 401, this is where you would call fitbitService.refreshFitbitToken()
-        res.status(500).json({ message: "Failed to fetch Fitbit data" });
+        let accessToken = fitbit.accessToken;
+
+        try {
+            const data = await fetchDailyStats(accessToken);
+
+            return res.json({
+                connected: true,
+                fitbit: {
+                    userId: fitbit.userId ?? null,
+                    connected: true,
+                    updatedAt: fitbit.updatedAt ?? null,
+                },
+                stats: data,
+            });
+        } catch (statsError) {
+            const statusCode = statsError?.response?.status;
+
+            if (statusCode !== 401 || !fitbit.refreshToken) {
+                throw statsError;
+            }
+
+            const refreshedTokens = await refreshFitbitToken(fitbit.refreshToken);
+            accessToken = refreshedTokens.access_token;
+            await saveFitbitTokens(uid, {
+                ...refreshedTokens,
+                user_id: fitbit.userId,
+            });
+
+            const refreshedStats = await fetchDailyStats(accessToken);
+
+            return res.json({
+                connected: true,
+                fitbit: {
+                    userId: fitbit.userId ?? null,
+                    connected: true,
+                    updatedAt: Date.now(),
+                },
+                stats: refreshedStats,
+                refreshed: true,
+            });
+        }
+    } catch (error) {
+        console.error("Failed to fetch Fitbit stats:", error.response?.data || error.message);
+        return res.status(500).json({ message: "Failed to fetch Fitbit data" });
     }
 }
 
 export const disconnect = async (req, res) => {
     try {
-        const token = req.body?.token || req.headers["x-fitbit-access-token"];
+        const uid = req.user?.uid;
+        if (!uid) {
+            return res.status(401).json({ message: "Unauthorized" });
+        }
+
+        const fitbit = await loadFitbitIntegration(uid);
+        const token = fitbit?.accessToken || fitbit?.refreshToken;
         if (!token) {
-            return res.status(400).json({ message: "Missing token" });
+            await clearFitbitIntegration(uid);
+            return res.json({ message: "Disconnected successfully" });
         }
 
         await revokeToken(token);
 
-        if (req.user?.uid) {
-            await admin.firestore().collection("users").doc(req.user.uid).set(
-                {
-                    integrations: {
-                        fitbit: {
-                            connected: false,
-                            accessToken: null,
-                            refreshToken: null,
-                            updatedAt: admin.firestore.FieldValue.serverTimestamp(),
-                        },
-                    },
-                },
-                { merge: true }
-            );
-        }
+        await clearFitbitIntegration(uid);
 
         res.json({ message: "Disconnected successfully" });
     } catch (error) {
         res.status(500).json({ message: "Failed to disconnect" });
     }
 };
+
+export const getDashData = getFitbitStats;
 
 

@@ -32,6 +32,17 @@ const DashboardCard = ({ title, children, className = "", headerClassName = "" }
   </div>
 );
 
+type FitbitDailyStats = {
+  steps: number | null;
+  caloriesOut: number | null;
+  distance: number | null;
+  activeMinutes: number | null;
+  restingHeartRate: number | null;
+  minutesVeryActive: number | null;
+  minutesFairlyActive: number | null;
+  minutesLightlyActive: number | null;
+};
+
 export default function DashboardMain() {
   const { user } = useAuth();
   const navigate = useNavigate();
@@ -78,6 +89,10 @@ export default function DashboardMain() {
   });
   const [exerciseSeedName, setExerciseSeedName] = useState('');
   const [reopenRoutineAfterExercise, setReopenRoutineAfterExercise] = useState(false);
+  const [fitbitLoading, setFitbitLoading] = useState(true);
+  const [fitbitConnected, setFitbitConnected] = useState(false);
+  const [fitbitStats, setFitbitStats] = useState<FitbitDailyStats | null>(null);
+  const [fitbitStatus, setFitbitStatus] = useState<'idle' | 'connected' | 'not_connected' | 'cancelled' | 'error'>('idle');
 
   const dateKey = (date: Date) => {
     const year = date.getFullYear();
@@ -275,32 +290,34 @@ export default function DashboardMain() {
   }, [user, metricsReloadToken]);
 
   useEffect(() => {
+    void loadFitbitStats();
+
+    return () => {};
+  }, [user]);
+
+  useEffect(() => {
     const params = new URLSearchParams(location.search);
     const fitbitStatus = params.get('fitbit');
     const fitbitReason = params.get('reason');
-    const fitbitPersist = params.get('persist');
 
     if (!fitbitStatus) {
       return;
     }
 
     if (fitbitStatus === 'connected') {
-      if (fitbitPersist === 'failed') {
-        const reasonText = fitbitReason ? decodeURIComponent(fitbitReason) : '';
-        showToast.warning(reasonText ? `Fitbit connected, but token save failed: ${reasonText}` : 'Fitbit connected, but token save failed.');
-      } else {
-        showToast.success('Fitbit connected successfully');
-      }
+      setFitbitStatus('connected');
+      showToast.success('Fitbit connected successfully');
     } else if (fitbitStatus === 'cancelled') {
+      setFitbitStatus('cancelled');
       showToast.info('Fitbit connection was cancelled. You can continue without Fitbit.');
     } else {
+      setFitbitStatus('error');
       const reasonText = fitbitReason ? decodeURIComponent(fitbitReason) : '';
       console.error('Fitbit connection failed:', reasonText || 'unknown reason');
       showToast.error(reasonText ? `Could not connect Fitbit: ${reasonText}` : 'Could not connect Fitbit');
     }
 
     params.delete('fitbit');
-    params.delete('persist');
     params.delete('reason');
     const nextQuery = params.toString();
     navigate(`/dashboard${nextQuery ? `?${nextQuery}` : ''}`, { replace: true });
@@ -498,7 +515,66 @@ export default function DashboardMain() {
 
   const selectedRoutine = routineOptions.find((routine) => routine.id === selectedRoutineId) ?? routineOptions[0] ?? null;
   const selectedRoutineDetails = parseRoutineDescription(selectedRoutine);
-  const connectedTrackers: Array<{ id: string; name: string; provider: string; syncedAt: string }> = [];
+
+  const loadFitbitStats = async () => {
+    if (!user) {
+      return;
+    }
+
+    setFitbitLoading(true);
+
+    try {
+      const response = await api.get('/fitbit/stats');
+      const payload = response.data;
+
+      if (!payload?.connected) {
+        setFitbitConnected(false);
+        setFitbitStats(null);
+        setFitbitStatus('not_connected');
+        return;
+      }
+
+      const summary = payload.stats?.summary ?? {};
+      const distanceEntry = Array.isArray(summary.distances)
+        ? summary.distances.find((entry: any) => entry?.activity === 'total') ?? summary.distances[0]
+        : null;
+
+      setFitbitConnected(true);
+      setFitbitStatus('connected');
+      setFitbitStats({
+        steps: Number.isFinite(Number(summary.steps)) ? Number(summary.steps) : null,
+        caloriesOut: Number.isFinite(Number(summary.caloriesOut)) ? Number(summary.caloriesOut) : null,
+        distance: Number.isFinite(Number(distanceEntry?.distance)) ? Number(distanceEntry.distance) : null,
+        activeMinutes: Number.isFinite(Number(summary.minutesVeryActive ?? 0)) || Number.isFinite(Number(summary.minutesFairlyActive ?? 0))
+          ? Number(summary.minutesVeryActive ?? 0) + Number(summary.minutesFairlyActive ?? 0)
+          : null,
+        restingHeartRate: Number.isFinite(Number(summary.restingHeartRate)) ? Number(summary.restingHeartRate) : null,
+        minutesVeryActive: Number.isFinite(Number(summary.minutesVeryActive)) ? Number(summary.minutesVeryActive) : null,
+        minutesFairlyActive: Number.isFinite(Number(summary.minutesFairlyActive)) ? Number(summary.minutesFairlyActive) : null,
+        minutesLightlyActive: Number.isFinite(Number(summary.minutesLightlyActive)) ? Number(summary.minutesLightlyActive) : null,
+      });
+    } catch (error) {
+      console.error('Failed to load Fitbit stats:', error);
+      setFitbitConnected(false);
+      setFitbitStats(null);
+      setFitbitStatus('error');
+    } finally {
+      setFitbitLoading(false);
+    }
+  };
+
+  const handleDisconnectFitbit = async () => {
+    try {
+      await api.post('/fitbit/disconnect');
+      setFitbitConnected(false);
+      setFitbitStats(null);
+      setFitbitStatus('not_connected');
+      showToast.success('Fitbit disconnected');
+    } catch (error) {
+      console.error('Could not disconnect Fitbit:', error);
+      showToast.error('Could not disconnect Fitbit');
+    }
+  };
 
   const handleDietPlanCreate = (plan: DietPlanData) => {
     api.post('/nutrition/user-diet-plans', {
@@ -912,34 +988,64 @@ export default function DashboardMain() {
             </div>
           </DashboardCard>
 
-          {connectedTrackers.length > 0 ? (
-            <DashboardCard title="Integrations" className="bg-kaizen-lightgreen">
-              <div className="w-full space-y-3">
-                <p className="font-mono text-sm text-gray-600 text-center uppercase">Connected Trackers</p>
-                <div className="space-y-2">
-                  {connectedTrackers.map((tracker) => (
-                    <div key={tracker.id} className="flex items-center justify-between border-2 border-black bg-white px-3 py-2">
-                      <div>
-                        <p className="font-heading uppercase text-sm font-bold">{tracker.name}</p>
-                        <p className="font-mono text-[10px] uppercase text-gray-600">{tracker.provider}</p>
-                      </div>
-                      <span className="font-mono text-[10px] uppercase text-gray-600">Synced {tracker.syncedAt}</span>
+          <DashboardCard title="Fitbit" className="bg-kaizen-lightgreen">
+            {fitbitLoading ? (
+              <div className="w-full min-h-[180px] flex items-center justify-center text-center px-3">
+                <p className="font-mono text-sm text-gray-600 uppercase">Loading Fitbit data...</p>
+              </div>
+            ) : fitbitConnected && fitbitStats ? (
+              <div className="w-full space-y-4">
+                <div className="text-center space-y-1">
+                  <p className="font-heading uppercase text-xl font-bold">Connected</p>
+                  <p className="font-mono text-xs text-gray-600 uppercase">Your Fitbit activity is synced to the dashboard</p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  {[
+                    { label: 'Steps', value: fitbitStats.steps != null ? fitbitStats.steps.toLocaleString() : 'N/A' },
+                    { label: 'Calories', value: fitbitStats.caloriesOut != null ? `${fitbitStats.caloriesOut.toLocaleString()} kcal` : 'N/A' },
+                    { label: 'Distance', value: fitbitStats.distance != null ? `${fitbitStats.distance.toFixed(2)} km` : 'N/A' },
+                    { label: 'Active Min', value: fitbitStats.activeMinutes != null ? fitbitStats.activeMinutes.toString() : 'N/A' },
+                  ].map((item) => (
+                    <div key={item.label} className="border-2 border-black bg-white px-3 py-3 text-center">
+                      <p className="font-mono text-[10px] uppercase text-gray-600">{item.label}</p>
+                      <p className="font-heading text-lg font-bold uppercase mt-1">{item.value}</p>
                     </div>
                   ))}
                 </div>
+
+                <div className="border-2 border-black bg-white px-3 py-3 text-center">
+                  <p className="font-mono text-[10px] uppercase text-gray-600">Resting Heart Rate</p>
+                  <p className="font-heading text-xl font-bold uppercase mt-1">
+                    {fitbitStats.restingHeartRate != null ? `${fitbitStats.restingHeartRate} bpm` : 'N/A'}
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2">
+                  <NeoButton className="text-base px-4 py-3 w-full font-bold" onClick={loadFitbitStats}>
+                    REFRESH FITBIT
+                  </NeoButton>
+                  <NeoButton className="text-base px-4 py-3 w-full font-bold" onClick={handleDisconnectFitbit}>
+                    DISCONNECT
+                  </NeoButton>
+                </div>
               </div>
-            </DashboardCard>
-          ) : (
-            <div className="border-3 border-kaizen-black bg-kaizen-lightgreen p-6 shadow-neo flex flex-col items-center justify-center text-center gap-3 min-h-[180px]">
-              <h3 className="font-heading text-xl uppercase font-bold">Integrations</h3>
-              <p className="font-mono text-sm text-gray-700 max-w-sm">
-                Connect Google Fit, Fitbit, or other trackers to show synced activity here.
-              </p>
-              <NeoButton className="text-base px-4 py-3 w-full max-w-xs font-bold" onClick={handleConnectFitbit}>
-                CONNECT WITH FITBIT
-              </NeoButton>
-            </div>
-          )}
+            ) : (
+              <div className="w-full min-h-[180px] flex flex-col items-center justify-center text-center gap-3 px-3">
+                <h3 className="font-heading text-xl uppercase font-bold">Fitbit Not Connected</h3>
+                <p className="font-mono text-sm text-gray-700 max-w-sm">
+                  {fitbitStatus === 'cancelled'
+                    ? 'Fitbit sign-in was cancelled. You can try again, or continue without Fitbit.'
+                    : fitbitStatus === 'error'
+                      ? 'Fitbit could not be loaded right now. Try connecting again.'
+                      : 'A Fitbit account is required. Sign in or create one on the Fitbit page to sync steps, calories, distance, and active minutes.'}
+                </p>
+                <NeoButton className="text-base px-4 py-3 w-full max-w-xs font-bold" onClick={handleConnectFitbit}>
+                  CONNECT WITH FITBIT
+                </NeoButton>
+              </div>
+            )}
+          </DashboardCard>
 
           {/* NUTRITION SECTION HEADER */}
           <div className="col-span-1 sm:col-span-2 lg:col-span-3 border-b-3 border-black pb-1 mb-2 mt-2">

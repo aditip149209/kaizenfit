@@ -63,6 +63,7 @@ import {
 import {
 	getAuthUrl,
 	handleCallback,
+	getFitbitStats,
 	getDashData,
 	disconnect,
 } from "./controllers/fitbitController.js";
@@ -154,6 +155,7 @@ router.get('/auth/fitbit/authorize', verifyToken, getAuthUrl);
 router.get('/auth/fitbit/callback', handleCallback);
 
 //the endpoint where data is fetched from fitbit
+router.get('/fitbit/stats', verifyToken, getFitbitStats);
 router.get('/fitbit/daily', verifyToken, getDashData);
 router.post('/fitbit/disconnect', verifyToken, disconnect);
 
